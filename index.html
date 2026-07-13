@@ -68,6 +68,15 @@
   .card-top p { margin: 4px 0 0; color: var(--ink-muted); font-size: 12px; }
   .card-top a.bgg-link { display:inline-flex; align-items:center; gap:4px; margin-top: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); text-decoration: none; }
   .card-top a.bgg-link:hover { text-decoration: underline; }
+  .meta-row { display:flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  .category-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.03em;
+    padding: 2px 8px; border-radius: 20px; background: var(--ink); color: var(--card);
+  }
+  .tag-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    padding: 2px 8px; border-radius: 20px; background: transparent; color: var(--ink-muted); border: 1px solid var(--border-card);
+  }
   .edit-btn { background:none; border:none; cursor:pointer; color: var(--label); padding: 4px; flex-shrink: 0; }
 
   .card-body { padding: 12px 16px; }
@@ -282,6 +291,7 @@ function render() {
   const q = query.trim().toLowerCase();
   const filtered = games.filter(g =>
     !q || g.name.toLowerCase().includes(q) || (g.borrower || "").toLowerCase().includes(q)
+      || (g.category || "").toLowerCase().includes(q) || (g.tags || "").toLowerCase().includes(q)
   );
 
   const out = games.filter(g => g.status === 'borrowed').length;
@@ -325,6 +335,12 @@ function render() {
               <h3 class="display">${escapeHtml(g.name)}</h3>
               ${g.notes ? `<p>${escapeHtml(g.notes)}</p>` : ''}
               ${g.bggUrl ? `<a class="bgg-link" href="${escapeHtml(g.bggUrl)}" target="_blank" rel="noopener">🔗 Zasady / opis gry</a>` : ''}
+              ${(g.category || g.duration || g.tags) ? `
+                <div class="meta-row">
+                  ${g.category ? `<span class="category-badge">${escapeHtml(g.category)}</span>` : ''}
+                  ${g.duration ? `<span class="category-badge" style="background:var(--green)">⏱ ${escapeHtml(g.duration)}</span>` : ''}
+                  ${(g.tags || '').split(/[\s,]+/).filter(Boolean).map(t => `<span class="tag-chip">${escapeHtml(t.startsWith('#') ? t : '#' + t)}</span>`).join('')}
+                </div>` : ''}
             </div>
           </div>
           <button class="edit-btn" onclick="openEdit('${g.id}')" title="Edytuj">✎</button>
@@ -371,6 +387,11 @@ function openAdd() {
           <div class="field-hint">Zdjęcie zostanie automatycznie pomniejszone.</div>
         </div>
         <div class="field"><label>Notatka (opcjonalnie)</label><input id="f-notes" placeholder="np. brakuje 1 kości"></div>
+        <div style="display:flex; gap:10px">
+          <div class="field" style="flex:1"><label>Kategoria</label><input id="f-category" placeholder="np. Łatwa / Trudna"></div>
+          <div class="field" style="flex:1"><label>Czas trwania</label><input id="f-duration" placeholder="np. 1h / 3h"></div>
+        </div>
+        <div class="field"><label>Tagi</label><input id="f-tags" placeholder="np. #imprezowa #kooperacja"></div>
       </div>
       <div class="modal-foot" style="justify-content:flex-end">
         <button class="btn btn-dark" id="f-save">Zapisz</button>
@@ -414,7 +435,10 @@ function openAdd() {
     if (!name) return;
     const notes = document.getElementById('f-notes').value.trim();
     const bggUrl = document.getElementById('f-bgg').value.trim();
-    games.push({ id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, coverImage: pendingCover });
+    const category = document.getElementById('f-category').value.trim();
+    const duration = document.getElementById('f-duration').value.trim();
+    const tags = document.getElementById('f-tags').value.trim();
+    games.push({ id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, coverImage: pendingCover, category, duration, tags });
     closeModal();
     writeGames();
   };
@@ -445,6 +469,11 @@ function openEdit(id) {
           <div class="field-hint">Zdjęcie zostanie automatycznie pomniejszone.</div>
         </div>
         <div class="field"><label>Notatka (opcjonalnie)</label><input id="f-notes" value="${escapeHtml(g.notes)}"></div>
+        <div style="display:flex; gap:10px">
+          <div class="field" style="flex:1"><label>Kategoria</label><input id="f-category" value="${escapeHtml(g.category || '')}" placeholder="np. Łatwa / Trudna"></div>
+          <div class="field" style="flex:1"><label>Czas trwania</label><input id="f-duration" value="${escapeHtml(g.duration || '')}" placeholder="np. 1h / 3h"></div>
+        </div>
+        <div class="field"><label>Tagi</label><input id="f-tags" value="${escapeHtml(g.tags || '')}" placeholder="np. #imprezowa #kooperacja"></div>
       </div>
       <div class="modal-foot">
         <button class="delete-link" id="f-delete">🗑 Usuń</button>
@@ -490,6 +519,9 @@ function openEdit(id) {
     g.name = name;
     g.notes = document.getElementById('f-notes').value.trim();
     g.bggUrl = document.getElementById('f-bgg').value.trim();
+    g.category = document.getElementById('f-category').value.trim();
+    g.duration = document.getElementById('f-duration').value.trim();
+    g.tags = document.getElementById('f-tags').value.trim();
     g.coverImage = pendingCover;
     closeModal();
     writeGames();
