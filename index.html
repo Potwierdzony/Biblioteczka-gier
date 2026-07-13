@@ -240,14 +240,32 @@ async function fetchBggCover(bggUrl) {
   const id = extractBggId(bggUrl);
   if (!id) throw new Error('To nie wygląda na link do gry na BoardGameGeek (np. boardgamegeek.com/boardgame/12345/nazwa)');
   const apiUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${id}`;
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-  const res = await fetch(proxyUrl);
-  if (!res.ok) throw new Error('Serwer BGG lub proxy nie odpowiedział');
-  const text = await res.text();
-  const xml = new DOMParser().parseFromString(text, 'text/xml');
-  const imageEl = xml.querySelector('image');
-  if (!imageEl || !imageEl.textContent.trim()) throw new Error('Nie znaleziono zdjęcia dla tej gry');
-  return imageEl.textContent.trim();
+
+  const proxies = [
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`,
+    `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`,
+  ];
+
+  let lastError = null;
+  for (const proxyUrl of proxies) {
+    try {
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error('Serwer proxy odpowiedział błędem: ' + res.status);
+      let text = await res.text();
+      // allorigins /get zwraca JSON z polem "contents" zawierającym oryginalny XML jako string
+      if (proxyUrl.includes('allorigins.win/get')) {
+        const parsed = JSON.parse(text);
+        text = parsed.contents;
+      }
+      const xml = new DOMParser().parseFromString(text, 'text/xml');
+      const imageEl = xml.querySelector('image');
+      if (!imageEl || !imageEl.textContent.trim()) throw new Error('Nie znaleziono zdjęcia dla tej gry');
+      return imageEl.textContent.trim();
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw new Error('Nie udało się połączyć z BGG (' + (lastError?.message || 'nieznany błąd') + ')');
 }
 
 
