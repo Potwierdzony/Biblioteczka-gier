@@ -35,6 +35,7 @@
   header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
   .eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:4px; color: var(--gold); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
   h1 { color: var(--card); font-weight: 600; font-size: 40px; margin: 0; }
+  .author-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 4px; vertical-align: middle; }
   .sub { color: var(--muted); font-size: 12px; margin-top: 8px; }
 
   .btn { border: none; cursor: pointer; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px 16px; display:inline-flex; align-items:center; gap:6px; }
@@ -118,7 +119,7 @@
   <header>
     <div>
       <div class="eyebrow">🎲 <span>Katalog wypożyczeń</span></div>
-      <h1 class="display">Biblioteczka Gier</h1>
+      <h1 class="display">Biblioteczka Gier <span class="author-tag">by Artur Oleksiak</span></h1>
       <p class="sub mono" id="subCount"><span class="sync-dot offline" id="syncDot"></span>Łączenie z bazą danych...</p>
     </div>
     <div class="header-actions">
