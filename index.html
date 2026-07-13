@@ -141,7 +141,7 @@
 
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
-    <input id="searchInput" placeholder="Szukaj gry lub osoby...">
+    <input id="searchInput" placeholder="Szukaj gry, osoby, kategorii, tagu (#RPG) lub czasu (1h)...">
   </div>
 
   <div id="emptyState" class="empty" style="display:none"></div>
@@ -292,6 +292,7 @@ function render() {
   const filtered = games.filter(g =>
     !q || g.name.toLowerCase().includes(q) || (g.borrower || "").toLowerCase().includes(q)
       || (g.category || "").toLowerCase().includes(q) || (g.tags || "").toLowerCase().includes(q)
+      || (g.duration || "").toLowerCase().includes(q)
   );
 
   const out = games.filter(g => g.status === 'borrowed').length;
@@ -337,9 +338,9 @@ function render() {
               ${g.bggUrl ? `<a class="bgg-link" href="${escapeHtml(g.bggUrl)}" target="_blank" rel="noopener">🔗 Zasady / opis gry</a>` : ''}
               ${(g.category || g.duration || g.tags) ? `
                 <div class="meta-row">
-                  ${g.category ? `<span class="category-badge">${escapeHtml(g.category)}</span>` : ''}
-                  ${g.duration ? `<span class="category-badge" style="background:var(--green)">⏱ ${escapeHtml(g.duration)}</span>` : ''}
-                  ${(g.tags || '').split(/[\s,]+/).filter(Boolean).map(t => `<span class="tag-chip">${escapeHtml(t.startsWith('#') ? t : '#' + t)}</span>`).join('')}
+                  ${g.category ? `<span class="category-badge" style="cursor:pointer" onclick="filterBy('${escapeHtml(g.category).replace(/'/g, "\\'")}')">${escapeHtml(g.category)}</span>` : ''}
+                  ${g.duration ? `<span class="category-badge" style="background:var(--green); cursor:pointer" onclick="filterBy('${escapeHtml(g.duration).replace(/'/g, "\\'")}')">⏱ ${escapeHtml(g.duration)}</span>` : ''}
+                  ${(g.tags || '').split(/[\s,]+/).filter(Boolean).map(t => `<span class="tag-chip" style="cursor:pointer" onclick="filterBy('${escapeHtml(t.startsWith('#') ? t : '#' + t).replace(/'/g, "\\'")}')">${escapeHtml(t.startsWith('#') ? t : '#' + t)}</span>`).join('')}
                 </div>` : ''}
             </div>
           </div>
@@ -586,6 +587,12 @@ function openQr(id) {
 
 document.getElementById('addBtn').onclick = openAdd;
 document.getElementById('searchInput').oninput = (e) => { query = e.target.value; render(); };
+function filterBy(value) {
+  query = value;
+  document.getElementById('searchInput').value = value;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 document.getElementById('shareBtn').onclick = () => {
   const base = window.location.href.split('#')[0];
   navigator.clipboard?.writeText(base).then(() => {
