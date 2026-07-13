@@ -250,24 +250,7 @@ async function fetchBggCover(bggUrl) {
   return imageEl.textContent.trim();
 }
 
-function extractBggId(url) {
-  const m = String(url).match(/boardgame(?:expansion)?\/(\d+)/);
-  return m ? m[1] : null;
-}
 
-async function fetchBggCover(bggUrl) {
-  const id = extractBggId(bggUrl);
-  if (!id) throw new Error('To nie wygląda na link do gry na BoardGameGeek (oczekiwany format: boardgamegeek.com/boardgame/ID/nazwa)');
-  const apiUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${id}`;
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-  const res = await fetch(proxyUrl);
-  if (!res.ok) throw new Error('Serwer BGG nie odpowiedział');
-  const text = await res.text();
-  const xml = new DOMParser().parseFromString(text, 'text/xml');
-  const imageTag = xml.querySelector('image');
-  if (!imageTag || !imageTag.textContent) throw new Error('Nie znaleziono okładki dla tej gry');
-  return imageTag.textContent.trim();
-}
 
 function shareUrl(id) {
   const base = window.location.href.split("#")[0];
