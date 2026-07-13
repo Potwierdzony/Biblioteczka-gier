@@ -148,13 +148,13 @@
 ======================================================================= -->
 <script>
   const firebaseConfig = {
-    apiKey: "AIzaSyDA8zIvx3YuGszrhJCSadCWsHuRZI-Osm8",
-    authDomain: "biblioteczka-gier.firebaseapp.com",
-    databaseURL: "https://biblioteczka-gier-default-rtdb.firebaseio.com",
-    projectId: "biblioteczka-gier",
-    storageBucket: "biblioteczka-gier.firebasestorage.app",
-    messagingSenderId: "940181407321",
-    appId: "1:940181407321:web:760a8077a6e45ae8d75348"
+    apiKey: "AIzaSyAu8sK58k8fVDkAgh5NAqXi3HMw5TVJyfk",
+    authDomain: "biblioteka-gier-bc893.firebaseapp.com",
+    databaseURL: "https://biblioteka-gier-bc893-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "biblioteka-gier-bc893",
+    storageBucket: "biblioteka-gier-bc893.firebasestorage.app",
+    messagingSenderId: "126313772534",
+    appId: "1:126313772534:web:b1fffe5501ba4930b583d7"
   };
 </script>
 
@@ -229,6 +229,44 @@ function resizeImageFile(file, maxWidth) {
     };
     reader.readAsDataURL(file);
   });
+}
+
+function extractBggId(url) {
+  const m = String(url).match(/boardgamegeek\.com\/(?:boardgame|boardgameexpansion)\/(\d+)/i);
+  return m ? m[1] : null;
+}
+
+async function fetchBggCover(bggUrl) {
+  const id = extractBggId(bggUrl);
+  if (!id) throw new Error('To nie wygląda na link do gry na BoardGameGeek (np. boardgamegeek.com/boardgame/12345/nazwa)');
+  const apiUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${id}`;
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+  const res = await fetch(proxyUrl);
+  if (!res.ok) throw new Error('Serwer BGG lub proxy nie odpowiedział');
+  const text = await res.text();
+  const xml = new DOMParser().parseFromString(text, 'text/xml');
+  const imageEl = xml.querySelector('image');
+  if (!imageEl || !imageEl.textContent.trim()) throw new Error('Nie znaleziono zdjęcia dla tej gry');
+  return imageEl.textContent.trim();
+}
+
+function extractBggId(url) {
+  const m = String(url).match(/boardgame(?:expansion)?\/(\d+)/);
+  return m ? m[1] : null;
+}
+
+async function fetchBggCover(bggUrl) {
+  const id = extractBggId(bggUrl);
+  if (!id) throw new Error('To nie wygląda na link do gry na BoardGameGeek (oczekiwany format: boardgamegeek.com/boardgame/ID/nazwa)');
+  const apiUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${id}`;
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+  const res = await fetch(proxyUrl);
+  if (!res.ok) throw new Error('Serwer BGG nie odpowiedział');
+  const text = await res.text();
+  const xml = new DOMParser().parseFromString(text, 'text/xml');
+  const imageTag = xml.querySelector('image');
+  if (!imageTag || !imageTag.textContent) throw new Error('Nie znaleziono okładki dla tej gry');
+  return imageTag.textContent.trim();
 }
 
 function shareUrl(id) {
@@ -314,9 +352,16 @@ function openAdd() {
       <div class="modal-head"><h2 class="display">Nowa gra</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
         <div class="field"><label>Nazwa gry</label><input id="f-name" placeholder="np. Nemesis: Odwet" autofocus></div>
-        <div class="field"><label>Link (np. BoardGameGeek)</label><input id="f-bgg" type="url" placeholder="https://boardgamegeek.com/..."></div>
         <div class="field">
-          <label>Zdjęcie okładki (opcjonalnie)</label>
+          <label>Link (np. BoardGameGeek)</label>
+          <input id="f-bgg" type="url" placeholder="https://boardgamegeek.com/boardgame/...">
+          <div class="file-preview-row" style="margin-top:6px">
+            <button type="button" class="btn btn-outline" id="f-bgg-fetch" style="padding:6px 10px">⬇ Pobierz okładkę z BGG</button>
+          </div>
+          <div class="field-hint" id="f-bgg-status"></div>
+        </div>
+        <div class="field">
+          <label>Zdjęcie okładki (opcjonalnie, ręcznie)</label>
           <input id="f-cover" type="file" accept="image/*">
           <div class="file-preview-row" id="f-cover-preview" style="display:none">
             <img id="f-cover-img" src="" alt="Podgląd"><button type="button" id="f-cover-clear">Usuń zdjęcie</button>
@@ -330,6 +375,22 @@ function openAdd() {
       </div>
     </div>
   `);
+  document.getElementById('f-bgg-fetch').onclick = async () => {
+    const url = document.getElementById('f-bgg').value.trim();
+    const statusEl = document.getElementById('f-bgg-status');
+    statusEl.style.color = '';
+    statusEl.textContent = 'Szukam okładki...';
+    try {
+      const imgUrl = await fetchBggCover(url);
+      pendingCover = imgUrl;
+      document.getElementById('f-cover-img').src = imgUrl;
+      document.getElementById('f-cover-preview').style.display = 'flex';
+      statusEl.textContent = '✓ Znaleziono okładkę';
+    } catch (err) {
+      statusEl.style.color = '#A8483A';
+      statusEl.textContent = '⚠ ' + err.message + ' — możesz wgrać zdjęcie ręcznie poniżej.';
+    }
+  };
   document.getElementById('f-cover').onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -365,9 +426,16 @@ function openEdit(id) {
       <div class="modal-head"><h2 class="display">Edytuj grę</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
         <div class="field"><label>Nazwa gry</label><input id="f-name" value="${escapeHtml(g.name)}" autofocus></div>
-        <div class="field"><label>Link (np. BoardGameGeek)</label><input id="f-bgg" type="url" value="${escapeHtml(g.bggUrl || '')}" placeholder="https://boardgamegeek.com/..."></div>
         <div class="field">
-          <label>Zdjęcie okładki (opcjonalnie)</label>
+          <label>Link (np. BoardGameGeek)</label>
+          <input id="f-bgg" type="url" value="${escapeHtml(g.bggUrl || '')}" placeholder="https://boardgamegeek.com/boardgame/...">
+          <div class="file-preview-row" style="margin-top:6px">
+            <button type="button" class="btn btn-outline" id="f-bgg-fetch" style="padding:6px 10px">⬇ Pobierz okładkę z BGG</button>
+          </div>
+          <div class="field-hint" id="f-bgg-status"></div>
+        </div>
+        <div class="field">
+          <label>Zdjęcie okładki (opcjonalnie, ręcznie)</label>
           <input id="f-cover" type="file" accept="image/*">
           <div class="file-preview-row" id="f-cover-preview" style="${pendingCover ? '' : 'display:none'}">
             <img id="f-cover-img" src="${pendingCover}" alt="Podgląd"><button type="button" id="f-cover-clear">Usuń zdjęcie</button>
@@ -382,6 +450,22 @@ function openEdit(id) {
       </div>
     </div>
   `);
+  document.getElementById('f-bgg-fetch').onclick = async () => {
+    const url = document.getElementById('f-bgg').value.trim();
+    const statusEl = document.getElementById('f-bgg-status');
+    statusEl.style.color = '';
+    statusEl.textContent = 'Szukam okładki...';
+    try {
+      const imgUrl = await fetchBggCover(url);
+      pendingCover = imgUrl;
+      document.getElementById('f-cover-img').src = imgUrl;
+      document.getElementById('f-cover-preview').style.display = 'flex';
+      statusEl.textContent = '✓ Znaleziono okładkę';
+    } catch (err) {
+      statusEl.style.color = '#A8483A';
+      statusEl.textContent = '⚠ ' + err.message + ' — możesz wgrać zdjęcie ręcznie poniżej.';
+    }
+  };
   document.getElementById('f-cover').onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
