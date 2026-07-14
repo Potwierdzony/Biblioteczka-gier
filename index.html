@@ -125,6 +125,16 @@
   .config-error code { background: #E6DFC8; padding: 2px 6px; border-radius: 4px; }
   .sync-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#4F7A57; margin-right:6px; }
   .sync-dot.offline { background: #A8483A; }
+  .viewer-badge {
+    display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--muted); background: #25322B; border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px;
+  }
+  .viewer-badge .viewer-dot { width:7px; height:7px; border-radius:50%; background:#4F7A57; box-shadow: 0 0 0 0 rgba(79,122,87,0.6); animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(79,122,87,0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(79,122,87,0); }
+    100% { box-shadow: 0 0 0 0 rgba(79,122,87,0); }
+  }
 </style>
 </head>
 <body>
@@ -137,6 +147,7 @@
       <p class="sub mono" id="subCount"><span class="sync-dot offline" id="syncDot"></span>Łączenie z bazą danych...</p>
     </div>
     <div class="header-actions">
+      <span class="viewer-badge" id="viewerBadge" style="display:none"><span class="viewer-dot"></span><span id="viewerCount"></span></span>
       <button class="btn btn-outline" id="shareBtn">🔗 Udostępnij</button>
       <button class="btn btn-outline" id="importBtn">📋 Import listy</button>
       <button class="btn btn-gold" id="addBtn">+ Dodaj grę</button>
@@ -656,6 +667,27 @@ document.getElementById('shareBtn').onclick = () => {
 };
 
 // Nasłuchiwanie zmian w czasie rzeczywistym - to jest sedno synchronizacji
+// Śledzenie liczby osób aktualnie przeglądających stronę
+const presenceListRef = db.ref('presence');
+const myPresenceRef = presenceListRef.push();
+db.ref('.info/connected').on('value', (snap) => {
+  if (snap.val() === true) {
+    myPresenceRef.onDisconnect().remove();
+    myPresenceRef.set(true);
+  }
+});
+presenceListRef.on('value', (snap) => {
+  const count = snap.numChildren();
+  const badge = document.getElementById('viewerBadge');
+  const countEl = document.getElementById('viewerCount');
+  if (count > 0) {
+    countEl.textContent = count === 1 ? '1 osoba przegląda' : count + ' osób przegląda';
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+});
+
 gamesRef.on('value', (snapshot) => {
   const val = snapshot.val();
   if (val === null) {
