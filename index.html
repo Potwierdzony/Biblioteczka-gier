@@ -298,7 +298,7 @@ function render() {
   const filtered = games.filter(g =>
     !q || g.name.toLowerCase().includes(q) || (g.borrower || "").toLowerCase().includes(q)
       || (g.category || "").toLowerCase().includes(q) || (g.tags || "").toLowerCase().includes(q)
-      || (g.duration || "").toLowerCase().includes(q)
+      || (g.duration || "").toLowerCase().includes(q) || (g.players || "").toLowerCase().includes(q)
   );
 
   const out = games.filter(g => g.status === 'borrowed').length;
@@ -346,6 +346,7 @@ function render() {
                 <div class="meta-row">
                   ${g.category ? `<span class="category-badge" style="cursor:pointer" onclick="filterBy('${escapeHtml(g.category).replace(/'/g, "\\'")}')">${escapeHtml(g.category)}</span>` : ''}
                   ${g.duration ? `<span class="category-badge" style="background:var(--green); cursor:pointer" onclick="filterBy('${escapeHtml(g.duration).replace(/'/g, "\\'")}')">⏱ ${escapeHtml(g.duration)}</span>` : ''}
+                  ${g.players ? `<span class="category-badge" style="background:var(--gold); color:var(--ink); cursor:pointer" onclick="filterBy('${escapeHtml(g.players).replace(/'/g, "\\'")}')">👥 ${escapeHtml(g.players)}</span>` : ''}
                   ${(g.tags || '').split(/[\s,]+/).filter(Boolean).map(t => `<span class="tag-chip" style="cursor:pointer" onclick="filterBy('${escapeHtml(t.startsWith('#') ? t : '#' + t).replace(/'/g, "\\'")}')">${escapeHtml(t.startsWith('#') ? t : '#' + t)}</span>`).join('')}
                 </div>` : ''}
             </div>
@@ -398,6 +399,7 @@ function openAdd() {
           <div class="field" style="flex:1"><label>Kategoria</label><input id="f-category" placeholder="np. Łatwa / Trudna"></div>
           <div class="field" style="flex:1"><label>Czas trwania</label><input id="f-duration" placeholder="np. 1h / 3h"></div>
         </div>
+        <div class="field"><label>Liczba graczy</label><input id="f-players" placeholder="np. 2-4"></div>
         <div class="field"><label>Tagi</label><input id="f-tags" placeholder="np. #imprezowa #kooperacja"></div>
       </div>
       <div class="modal-foot" style="justify-content:flex-end">
@@ -444,8 +446,9 @@ function openAdd() {
     const bggUrl = document.getElementById('f-bgg').value.trim();
     const category = document.getElementById('f-category').value.trim();
     const duration = document.getElementById('f-duration').value.trim();
+    const players = document.getElementById('f-players').value.trim();
     const tags = document.getElementById('f-tags').value.trim();
-    games.push({ id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, coverImage: pendingCover, category, duration, tags });
+    games.push({ id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, coverImage: pendingCover, category, duration, players, tags });
     closeModal();
     writeGames();
   };
@@ -480,6 +483,7 @@ function openEdit(id) {
           <div class="field" style="flex:1"><label>Kategoria</label><input id="f-category" value="${escapeHtml(g.category || '')}" placeholder="np. Łatwa / Trudna"></div>
           <div class="field" style="flex:1"><label>Czas trwania</label><input id="f-duration" value="${escapeHtml(g.duration || '')}" placeholder="np. 1h / 3h"></div>
         </div>
+        <div class="field"><label>Liczba graczy</label><input id="f-players" value="${escapeHtml(g.players || '')}" placeholder="np. 2-4"></div>
         <div class="field"><label>Tagi</label><input id="f-tags" value="${escapeHtml(g.tags || '')}" placeholder="np. #imprezowa #kooperacja"></div>
       </div>
       <div class="modal-foot">
@@ -528,6 +532,7 @@ function openEdit(id) {
     g.bggUrl = document.getElementById('f-bgg').value.trim();
     g.category = document.getElementById('f-category').value.trim();
     g.duration = document.getElementById('f-duration').value.trim();
+    g.players = document.getElementById('f-players').value.trim();
     g.tags = document.getElementById('f-tags').value.trim();
     g.coverImage = pendingCover;
     closeModal();
@@ -620,7 +625,7 @@ Brzdęk: Katakumby
       if (existingNames.has(name.toLowerCase())) { skipped++; return; }
       games.push({
         id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '',
-        notes: '', bggUrl: '', coverImage: '', category: '', duration: '', tags: ''
+        notes: '', bggUrl: '', coverImage: '', category: '', duration: '', players: '', tags: ''
       });
       existingNames.add(name.toLowerCase());
       added++;
