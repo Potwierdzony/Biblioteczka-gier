@@ -103,6 +103,11 @@
     border: 1px solid var(--border-card); font-size: 14px; outline: none; font-family: 'Inter', sans-serif; color: var(--ink);
   }
   .field input[type="file"] { padding: 6px 8px; font-size: 12px; }
+  .field textarea {
+    width: 100%; margin-top: 4px; padding: 8px 10px; border-radius: 6px;
+    border: 1px solid var(--border-card); font-size: 13px; outline: none; font-family: 'JetBrains Mono', monospace; color: var(--ink);
+    resize: vertical; min-height: 140px;
+  }
   .file-preview-row { display:flex; align-items:center; gap:10px; margin-top: 6px; }
   .file-preview-row img { width: 44px; height: 58px; object-fit: cover; border-radius: 5px; border: 1px solid var(--border-card); }
   .file-preview-row button { background:none; border:none; cursor:pointer; color: var(--red); font-family:'JetBrains Mono', monospace; font-size: 11px; }
@@ -133,6 +138,7 @@
     </div>
     <div class="header-actions">
       <button class="btn btn-outline" id="shareBtn">🔗 Udostępnij</button>
+      <button class="btn btn-outline" id="importBtn">📋 Import listy</button>
       <button class="btn btn-gold" id="addBtn">+ Dodaj grę</button>
     </div>
   </header>
@@ -585,7 +591,48 @@ function openQr(id) {
   `);
 }
 
+function openImport() {
+  openModal(`
+    <div class="modal">
+      <div class="modal-head"><h2 class="display">Import listy gier</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Wklej nazwy gier (po jednej w linii)</label>
+          <textarea id="f-import" placeholder="SETI
+Na dnie morza
+Brzdęk: Katakumby
+..."></textarea>
+        </div>
+        <div class="field-hint" id="f-import-status">Gry zostaną dopisane do istniejącej listy — nic nie zostanie skasowane ani nadpisane.</div>
+      </div>
+      <div class="modal-foot" style="justify-content:flex-end">
+        <button class="btn btn-dark" id="f-import-save">Dodaj gry</button>
+      </div>
+    </div>
+  `);
+  document.getElementById('f-import-save').onclick = () => {
+    const raw = document.getElementById('f-import').value;
+    const names = raw.split('\n').map(s => s.trim()).filter(Boolean);
+    if (names.length === 0) return;
+    const existingNames = new Set(games.map(g => g.name.trim().toLowerCase()));
+    let added = 0, skipped = 0;
+    names.forEach(name => {
+      if (existingNames.has(name.toLowerCase())) { skipped++; return; }
+      games.push({
+        id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '',
+        notes: '', bggUrl: '', coverImage: '', category: '', duration: '', tags: ''
+      });
+      existingNames.add(name.toLowerCase());
+      added++;
+    });
+    closeModal();
+    writeGames();
+    setTimeout(() => alert(`Dodano ${added} gier.${skipped ? ' Pominięto ' + skipped + ' (już były na liście).' : ''}`), 300);
+  };
+}
+
 document.getElementById('addBtn').onclick = openAdd;
+document.getElementById('importBtn').onclick = openImport;
 document.getElementById('searchInput').oninput = (e) => { query = e.target.value; render(); };
 function filterBy(value) {
   query = value;
