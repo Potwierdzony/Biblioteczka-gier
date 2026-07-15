@@ -135,6 +135,80 @@
     70% { box-shadow: 0 0 0 6px rgba(79,122,87,0); }
     100% { box-shadow: 0 0 0 0 rgba(79,122,87,0); }
   }
+
+  /* ---- Motyw jasny ---- */
+  body.light {
+    --bg: #EDE6D6;
+    --card: #FFFFFF;
+    --card-alt: #F3EEE0;
+    --border: #D9D0BA;
+    --border-card: #E0D8C0;
+    --gold: #9C7538;
+    --green: #3F6B49;
+    --red: #A8483A;
+    --muted: #8A8270;
+    --ink: #1F2A24;
+    --ink-muted: #6B6555;
+    --label: #8A8270;
+    --heading: #1F2A24;
+  }
+  :root { --heading: #F0EAD9; }
+  h1 { color: var(--heading); }
+  body.light .search-wrap input { background: #fff; color: var(--ink); border-color: var(--border-card); }
+  body.light .search-icon { color: var(--label); }
+  body.light .viewer-badge { background: #fff; }
+  body.light .shelf-tile .shelf-name { color: var(--heading); }
+  body.light .sub { color: var(--ink-muted); }
+
+  /* ---- Pasek kontrolek (sortowanie / filtry / widok) ---- */
+  .controls-row { display:flex; flex-wrap: wrap; gap: 8px; align-items:center; margin-bottom: 14px; }
+  select.ctrl-select {
+    font-family:'JetBrains Mono', monospace; font-size: 12px; padding: 8px 10px; border-radius: 6px;
+    background: #25322B; border: 1px solid var(--border); color: var(--card); outline:none; cursor:pointer;
+  }
+  body.light select.ctrl-select { background: #fff; color: var(--ink); border-color: var(--border-card); }
+  .view-toggle { display:flex; border: 1px solid var(--border); border-radius: 6px; overflow:hidden; }
+  .view-toggle button {
+    border:none; background: transparent; color: var(--muted); font-family:'JetBrains Mono', monospace; font-size: 12px;
+    padding: 8px 12px; cursor:pointer;
+  }
+  .view-toggle button.active { background: var(--gold); color: var(--bg); }
+  .group-toggle-label {
+    display:flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); cursor:pointer;
+  }
+
+  .filter-panel {
+    display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 16px; padding: 12px; border-radius: 8px;
+    background: #25322B; border: 1px solid var(--border);
+  }
+  body.light .filter-panel { background: #fff; border-color: var(--border-card); }
+  .filter-panel button.clear-filters {
+    background:none; border: 1px solid var(--border); color: var(--muted); font-family:'JetBrains Mono', monospace;
+    font-size: 11px; padding: 8px 10px; border-radius: 6px; cursor:pointer;
+  }
+
+  /* ---- Grupowanie po kategorii ---- */
+  .group-header {
+    font-family:'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--gold); margin: 26px 0 10px; padding-bottom: 6px; border-bottom: 1px dashed var(--border);
+  }
+  .group-header:first-child { margin-top: 0; }
+
+  /* ---- Widok półki ---- */
+  .shelf-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 16px; }
+  .shelf-tile { cursor:pointer; text-align:center; }
+  .shelf-tile .shelf-img, .shelf-tile .shelf-placeholder {
+    width:100%; aspect-ratio: 3/4; object-fit:cover; border-radius: 8px; border: 1px solid var(--border);
+  }
+  .shelf-tile .shelf-placeholder { display:flex; align-items:center; justify-content:center; font-size: 26px; background: var(--card-alt); color: var(--label); }
+  .shelf-tile .shelf-name { margin-top: 7px; font-size: 12px; font-weight: 500; line-height: 1.3; color: var(--heading); }
+  .shelf-status-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+
+  /* ---- Historia wypożyczeń ---- */
+  .history-row { display:flex; justify-content:space-between; gap: 10px; font-family:'JetBrains Mono', monospace; font-size: 12px; padding: 7px 0; border-bottom: 1px dashed var(--border-card); color: var(--ink); }
+  .history-row:last-child { border-bottom: none; }
+  .history-row span { color: var(--ink-muted); white-space:nowrap; }
+  .loan-count { color: var(--label); }
 </style>
 </head>
 <body>
@@ -148,6 +222,7 @@
     </div>
     <div class="header-actions">
       <span class="viewer-badge" id="viewerBadge" style="display:none"><span class="viewer-dot"></span><span id="viewerCount"></span></span>
+      <button class="btn btn-outline" id="themeToggle" title="Zmień motyw">☀️</button>
       <button class="btn btn-outline" id="shareBtn">🔗 Udostępnij</button>
       <button class="btn btn-outline" id="importBtn">📋 Import listy</button>
       <button class="btn btn-gold" id="addBtn">+ Dodaj grę</button>
@@ -161,8 +236,38 @@
     <input id="searchInput" placeholder="Szukaj gry, osoby, kategorii, tagu (#RPG) lub czasu (1h)...">
   </div>
 
+  <div class="controls-row">
+    <select class="ctrl-select" id="sortSelect">
+      <option value="default">Sortuj: domyślnie</option>
+      <option value="name">Nazwa A-Z</option>
+      <option value="popularity">Najpopularniejsze</option>
+      <option value="duration">Czas trwania</option>
+      <option value="players">Liczba graczy</option>
+    </select>
+    <button class="btn btn-outline" id="filterToggleBtn">🎛 Filtry</button>
+    <div class="view-toggle">
+      <button class="active" id="viewListBtn">📋 Lista</button>
+      <button id="viewShelfBtn">🖼 Półka</button>
+    </div>
+    <label class="group-toggle-label">
+      <input type="checkbox" id="groupByCategory"> Grupuj wg kategorii
+    </label>
+  </div>
+
+  <div class="filter-panel" id="filterPanel" style="display:none">
+    <select class="ctrl-select" id="filterStatus">
+      <option value="">Status: wszystkie</option>
+      <option value="available">Dostępne</option>
+      <option value="borrowed">Wypożyczone</option>
+    </select>
+    <select class="ctrl-select" id="filterCategory"><option value="">Kategoria: wszystkie</option></select>
+    <select class="ctrl-select" id="filterDuration"><option value="">Czas: wszystkie</option></select>
+    <select class="ctrl-select" id="filterPlayers"><option value="">Gracze: wszystkie</option></select>
+    <button class="clear-filters" id="clearFiltersBtn">✕ Wyczyść filtry</button>
+  </div>
+
   <div id="emptyState" class="empty" style="display:none"></div>
-  <div class="grid" id="grid"></div>
+  <div id="results"></div>
 </div>
 
 <div id="modalRoot"></div>
@@ -302,76 +407,158 @@ function shareUrl(id) {
   return base + "#g-" + id;
 }
 
+let sortBy = "default";
+let viewMode = "list";
+let groupByCat = false;
+let filters = { status: "", category: "", duration: "", players: "" };
+
+function parseDurationHours(d) {
+  const m = String(d || "").match(/(\d+(\.\d+)?)/);
+  return m ? parseFloat(m[1]) : 999;
+}
+function parsePlayersMax(p) {
+  const nums = String(p || "").match(/\d+/g);
+  return nums ? Math.max(...nums.map(Number)) : 999;
+}
+function sortGames(list) {
+  const arr = [...list];
+  if (sortBy === "name") arr.sort((a, b) => a.name.localeCompare(b.name, "pl"));
+  else if (sortBy === "popularity") arr.sort((a, b) => (b.history || []).length - (a.history || []).length);
+  else if (sortBy === "duration") arr.sort((a, b) => parseDurationHours(a.duration) - parseDurationHours(b.duration));
+  else if (sortBy === "players") arr.sort((a, b) => parsePlayersMax(a.players) - parsePlayersMax(b.players));
+  return arr;
+}
+
+function populateFilterOptions() {
+  const build = (id, values, prefix) => {
+    const sel = document.getElementById(id);
+    const current = sel.value;
+    const opts = [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "pl"));
+    sel.innerHTML = `<option value="">${prefix}: wszystkie</option>` + opts.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+    if (opts.includes(current)) sel.value = current;
+  };
+  build("filterCategory", games.map(g => g.category), "Kategoria");
+  build("filterDuration", games.map(g => g.duration), "Czas");
+  build("filterPlayers", games.map(g => g.players), "Gracze");
+}
+
+function matchesFilters(g) {
+  if (filters.status && g.status !== filters.status) return false;
+  if (filters.category && (g.category || "") !== filters.category) return false;
+  if (filters.duration && (g.duration || "") !== filters.duration) return false;
+  if (filters.players && (g.players || "") !== filters.players) return false;
+  return true;
+}
+
+function cardHtml(g) {
+  const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
+  const loanCount = (g.history || []).length;
+  const statusHtml = g.status === 'available'
+    ? `<div class="status-row">
+         <span class="status-available">✓ Dostępna</span>
+         <button class="btn btn-dark" onclick="openBorrow('${g.id}')">Wypożycz</button>
+       </div>`
+    : `<div>
+         <div class="status-row">
+           <span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span>
+           <button class="btn btn-green" onclick="returnGame('${g.id}')">↺ Zwrot</button>
+         </div>
+         <div class="borrow-info">
+           Kto: <b>${escapeHtml(g.borrower)}</b><br>
+           Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}
+         </div>
+       </div>`;
+
+  return `
+    <div class="card" id="card-${g.id}">
+      <div class="card-top">
+        <div class="card-top-main">
+          ${g.coverImage
+            ? `<img class="card-thumb" src="${g.coverImage}" alt="Okładka">`
+            : `<div class="card-thumb-placeholder">🎲</div>`}
+          <div style="min-width:0">
+            <h3 class="display">${escapeHtml(g.name)}</h3>
+            ${g.notes ? `<p>${escapeHtml(g.notes)}</p>` : ''}
+            ${g.bggUrl ? `<a class="bgg-link" href="${escapeHtml(g.bggUrl)}" target="_blank" rel="noopener">🔗 Zasady / opis gry</a>` : ''}
+            ${(g.category || g.duration || g.players || g.tags) ? `
+              <div class="meta-row">
+                ${g.category ? `<span class="category-badge" style="cursor:pointer" onclick="filterBy('${escapeHtml(g.category).replace(/'/g, "\\'")}')">${escapeHtml(g.category)}</span>` : ''}
+                ${g.duration ? `<span class="category-badge" style="background:var(--green); cursor:pointer" onclick="filterBy('${escapeHtml(g.duration).replace(/'/g, "\\'")}')">⏱ ${escapeHtml(g.duration)}</span>` : ''}
+                ${g.players ? `<span class="category-badge" style="background:var(--gold); color:var(--ink); cursor:pointer" onclick="filterBy('${escapeHtml(g.players).replace(/'/g, "\\'")}')">👥 ${escapeHtml(g.players)}</span>` : ''}
+                ${(g.tags || '').split(/[\s,]+/).filter(Boolean).map(t => `<span class="tag-chip" style="cursor:pointer" onclick="filterBy('${escapeHtml(t.startsWith('#') ? t : '#' + t).replace(/'/g, "\\'")}')">${escapeHtml(t.startsWith('#') ? t : '#' + t)}</span>`).join('')}
+              </div>` : ''}
+          </div>
+        </div>
+        <button class="edit-btn" onclick="openEdit('${g.id}')" title="Edytuj">✎</button>
+      </div>
+      <div class="card-body">${statusHtml}</div>
+      <div class="card-footer">
+        <span>#${g.id}${loanCount ? ` <span class="loan-count">· wypożyczano ${loanCount}x</span>` : ''}</span>
+        <div style="display:flex; gap:12px">
+          <button class="qr-btn" onclick="openHistory('${g.id}')">🕑 Historia</button>
+          <button class="qr-btn" onclick="openQr('${g.id}')">▦ QR</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function shelfTileHtml(g) {
+  const dotColor = g.status === 'available' ? 'var(--green)' : 'var(--gold)';
+  return `
+    <div class="shelf-tile" onclick="openQuickActions('${g.id}')">
+      ${g.coverImage
+        ? `<img class="shelf-img" src="${g.coverImage}" alt="Okładka">`
+        : `<div class="shelf-placeholder">🎲</div>`}
+      <div class="shelf-name"><span class="shelf-status-dot" style="background:${dotColor}"></span>${escapeHtml(g.name)}</div>
+    </div>
+  `;
+}
+
 function render() {
-  const grid = document.getElementById('grid');
+  const results = document.getElementById('results');
   const empty = document.getElementById('emptyState');
   const q = query.trim().toLowerCase();
-  const filtered = games.filter(g =>
-    !q || g.name.toLowerCase().includes(q) || (g.borrower || "").toLowerCase().includes(q)
+
+  let filtered = games.filter(g =>
+    (!q || g.name.toLowerCase().includes(q) || (g.borrower || "").toLowerCase().includes(q)
       || (g.category || "").toLowerCase().includes(q) || (g.tags || "").toLowerCase().includes(q)
-      || (g.duration || "").toLowerCase().includes(q) || (g.players || "").toLowerCase().includes(q)
+      || (g.duration || "").toLowerCase().includes(q) || (g.players || "").toLowerCase().includes(q))
+    && matchesFilters(g)
   );
+  filtered = sortGames(filtered);
 
   const out = games.filter(g => g.status === 'borrowed').length;
   document.getElementById('subCount').innerHTML =
     `<span class="sync-dot" id="syncDot"></span>${games.length} pozycji w katalogu · ${out} obecnie wypożyczonych`;
 
+  populateFilterOptions();
+
   if (filtered.length === 0) {
     empty.style.display = 'block';
     empty.textContent = games.length === 0 ? 'Katalog jest pusty. Dodaj pierwszą grę.' : 'Brak wyników.';
-    grid.innerHTML = '';
+    results.innerHTML = '';
     return;
   }
   empty.style.display = 'none';
 
-  grid.innerHTML = filtered.map(g => {
-    const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
-    const statusHtml = g.status === 'available'
-      ? `<div class="status-row">
-           <span class="status-available">✓ Dostępna</span>
-           <button class="btn btn-dark" onclick="openBorrow('${g.id}')">Wypożycz</button>
-         </div>`
-      : `<div>
-           <div class="status-row">
-             <span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span>
-             <button class="btn btn-green" onclick="returnGame('${g.id}')">↺ Zwrot</button>
-           </div>
-           <div class="borrow-info">
-             Kto: <b>${escapeHtml(g.borrower)}</b><br>
-             Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}
-           </div>
-         </div>`;
+  const wrapClass = viewMode === 'shelf' ? 'shelf-grid' : 'grid';
+  const tileFn = viewMode === 'shelf' ? shelfTileHtml : cardHtml;
 
-    return `
-      <div class="card" id="card-${g.id}">
-        <div class="card-top">
-          <div class="card-top-main">
-            ${g.coverImage
-              ? `<img class="card-thumb" src="${g.coverImage}" alt="Okładka">`
-              : `<div class="card-thumb-placeholder">🎲</div>`}
-            <div style="min-width:0">
-              <h3 class="display">${escapeHtml(g.name)}</h3>
-              ${g.notes ? `<p>${escapeHtml(g.notes)}</p>` : ''}
-              ${g.bggUrl ? `<a class="bgg-link" href="${escapeHtml(g.bggUrl)}" target="_blank" rel="noopener">🔗 Zasady / opis gry</a>` : ''}
-              ${(g.category || g.duration || g.tags) ? `
-                <div class="meta-row">
-                  ${g.category ? `<span class="category-badge" style="cursor:pointer" onclick="filterBy('${escapeHtml(g.category).replace(/'/g, "\\'")}')">${escapeHtml(g.category)}</span>` : ''}
-                  ${g.duration ? `<span class="category-badge" style="background:var(--green); cursor:pointer" onclick="filterBy('${escapeHtml(g.duration).replace(/'/g, "\\'")}')">⏱ ${escapeHtml(g.duration)}</span>` : ''}
-                  ${g.players ? `<span class="category-badge" style="background:var(--gold); color:var(--ink); cursor:pointer" onclick="filterBy('${escapeHtml(g.players).replace(/'/g, "\\'")}')">👥 ${escapeHtml(g.players)}</span>` : ''}
-                  ${(g.tags || '').split(/[\s,]+/).filter(Boolean).map(t => `<span class="tag-chip" style="cursor:pointer" onclick="filterBy('${escapeHtml(t.startsWith('#') ? t : '#' + t).replace(/'/g, "\\'")}')">${escapeHtml(t.startsWith('#') ? t : '#' + t)}</span>`).join('')}
-                </div>` : ''}
-            </div>
-          </div>
-          <button class="edit-btn" onclick="openEdit('${g.id}')" title="Edytuj">✎</button>
-        </div>
-        <div class="card-body">${statusHtml}</div>
-        <div class="card-footer">
-          <span>#${g.id}</span>
-          <button class="qr-btn" onclick="openQr('${g.id}')">▦ Kod QR</button>
-        </div>
-      </div>
-    `;
-  }).join('');
+  if (groupByCat) {
+    const map = new Map();
+    filtered.forEach(g => {
+      const key = g.category && g.category.trim() ? g.category.trim() : 'Bez kategorii';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(g);
+    });
+    results.innerHTML = [...map.entries()].map(([cat, list]) => `
+      <div class="group-header">${escapeHtml(cat)} (${list.length})</div>
+      <div class="${wrapClass}">${list.map(tileFn).join('')}</div>
+    `).join('');
+  } else {
+    results.innerHTML = `<div class="${wrapClass}">${filtered.map(tileFn).join('')}</div>`;
+  }
 }
 
 function openModal(html) {
@@ -584,11 +771,63 @@ function openBorrow(id) {
 
 function returnGame(id) {
   const g = games.find(x => x.id === id);
+  if (!g.history) g.history = [];
+  if (g.borrower) {
+    g.history.push({ borrower: g.borrower, borrowedDate: g.borrowedDate, returnedDate: todayStr() });
+  }
   g.status = 'available';
   g.borrower = '';
   g.borrowedDate = '';
   g.dueDate = '';
   writeGames();
+}
+
+function openHistory(id) {
+  const g = games.find(x => x.id === id);
+  const hist = (g.history || []).slice().reverse();
+  const rows = hist.length
+    ? hist.map(h => `<div class="history-row"><b>${escapeHtml(h.borrower)}</b><span>${fmtDate(h.borrowedDate)} → ${fmtDate(h.returnedDate)}</span></div>`).join('')
+    : `<div class="field-hint">Brak historii wypożyczeń.</div>`;
+  openModal(`
+    <div class="modal">
+      <div class="modal-head"><h2 class="display">Historia: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="field-hint" style="margin-bottom:2px">Wypożyczano łącznie ${hist.length} ${hist.length === 1 ? 'raz' : 'razy'}.</div>
+        ${rows}
+      </div>
+    </div>
+  `);
+}
+
+function openQuickActions(id) {
+  const g = games.find(x => x.id === id);
+  const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
+  openModal(`
+    <div class="modal">
+      <div class="modal-head"><h2 class="display">${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        ${(g.category || g.duration || g.players) ? `
+          <div class="meta-row">
+            ${g.category ? `<span class="category-badge">${escapeHtml(g.category)}</span>` : ''}
+            ${g.duration ? `<span class="category-badge" style="background:var(--green)">⏱ ${escapeHtml(g.duration)}</span>` : ''}
+            ${g.players ? `<span class="category-badge" style="background:var(--gold); color:var(--ink)">👥 ${escapeHtml(g.players)}</span>` : ''}
+          </div>` : ''}
+        ${g.status === 'available'
+          ? `<div class="status-available">✓ Dostępna</div>`
+          : `<div class="borrow-info"><span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span><br>Kto: <b>${escapeHtml(g.borrower)}</b><br>Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}</div>`}
+      </div>
+      <div class="modal-foot">
+        <div style="display:flex; gap:14px">
+          <button class="qr-btn" onclick="closeModal(); openHistory('${id}')">🕑 Historia</button>
+          <button class="qr-btn" onclick="closeModal(); openQr('${id}')">▦ QR</button>
+          <button class="edit-btn" onclick="closeModal(); openEdit('${id}')" title="Edytuj">✎</button>
+        </div>
+        ${g.status === 'available'
+          ? `<button class="btn btn-dark" onclick="closeModal(); openBorrow('${id}')">Wypożycz</button>`
+          : `<button class="btn btn-green" onclick="returnGame('${id}'); closeModal()">↺ Zwrot</button>`}
+      </div>
+    </div>
+  `);
 }
 
 function openQr(id) {
@@ -656,6 +895,49 @@ function filterBy(value) {
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+document.getElementById('sortSelect').onchange = (e) => { sortBy = e.target.value; render(); };
+
+document.getElementById('viewListBtn').onclick = () => {
+  viewMode = 'list';
+  document.getElementById('viewListBtn').classList.add('active');
+  document.getElementById('viewShelfBtn').classList.remove('active');
+  render();
+};
+document.getElementById('viewShelfBtn').onclick = () => {
+  viewMode = 'shelf';
+  document.getElementById('viewShelfBtn').classList.add('active');
+  document.getElementById('viewListBtn').classList.remove('active');
+  render();
+};
+
+document.getElementById('groupByCategory').onchange = (e) => { groupByCat = e.target.checked; render(); };
+
+document.getElementById('filterToggleBtn').onclick = () => {
+  const panel = document.getElementById('filterPanel');
+  panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+};
+document.getElementById('filterStatus').onchange = (e) => { filters.status = e.target.value; render(); };
+document.getElementById('filterCategory').onchange = (e) => { filters.category = e.target.value; render(); };
+document.getElementById('filterDuration').onchange = (e) => { filters.duration = e.target.value; render(); };
+document.getElementById('filterPlayers').onchange = (e) => { filters.players = e.target.value; render(); };
+document.getElementById('clearFiltersBtn').onclick = () => {
+  filters = { status: "", category: "", duration: "", players: "" };
+  ['filterStatus', 'filterCategory', 'filterDuration', 'filterPlayers'].forEach(id => document.getElementById(id).value = "");
+  render();
+};
+
+const THEME_KEY = 'biblioteczka-gier-theme';
+function applyTheme(theme) {
+  document.body.classList.toggle('light', theme === 'light');
+  document.getElementById('themeToggle').textContent = theme === 'light' ? '🌙' : '☀️';
+}
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+document.getElementById('themeToggle').onclick = () => {
+  const next = document.body.classList.contains('light') ? 'dark' : 'light';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+};
 document.getElementById('shareBtn').onclick = () => {
   const base = window.location.href.split('#')[0];
   navigator.clipboard?.writeText(base).then(() => {
