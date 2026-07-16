@@ -1241,6 +1241,7 @@ presenceListRef.on('value', (snap) => {
 });
 
 gamesRef.on('value', (snapshot) => {
+  const wasFirstLoad = firstLoad;
   const val = snapshot.val();
   if (val === null) {
     // Baza pusta - wgrywamy dane startowe tylko przy pierwszym uruchomieniu
@@ -1257,25 +1258,29 @@ gamesRef.on('value', (snapshot) => {
   firstLoad = false;
   document.getElementById('saveErrorBox').style.display = 'none';
   render();
+  if (wasFirstLoad) handleQrDeepLink();
 }, (error) => {
   document.getElementById('saveErrorBox').style.display = 'block';
   document.getElementById('saveErrorBox').textContent = '⚠️ Błąd połączenia z bazą danych: ' + error.message;
 });
 
-// Podświetlenie gry z kodu QR
-window.addEventListener('load', () => {
-  const tryHighlight = () => {
-    const hash = window.location.hash.replace('#g-', '');
-    if (!hash) return;
+// Obsługa linku z kodu QR (#g-ID) - otwiera pełne okno szczegółów gry,
+// działa niezależnie od trybu widoku (Lista / Półka)
+function handleQrDeepLink() {
+  const hash = window.location.hash.replace('#g-', '');
+  if (!hash) return;
+  const g = games.find(x => x.id === hash);
+  if (!g) return;
+  setTimeout(() => {
+    openQuickActions(hash);
     const el = document.getElementById('card-' + hash);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       el.style.outline = '2px solid #B8935F';
       el.style.outlineOffset = '2px';
     }
-  };
-  setTimeout(tryHighlight, 800);
-});
+  }, 250);
+}
 
 } // koniec bloku CONFIGURED
 </script>
