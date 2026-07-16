@@ -1065,12 +1065,12 @@ function openQuickActions(id) {
       </div>
       <div class="modal-foot">
         <div style="display:flex; gap:14px">
-          <button class="qr-btn" onclick="closeModal(); openHistory('${id}')">🕑 Historia</button>
-          <button class="qr-btn" onclick="closeModal(); openQr('${id}')">▦ QR</button>
-          <button class="edit-btn" onclick="closeModal(); openEdit('${id}')" title="Edytuj">✎</button>
+          <button class="qr-btn" onclick="openHistory('${id}')">🕑 Historia</button>
+          <button class="qr-btn" onclick="openQr('${id}')">▦ QR</button>
+          <button class="edit-btn" onclick="openEdit('${id}')" title="Edytuj">✎</button>
         </div>
         ${g.status === 'available'
-          ? `<button class="btn btn-dark" onclick="closeModal(); openBorrow('${id}')">Wypożycz</button>`
+          ? `<button class="btn btn-dark" onclick="openBorrow('${id}')">Wypożycz</button>`
           : `<button class="btn btn-green" onclick="returnGame('${id}'); closeModal()">↺ Zwrot</button>`}
       </div>
     </div>
