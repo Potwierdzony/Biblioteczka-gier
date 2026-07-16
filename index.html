@@ -209,6 +209,91 @@
   .history-row:last-child { border-bottom: none; }
   .history-row span { color: var(--ink-muted); white-space:nowrap; }
   .loan-count { color: var(--label); }
+
+  /* ---- Animacje modali ---- */
+  .modal-overlay { opacity: 0; transition: opacity 0.18s ease; }
+  .modal-overlay.show { opacity: 1; }
+  .modal { transform: scale(0.94) translateY(8px); transition: transform 0.18s ease; }
+  .modal-overlay.show .modal { transform: scale(1) translateY(0); }
+
+  /* ---- Hover na kartach ---- */
+  .card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+  .shelf-tile { transition: transform 0.15s ease; }
+  .shelf-tile:hover { transform: translateY(-3px); }
+  .shelf-tile img, .shelf-tile .shelf-placeholder { transition: box-shadow 0.15s ease; }
+  .shelf-tile:hover .shelf-img, .shelf-tile:hover .shelf-placeholder { box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+
+  /* ---- Płynne przejście przy zmianie widoku/filtrów ---- */
+  #results { transition: opacity 0.15s ease; }
+  #results.fading { opacity: 0; }
+
+  /* ---- Skeleton loading ---- */
+  .skeleton-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; height: 150px; overflow:hidden; position:relative; }
+  .skeleton-line { background: var(--card-alt); border-radius: 4px; margin-bottom: 10px; position:relative; overflow:hidden; }
+  .skeleton-line::after {
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: shimmer 1.4s infinite;
+  }
+  @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+  /* ---- Pusty stan ---- */
+  .empty { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .empty .empty-icon { font-size: 34px; opacity: 0.6; }
+
+  /* ---- Konfetti przy zwrocie ---- */
+  .confetti-piece {
+    position: fixed; top: -10px; width: 8px; height: 8px; border-radius: 2px; pointer-events:none; z-index: 999;
+    animation: confetti-fall 1.1s ease-in forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(90vh) rotate(400deg); opacity: 0; }
+  }
+
+  /* ---- Panel statystyk ---- */
+  .stats-row { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .stat-box { background: #25322B; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  body.light .stat-box { background: #fff; border-color: var(--border-card); }
+  .stat-box .stat-label { font-family:'JetBrains Mono', monospace; font-size: 10px; text-transform:uppercase; letter-spacing:0.05em; color: var(--muted); }
+  .stat-box .stat-value { font-family:'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--heading); margin-top: 4px; line-height:1.3; }
+  body.light .stat-box .stat-value { color: var(--ink); }
+
+  /* ---- Oś czasu wypożyczeń ---- */
+  .timeline-wrap { margin-bottom: 20px; }
+  .timeline-title { font-family:'JetBrains Mono', monospace; font-size: 11px; text-transform:uppercase; letter-spacing:0.05em; color: var(--muted); margin-bottom: 8px; }
+  .timeline-strip { display:flex; gap: 10px; overflow-x:auto; padding-bottom: 4px; }
+  .timeline-chip {
+    flex-shrink:0; display:flex; align-items:center; gap:8px; background: var(--card); border: 1px solid var(--border-card);
+    border-radius: 20px; padding: 6px 12px 6px 6px; cursor:pointer;
+  }
+  .timeline-chip .tc-info { font-size: 11px; font-family:'JetBrains Mono', monospace; color: var(--ink); line-height:1.3; }
+  .timeline-chip .tc-info b { color: var(--ink); }
+  .timeline-chip .tc-info span { color: var(--ink-muted); display:block; }
+
+  /* ---- Awatar inicjałów ---- */
+  .avatar {
+    display:inline-flex; align-items:center; justify-content:center; width: 22px; height: 22px; border-radius:50%;
+    font-family:'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: #fff; flex-shrink:0;
+  }
+  .avatar-lg { width: 28px; height: 28px; font-size: 11px; }
+
+  /* ---- Walidacja i licznik znaków ---- */
+  .field-error { color: var(--red); font-size: 11px; margin-top: 3px; display:none; }
+  .field.invalid input { border-color: var(--red); }
+  .field.invalid .field-error { display:block; }
+  .char-counter { font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--label); text-align:right; margin-top: 3px; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); } 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); } 80% { transform: translateX(3px); }
+  }
+  .shake { animation: shake 0.3s ease; }
+
+  /* ---- Potwierdzenie usunięcia ---- */
+  .confirm-body { padding: 20px; text-align:center; }
+  .confirm-body p { font-size: 14px; color: var(--ink); margin: 0 0 16px; }
+  .confirm-actions { display:flex; gap:10px; justify-content:center; }
 </style>
 </head>
 <body>
@@ -230,6 +315,13 @@
   </header>
 
   <div id="saveErrorBox" style="display:none" class="save-error">⚠️ Nie udało się zapisać zmian w bazie danych.</div>
+
+  <div class="stats-row" id="statsRow" style="display:none"></div>
+
+  <div class="timeline-wrap" id="timelineWrap" style="display:none">
+    <div class="timeline-title">👀 Aktualnie wypożyczone</div>
+    <div class="timeline-strip" id="timelineStrip"></div>
+  </div>
 
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
@@ -267,7 +359,12 @@
   </div>
 
   <div id="emptyState" class="empty" style="display:none"></div>
-  <div id="results"></div>
+  <div id="results">
+    <div class="grid">
+      <div class="skeleton-card"><div class="skeleton-line" style="height:20px;width:60%"></div><div class="skeleton-line" style="height:12px;width:40%"></div><div class="skeleton-line" style="height:30px;width:100%;margin-top:20px"></div></div>
+      <div class="skeleton-card"><div class="skeleton-line" style="height:20px;width:50%"></div><div class="skeleton-line" style="height:12px;width:35%"></div><div class="skeleton-line" style="height:30px;width:100%;margin-top:20px"></div></div>
+    </div>
+  </div>
 </div>
 
 <div id="modalRoot"></div>
@@ -463,9 +560,10 @@ function cardHtml(g) {
            <span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span>
            <button class="btn btn-green" onclick="returnGame('${g.id}')">↺ Zwrot</button>
          </div>
-         <div class="borrow-info">
-           Kto: <b>${escapeHtml(g.borrower)}</b><br>
-           Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}
+         <div class="borrow-info" style="display:flex; align-items:center; gap:8px">
+           ${avatarHtml(g.borrower)}
+           <span>Kto: <b>${escapeHtml(g.borrower)}</b><br>
+           Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}</span>
          </div>
        </div>`;
 
@@ -515,10 +613,64 @@ function shelfTileHtml(g) {
   `;
 }
 
+function updateStats() {
+  const box = document.getElementById('statsRow');
+  if (games.length === 0) { box.style.display = 'none'; return; }
+
+  // Najpopularniejsza gra (najwięcej wypożyczeń w historii)
+  let popular = null;
+  games.forEach(g => {
+    const c = (g.history || []).length;
+    if (c > 0 && (!popular || c > popular.count)) popular = { name: g.name, count: c };
+  });
+
+  // Najdłużej wypożyczona obecnie
+  let longest = null;
+  games.forEach(g => {
+    if (g.status === 'borrowed' && g.borrowedDate) {
+      const days = Math.max(0, -daysUntil(g.borrowedDate));
+      if (!longest || days > longest.days) longest = { name: g.name, days };
+    }
+  });
+
+  // Łączna liczba wypożyczeń w tym miesiącu
+  const now = new Date();
+  const ym = now.toISOString().slice(0, 7);
+  let monthCount = 0;
+  games.forEach(g => {
+    (g.history || []).forEach(h => { if ((h.borrowedDate || '').startsWith(ym)) monthCount++; });
+    if (g.status === 'borrowed' && (g.borrowedDate || '').startsWith(ym)) monthCount++;
+  });
+
+  box.style.display = 'grid';
+  box.innerHTML = `
+    <div class="stat-box"><div class="stat-label">🏆 Najpopularniejsza</div><div class="stat-value">${popular ? escapeHtml(popular.name) : '—'}</div></div>
+    <div class="stat-box"><div class="stat-label">⏳ Najdłużej wypożyczona</div><div class="stat-value">${longest ? escapeHtml(longest.name) + ` (${longest.days} dni)` : '—'}</div></div>
+    <div class="stat-box"><div class="stat-label">📅 Wypożyczeń w tym miesiącu</div><div class="stat-value">${monthCount}</div></div>
+  `;
+}
+
+function updateTimeline() {
+  const wrap = document.getElementById('timelineWrap');
+  const strip = document.getElementById('timelineStrip');
+  const borrowed = games.filter(g => g.status === 'borrowed').sort((a, b) => (a.borrowedDate || '').localeCompare(b.borrowedDate || ''));
+  if (borrowed.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  strip.innerHTML = borrowed.map(g => `
+    <div class="timeline-chip" onclick="openQuickActions('${g.id}')">
+      ${avatarHtml(g.borrower, 'lg')}
+      <div class="tc-info"><b>${escapeHtml(g.borrower)}</b><span>${escapeHtml(g.name)} · od ${fmtDate(g.borrowedDate)}</span></div>
+    </div>
+  `).join('');
+}
+
 function render() {
   const results = document.getElementById('results');
   const empty = document.getElementById('emptyState');
   const q = query.trim().toLowerCase();
+
+  updateStats();
+  updateTimeline();
 
   let filtered = games.filter(g =>
     (!q || g.name.toLowerCase().includes(q) || (g.borrower || "").toLowerCase().includes(q)
@@ -534,40 +686,107 @@ function render() {
 
   populateFilterOptions();
 
-  if (filtered.length === 0) {
-    empty.style.display = 'block';
-    empty.textContent = games.length === 0 ? 'Katalog jest pusty. Dodaj pierwszą grę.' : 'Brak wyników.';
-    results.innerHTML = '';
-    return;
-  }
-  empty.style.display = 'none';
+  results.classList.add('fading');
+  setTimeout(() => {
+    if (filtered.length === 0) {
+      empty.style.display = 'block';
+      empty.innerHTML = games.length === 0
+        ? `<span class="empty-icon">🎲</span>Katalog jest pusty. Dodaj pierwszą grę.`
+        : `<span class="empty-icon">🔍</span>Brak wyników pasujących do wyszukiwania lub filtrów.`;
+      results.innerHTML = '';
+      results.classList.remove('fading');
+      return;
+    }
+    empty.style.display = 'none';
 
-  const wrapClass = viewMode === 'shelf' ? 'shelf-grid' : 'grid';
-  const tileFn = viewMode === 'shelf' ? shelfTileHtml : cardHtml;
+    const wrapClass = viewMode === 'shelf' ? 'shelf-grid' : 'grid';
+    const tileFn = viewMode === 'shelf' ? shelfTileHtml : cardHtml;
 
-  if (groupByCat) {
-    const map = new Map();
-    filtered.forEach(g => {
-      const key = g.category && g.category.trim() ? g.category.trim() : 'Bez kategorii';
-      if (!map.has(key)) map.set(key, []);
-      map.get(key).push(g);
-    });
-    results.innerHTML = [...map.entries()].map(([cat, list]) => `
-      <div class="group-header">${escapeHtml(cat)} (${list.length})</div>
-      <div class="${wrapClass}">${list.map(tileFn).join('')}</div>
-    `).join('');
-  } else {
-    results.innerHTML = `<div class="${wrapClass}">${filtered.map(tileFn).join('')}</div>`;
-  }
+    if (groupByCat) {
+      const map = new Map();
+      filtered.forEach(g => {
+        const key = g.category && g.category.trim() ? g.category.trim() : 'Bez kategorii';
+        if (!map.has(key)) map.set(key, []);
+        map.get(key).push(g);
+      });
+      results.innerHTML = [...map.entries()].map(([cat, list]) => `
+        <div class="group-header">${escapeHtml(cat)} (${list.length})</div>
+        <div class="${wrapClass}">${list.map(tileFn).join('')}</div>
+      `).join('');
+    } else {
+      results.innerHTML = `<div class="${wrapClass}">${filtered.map(tileFn).join('')}</div>`;
+    }
+    results.classList.remove('fading');
+  }, 90);
 }
 
 function openModal(html) {
   document.getElementById('modalRoot').innerHTML = `<div class="modal-overlay" id="overlay">${html}</div>`;
-  document.getElementById('overlay').addEventListener('click', (e) => {
+  const overlay = document.getElementById('overlay');
+  requestAnimationFrame(() => overlay.classList.add('show'));
+  overlay.addEventListener('click', (e) => {
     if (e.target.id === 'overlay') closeModal();
   });
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+      e.preventDefault();
+      const primary = overlay.querySelector('.btn-dark, .btn-green');
+      if (primary) primary.click();
+    }
+  });
 }
-function closeModal() { document.getElementById('modalRoot').innerHTML = ''; }
+function closeModal() {
+  const overlay = document.getElementById('overlay');
+  if (!overlay) return;
+  overlay.classList.remove('show');
+  setTimeout(() => { document.getElementById('modalRoot').innerHTML = ''; }, 150);
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('overlay')) closeModal();
+});
+
+function confirmAction(message, onConfirm) {
+  openModal(`
+    <div class="modal">
+      <div class="confirm-body">
+        <p>${escapeHtml(message)}</p>
+        <div class="confirm-actions">
+          <button class="btn btn-outline" id="confirm-no">Anuluj</button>
+          <button class="btn" style="background:var(--red); color:#fff" id="confirm-yes">Tak, usuń</button>
+        </div>
+      </div>
+    </div>
+  `);
+  document.getElementById('confirm-no').onclick = closeModal;
+  document.getElementById('confirm-yes').onclick = () => { closeModal(); onConfirm(); };
+}
+
+function spawnConfetti() {
+  const colors = ['#B8935F', '#4F7A57', '#A8483A', '#F0EAD9'];
+  for (let i = 0; i < 24; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = (Math.random() * 0.2) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 1400);
+  }
+}
+
+function initials(name) {
+  const parts = String(name || '?').trim().split(/\s+/);
+  return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || '?';
+}
+function avatarColor(name) {
+  const palette = ['#B8935F', '#4F7A57', '#A8483A', '#6B7A8F', '#8F6B8A', '#7A8F4F'];
+  let hash = 0;
+  for (const ch of String(name || '')) hash = (hash * 31 + ch.charCodeAt(0)) % 997;
+  return palette[hash % palette.length];
+}
+function avatarHtml(name, size) {
+  return `<span class="avatar${size === 'lg' ? ' avatar-lg' : ''}" style="background:${avatarColor(name)}">${initials(name)}</span>`;
+}
 
 function openAdd() {
   let pendingCover = "";
@@ -575,7 +794,7 @@ function openAdd() {
     <div class="modal">
       <div class="modal-head"><h2 class="display">Nowa gra</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        <div class="field"><label>Nazwa gry</label><input id="f-name" placeholder="np. Nemesis: Odwet" autofocus></div>
+        <div class="field" id="f-name-field"><label>Nazwa gry</label><input id="f-name" placeholder="np. Nemesis: Odwet" autofocus><div class="field-error">Nazwa gry jest wymagana</div></div>
         <div class="field">
           <label>Link (np. BoardGameGeek)</label>
           <input id="f-bgg" type="url" placeholder="https://boardgamegeek.com/boardgame/...">
@@ -592,7 +811,7 @@ function openAdd() {
           </div>
           <div class="field-hint">Zdjęcie zostanie automatycznie pomniejszone.</div>
         </div>
-        <div class="field"><label>Notatka (opcjonalnie)</label><input id="f-notes" placeholder="np. brakuje 1 kości"></div>
+        <div class="field"><label>Notatka (opcjonalnie)</label><input id="f-notes" maxlength="140" placeholder="np. brakuje 1 kości"><div class="char-counter" id="f-notes-counter">0/140</div></div>
         <div style="display:flex; gap:10px">
           <div class="field" style="flex:1"><label>Kategoria</label><input id="f-category" placeholder="np. Łatwa / Trudna"></div>
           <div class="field" style="flex:1"><label>Czas trwania</label><input id="f-duration" placeholder="np. 1h / 3h"></div>
@@ -605,6 +824,7 @@ function openAdd() {
       </div>
     </div>
   `);
+  document.getElementById('f-notes').oninput = (e) => { document.getElementById('f-notes-counter').textContent = e.target.value.length + '/140'; };
   document.getElementById('f-bgg-fetch').onclick = async () => {
     const url = document.getElementById('f-bgg').value.trim();
     const statusEl = document.getElementById('f-bgg-status');
@@ -639,14 +859,20 @@ function openAdd() {
   };
   document.getElementById('f-save').onclick = () => {
     const name = document.getElementById('f-name').value.trim();
-    if (!name) return;
+    if (!name) {
+      const field = document.getElementById('f-name-field');
+      field.classList.add('invalid', 'shake');
+      document.getElementById('f-name').focus();
+      setTimeout(() => field.classList.remove('shake'), 300);
+      return;
+    }
     const notes = document.getElementById('f-notes').value.trim();
     const bggUrl = document.getElementById('f-bgg').value.trim();
     const category = document.getElementById('f-category').value.trim();
     const duration = document.getElementById('f-duration').value.trim();
     const players = document.getElementById('f-players').value.trim();
     const tags = document.getElementById('f-tags').value.trim();
-    games.push({ id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, coverImage: pendingCover, category, duration, players, tags });
+    games.push({ id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, coverImage: pendingCover, category, duration, players, tags, history: [] });
     closeModal();
     writeGames();
   };
@@ -659,7 +885,7 @@ function openEdit(id) {
     <div class="modal">
       <div class="modal-head"><h2 class="display">Edytuj grę</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        <div class="field"><label>Nazwa gry</label><input id="f-name" value="${escapeHtml(g.name)}" autofocus></div>
+        <div class="field" id="f-name-field"><label>Nazwa gry</label><input id="f-name" value="${escapeHtml(g.name)}" autofocus><div class="field-error">Nazwa gry jest wymagana</div></div>
         <div class="field">
           <label>Link (np. BoardGameGeek)</label>
           <input id="f-bgg" type="url" value="${escapeHtml(g.bggUrl || '')}" placeholder="https://boardgamegeek.com/boardgame/...">
@@ -676,7 +902,7 @@ function openEdit(id) {
           </div>
           <div class="field-hint">Zdjęcie zostanie automatycznie pomniejszone.</div>
         </div>
-        <div class="field"><label>Notatka (opcjonalnie)</label><input id="f-notes" value="${escapeHtml(g.notes)}"></div>
+        <div class="field"><label>Notatka (opcjonalnie)</label><input id="f-notes" maxlength="140" value="${escapeHtml(g.notes)}"><div class="char-counter" id="f-notes-counter">${(g.notes||'').length}/140</div></div>
         <div style="display:flex; gap:10px">
           <div class="field" style="flex:1"><label>Kategoria</label><input id="f-category" value="${escapeHtml(g.category || '')}" placeholder="np. Łatwa / Trudna"></div>
           <div class="field" style="flex:1"><label>Czas trwania</label><input id="f-duration" value="${escapeHtml(g.duration || '')}" placeholder="np. 1h / 3h"></div>
@@ -690,6 +916,7 @@ function openEdit(id) {
       </div>
     </div>
   `);
+  document.getElementById('f-notes').oninput = (e) => { document.getElementById('f-notes-counter').textContent = e.target.value.length + '/140'; };
   document.getElementById('f-bgg-fetch').onclick = async () => {
     const url = document.getElementById('f-bgg').value.trim();
     const statusEl = document.getElementById('f-bgg-status');
@@ -724,7 +951,13 @@ function openEdit(id) {
   };
   document.getElementById('f-save').onclick = () => {
     const name = document.getElementById('f-name').value.trim();
-    if (!name) return;
+    if (!name) {
+      const field = document.getElementById('f-name-field');
+      field.classList.add('invalid', 'shake');
+      document.getElementById('f-name').focus();
+      setTimeout(() => field.classList.remove('shake'), 300);
+      return;
+    }
     g.name = name;
     g.notes = document.getElementById('f-notes').value.trim();
     g.bggUrl = document.getElementById('f-bgg').value.trim();
@@ -737,9 +970,10 @@ function openEdit(id) {
     writeGames();
   };
   document.getElementById('f-delete').onclick = () => {
-    games = games.filter(x => x.id !== id);
-    closeModal();
-    writeGames();
+    confirmAction(`Usunąć grę „${g.name}” z katalogu? Tej operacji nie można cofnąć.`, () => {
+      games = games.filter(x => x.id !== id);
+      writeGames();
+    });
   };
 }
 
@@ -780,13 +1014,14 @@ function returnGame(id) {
   g.borrowedDate = '';
   g.dueDate = '';
   writeGames();
+  spawnConfetti();
 }
 
 function openHistory(id) {
   const g = games.find(x => x.id === id);
   const hist = (g.history || []).slice().reverse();
   const rows = hist.length
-    ? hist.map(h => `<div class="history-row"><b>${escapeHtml(h.borrower)}</b><span>${fmtDate(h.borrowedDate)} → ${fmtDate(h.returnedDate)}</span></div>`).join('')
+    ? hist.map(h => `<div class="history-row"><span style="display:flex;align-items:center;gap:6px;color:var(--ink)">${avatarHtml(h.borrower)}<b>${escapeHtml(h.borrower)}</b></span><span>${fmtDate(h.borrowedDate)} → ${fmtDate(h.returnedDate)}</span></div>`).join('')
     : `<div class="field-hint">Brak historii wypożyczeń.</div>`;
   openModal(`
     <div class="modal">
@@ -814,7 +1049,7 @@ function openQuickActions(id) {
           </div>` : ''}
         ${g.status === 'available'
           ? `<div class="status-available">✓ Dostępna</div>`
-          : `<div class="borrow-info"><span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span><br>Kto: <b>${escapeHtml(g.borrower)}</b><br>Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}</div>`}
+          : `<div class="borrow-info" style="display:flex; align-items:center; gap:8px">${avatarHtml(g.borrower)}<span><span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span><br>Kto: <b>${escapeHtml(g.borrower)}</b><br>Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}</span></div>`}
       </div>
       <div class="modal-foot">
         <div style="display:flex; gap:14px">
@@ -875,7 +1110,7 @@ Brzdęk: Katakumby
       if (existingNames.has(name.toLowerCase())) { skipped++; return; }
       games.push({
         id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '',
-        notes: '', bggUrl: '', coverImage: '', category: '', duration: '', players: '', tags: ''
+        notes: '', bggUrl: '', coverImage: '', category: '', duration: '', players: '', tags: '', history: []
       });
       existingNames.add(name.toLowerCase());
       added++;
