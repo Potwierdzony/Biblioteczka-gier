@@ -338,8 +338,8 @@
     </select>
     <button class="btn btn-outline" id="filterToggleBtn">🎛 Filtry</button>
     <div class="view-toggle">
-      <button class="active" id="viewListBtn">📋 Lista</button>
-      <button id="viewShelfBtn">🖼 Półka</button>
+      <button id="viewListBtn">📋 Lista</button>
+      <button class="active" id="viewShelfBtn">🖼 Półka</button>
     </div>
     <label class="group-toggle-label">
       <input type="checkbox" id="groupByCategory"> Grupuj wg kategorii
@@ -360,9 +360,13 @@
 
   <div id="emptyState" class="empty" style="display:none"></div>
   <div id="results">
-    <div class="grid">
-      <div class="skeleton-card"><div class="skeleton-line" style="height:20px;width:60%"></div><div class="skeleton-line" style="height:12px;width:40%"></div><div class="skeleton-line" style="height:30px;width:100%;margin-top:20px"></div></div>
-      <div class="skeleton-card"><div class="skeleton-line" style="height:20px;width:50%"></div><div class="skeleton-line" style="height:12px;width:35%"></div><div class="skeleton-line" style="height:30px;width:100%;margin-top:20px"></div></div>
+    <div class="shelf-grid">
+      <div class="skeleton-card" style="height:auto; aspect-ratio:3/4; padding:0"><div class="skeleton-line" style="height:100%;width:100%;margin:0;border-radius:8px"></div></div>
+      <div class="skeleton-card" style="height:auto; aspect-ratio:3/4; padding:0"><div class="skeleton-line" style="height:100%;width:100%;margin:0;border-radius:8px"></div></div>
+      <div class="skeleton-card" style="height:auto; aspect-ratio:3/4; padding:0"><div class="skeleton-line" style="height:100%;width:100%;margin:0;border-radius:8px"></div></div>
+      <div class="skeleton-card" style="height:auto; aspect-ratio:3/4; padding:0"><div class="skeleton-line" style="height:100%;width:100%;margin:0;border-radius:8px"></div></div>
+      <div class="skeleton-card" style="height:auto; aspect-ratio:3/4; padding:0"><div class="skeleton-line" style="height:100%;width:100%;margin:0;border-radius:8px"></div></div>
+      <div class="skeleton-card" style="height:auto; aspect-ratio:3/4; padding:0"><div class="skeleton-line" style="height:100%;width:100%;margin:0;border-radius:8px"></div></div>
     </div>
   </div>
 </div>
@@ -505,7 +509,7 @@ function shareUrl(id) {
 }
 
 let sortBy = "default";
-let viewMode = "list";
+let viewMode = "shelf";
 let groupByCat = false;
 let filters = { status: "", category: "", duration: "", players: "" };
 
@@ -1037,19 +1041,27 @@ function openHistory(id) {
 function openQuickActions(id) {
   const g = games.find(x => x.id === id);
   const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
+  const loanCount = (g.history || []).length;
   openModal(`
     <div class="modal">
+      ${g.coverImage ? `<img src="${g.coverImage}" alt="Okładka" style="width:100%; max-height:220px; object-fit:cover; display:block;">` : ''}
       <div class="modal-head"><h2 class="display">${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        ${(g.category || g.duration || g.players) ? `
+        ${g.notes ? `<p style="margin:0; font-size:13px; color:var(--ink-muted)">${escapeHtml(g.notes)}</p>` : ''}
+        ${g.bggUrl ? `<a class="bgg-link" href="${escapeHtml(g.bggUrl)}" target="_blank" rel="noopener">🔗 Zasady / opis gry</a>` : ''}
+        ${(g.category || g.duration || g.players || g.tags) ? `
           <div class="meta-row">
             ${g.category ? `<span class="category-badge">${escapeHtml(g.category)}</span>` : ''}
             ${g.duration ? `<span class="category-badge" style="background:var(--green)">⏱ ${escapeHtml(g.duration)}</span>` : ''}
             ${g.players ? `<span class="category-badge" style="background:var(--gold); color:var(--ink)">👥 ${escapeHtml(g.players)}</span>` : ''}
+            ${(g.tags || '').split(/[\s,]+/).filter(Boolean).map(t => `<span class="tag-chip">${escapeHtml(t.startsWith('#') ? t : '#' + t)}</span>`).join('')}
           </div>` : ''}
+        <div style="margin-top:10px">
         ${g.status === 'available'
           ? `<div class="status-available">✓ Dostępna</div>`
           : `<div class="borrow-info" style="display:flex; align-items:center; gap:8px">${avatarHtml(g.borrower)}<span><span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span><br>Kto: <b>${escapeHtml(g.borrower)}</b><br>Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}</span></div>`}
+        </div>
+        ${loanCount ? `<div class="loan-count" style="margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:11px">Wypożyczano łącznie ${loanCount}x</div>` : ''}
       </div>
       <div class="modal-foot">
         <div style="display:flex; gap:14px">
