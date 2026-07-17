@@ -433,6 +433,8 @@ if (!CONFIGURED) {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const gamesRef = db.ref('games');
+const coversRef = db.ref('covers');
+const coverCache = new Map(); // id -> zdjęcie (base64/URL) lub null jeśli brak
 
 function uid() { return Math.random().toString(36).slice(2, 10); }
 function todayStr() { return new Date().toISOString().slice(0, 10); }
@@ -452,9 +454,64 @@ let games = [];
 let query = "";
 let firstLoad = true;
 
-function writeGames() {
-  gamesRef.set(games).catch(() => {
+// Zapisuje TYLKO metadane jednej gry (bez zdjęcia) - używane przy statusie/wypożyczeniu/zwrocie/historii.
+// Nie rusza zdjęcia okładki, więc te operacje są bardzo lekkie transferowo.
+function saveGameMeta(game) {
+  db.ref('games/' + game.id).set(game).catch(() => {
     document.getElementById('saveErrorBox').style.display = 'block';
+  });
+}
+
+// Zapisuje metadane ORAZ (opcjonalnie) zdjęcie okładki - używane przy dodawaniu/edycji gry.
+function saveGameWithCover(game, coverImage) {
+  const meta = { ...game, hasCover: !!coverImage };
+  const updates = {};
+  updates['games/' + game.id] = meta;
+  updates['covers/' + game.id] = coverImage || null;
+  coverCache.set(game.id, coverImage || null);
+  db.ref().update(updates).catch(() => {
+    document.getElementById('saveErrorBox').style.display = 'block';
+  });
+}
+
+// Usuwa grę - zarówno metadane, jak i jej zdjęcie (jeśli istniało).
+function deleteGameRemote(id) {
+  const updates = {};
+  updates['games/' + id] = null;
+  updates['covers/' + id] = null;
+  coverCache.delete(id);
+  db.ref().update(updates).catch(() => {
+    document.getElementById('saveErrorBox').style.display = 'block';
+  });
+}
+
+// Pobiera zdjęcie okładki (z pamięci podręcznej albo z Firebase, tylko raz na sesję).
+async function getCover(id) {
+  if (coverCache.has(id)) return coverCache.get(id);
+  try {
+    const snap = await coversRef.child(id).once('value');
+    const val = snap.val();
+    coverCache.set(id, val);
+    return val;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Po wstawieniu HTML z elementami [data-cover-id] - doczytuje ich zdjęcia asynchronicznie.
+function hydrateCovers(root) {
+  const scope = root || document;
+  scope.querySelectorAll('[data-cover-id]').forEach(async (el) => {
+    const id = el.getAttribute('data-cover-id');
+    const src = await getCover(id);
+    if (src) {
+      el.src = src;
+    } else {
+      const placeholder = document.createElement('div');
+      placeholder.className = el.classList.contains('shelf-img') ? 'shelf-placeholder' : 'card-thumb-placeholder';
+      placeholder.textContent = '🎲';
+      el.replaceWith(placeholder);
+    }
   });
 }
 
@@ -478,8 +535,11 @@ function resizeImageFile(file, maxWidth) {
         const canvas = document.createElement('canvas');
         canvas.width = w;
         canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.75));
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
       };
       img.src = reader.result;
     };
@@ -598,8 +658,8 @@ function cardHtml(g) {
     <div class="card" id="card-${g.id}">
       <div class="card-top">
         <div class="card-top-main">
-          ${g.coverImage
-            ? `<img class="card-thumb" src="${g.coverImage}" alt="Okładka">`
+          ${g.hasCover
+            ? `<img class="card-thumb" data-cover-id="${g.id}" alt="Okładka">`
             : `<div class="card-thumb-placeholder">🎲</div>`}
           <div style="min-width:0">
             <h3 class="display">${escapeHtml(g.name)}</h3>
@@ -632,8 +692,8 @@ function shelfTileHtml(g) {
   const dotColor = g.status === 'available' ? 'var(--green)' : 'var(--gold)';
   return `
     <div class="shelf-tile" onclick="openQuickActions('${g.id}')">
-      ${g.coverImage
-        ? `<img class="shelf-img" src="${g.coverImage}" alt="Okładka">`
+      ${g.hasCover
+        ? `<img class="shelf-img" data-cover-id="${g.id}" alt="Okładka">`
         : `<div class="shelf-placeholder">🎲</div>`}
       <div class="shelf-name"><span class="shelf-status-dot" style="background:${dotColor}"></span>${escapeHtml(g.name)}</div>
     </div>
@@ -743,6 +803,7 @@ function render() {
     } else {
       results.innerHTML = `<div class="${wrapClass}">${filtered.map(tileFn).join('')}</div>`;
     }
+    hydrateCovers(results);
     results.classList.remove('fading');
   }, 90);
 }
@@ -872,7 +933,7 @@ function openAdd() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      pendingCover = await resizeImageFile(file, 240);
+      pendingCover = await resizeImageFile(file, 640);
       document.getElementById('f-cover-img').src = pendingCover;
       document.getElementById('f-cover-preview').style.display = 'flex';
     } catch (err) {
@@ -899,15 +960,16 @@ function openAdd() {
     const duration = document.getElementById('f-duration').value.trim();
     const players = document.getElementById('f-players').value.trim();
     const tags = document.getElementById('f-tags').value.trim();
-    games.push({ id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, coverImage: pendingCover, category, duration, players, tags, history: [] });
+    const newGame = { id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, hasCover: !!pendingCover, category, duration, players, tags, history: [] };
+    games.push(newGame);
     closeModal();
-    writeGames();
+    saveGameWithCover(newGame, pendingCover);
   };
 }
 
 function openEdit(id) {
   const g = games.find(x => x.id === id);
-  let pendingCover = g.coverImage || "";
+  let pendingCover = "";
   openModal(`
     <div class="modal">
       <div class="modal-head"><h2 class="display">Edytuj grę</h2><button onclick="closeModal()">✕</button></div>
@@ -924,8 +986,8 @@ function openEdit(id) {
         <div class="field">
           <label>Zdjęcie okładki (opcjonalnie, ręcznie)</label>
           <input id="f-cover" type="file" accept="image/*">
-          <div class="file-preview-row" id="f-cover-preview" style="${pendingCover ? '' : 'display:none'}">
-            <img id="f-cover-img" src="${pendingCover}" alt="Podgląd"><button type="button" id="f-cover-clear">Usuń zdjęcie</button>
+          <div class="file-preview-row" id="f-cover-preview" style="${g.hasCover ? '' : 'display:none'}">
+            <img id="f-cover-img" data-cover-id="${g.hasCover ? g.id : ''}" alt="Podgląd"><button type="button" id="f-cover-clear">Usuń zdjęcie</button>
           </div>
           <div class="field-hint">Zdjęcie zostanie automatycznie pomniejszone.</div>
         </div>
@@ -944,6 +1006,15 @@ function openEdit(id) {
     </div>
   `);
   document.getElementById('f-notes').oninput = (e) => { document.getElementById('f-notes-counter').textContent = e.target.value.length + '/140'; };
+  if (g.hasCover) {
+    getCover(id).then(src => {
+      if (src) {
+        pendingCover = src;
+        const img = document.getElementById('f-cover-img');
+        if (img) img.src = src;
+      }
+    });
+  }
   document.getElementById('f-bgg-fetch').onclick = async () => {
     const url = document.getElementById('f-bgg').value.trim();
     const statusEl = document.getElementById('f-bgg-status');
@@ -964,7 +1035,7 @@ function openEdit(id) {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      pendingCover = await resizeImageFile(file, 240);
+      pendingCover = await resizeImageFile(file, 640);
       document.getElementById('f-cover-img').src = pendingCover;
       document.getElementById('f-cover-preview').style.display = 'flex';
     } catch (err) {
@@ -992,14 +1063,14 @@ function openEdit(id) {
     g.duration = document.getElementById('f-duration').value.trim();
     g.players = document.getElementById('f-players').value.trim();
     g.tags = document.getElementById('f-tags').value.trim();
-    g.coverImage = pendingCover;
+    g.hasCover = !!pendingCover;
     closeModal();
-    writeGames();
+    saveGameWithCover(g, pendingCover);
   };
   document.getElementById('f-delete').onclick = () => {
     confirmAction(`Usunąć grę „${g.name}” z katalogu? Tej operacji nie można cofnąć.`, () => {
       games = games.filter(x => x.id !== id);
-      writeGames();
+      deleteGameRemote(id);
     });
   };
 }
@@ -1026,7 +1097,7 @@ function openBorrow(id) {
     g.borrowedDate = todayStr();
     g.dueDate = document.getElementById('f-due').value;
     closeModal();
-    writeGames();
+    saveGameMeta(g);
   };
 }
 
@@ -1040,7 +1111,7 @@ function returnGame(id) {
   g.borrower = '';
   g.borrowedDate = '';
   g.dueDate = '';
-  writeGames();
+  saveGameMeta(g);
   spawnConfetti();
 }
 
@@ -1067,7 +1138,7 @@ function openQuickActions(id) {
   const loanCount = (g.history || []).length;
   openModal(`
     <div class="modal">
-      ${g.coverImage ? `<img src="${g.coverImage}" alt="Okładka" style="width:100%; max-height:220px; object-fit:cover; display:block;">` : ''}
+      ${g.hasCover ? `<img data-cover-id="${g.id}" alt="Okładka" style="width:100%; max-height:220px; object-fit:cover; display:block; background:var(--card-alt);">` : ''}
       <div class="modal-head"><h2 class="display">${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
         ${g.notes ? `<p style="margin:0; font-size:13px; color:var(--ink-muted)">${escapeHtml(g.notes)}</p>` : ''}
@@ -1098,6 +1169,7 @@ function openQuickActions(id) {
       </div>
     </div>
   `);
+  hydrateCovers(document.getElementById('overlay'));
 }
 
 function openQr(id) {
@@ -1140,18 +1212,25 @@ Brzdęk: Katakumby
     const names = raw.split('\n').map(s => s.trim()).filter(Boolean);
     if (names.length === 0) return;
     const existingNames = new Set(games.map(g => g.name.trim().toLowerCase()));
+    const updates = {};
     let added = 0, skipped = 0;
     names.forEach(name => {
       if (existingNames.has(name.toLowerCase())) { skipped++; return; }
-      games.push({
+      const newGame = {
         id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '',
-        notes: '', bggUrl: '', coverImage: '', category: '', duration: '', players: '', tags: '', history: []
-      });
+        notes: '', bggUrl: '', hasCover: false, category: '', duration: '', players: '', tags: '', history: []
+      };
+      games.push(newGame);
+      updates['games/' + newGame.id] = newGame;
       existingNames.add(name.toLowerCase());
       added++;
     });
     closeModal();
-    writeGames();
+    if (added > 0) {
+      db.ref().update(updates).catch(() => {
+        document.getElementById('saveErrorBox').style.display = 'block';
+      });
+    }
     setTimeout(() => alert(`Dodano ${added} gier.${skipped ? ' Pominięto ' + skipped + ' (już były na liście).' : ''}`), 300);
   };
 }
@@ -1246,14 +1325,36 @@ gamesRef.on('value', (snapshot) => {
   if (val === null) {
     // Baza pusta - wgrywamy dane startowe tylko przy pierwszym uruchomieniu
     if (firstLoad) {
-      games = [
-        { id: uid(), name: "Nemesis: Odwet", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", coverImage: "" },
-        { id: uid(), name: "Gloomhaven", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", coverImage: "" },
+      const seedGames = [
+        { id: uid(), name: "Nemesis: Odwet", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", hasCover: false, category: "", duration: "", players: "", tags: "", history: [] },
+        { id: uid(), name: "Gloomhaven", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", hasCover: false, category: "", duration: "", players: "", tags: "", history: [] },
       ];
-      writeGames();
+      const seedUpdates = {};
+      seedGames.forEach(g => { seedUpdates['games/' + g.id] = g; });
+      db.ref().update(seedUpdates);
+      games = seedGames;
     }
+  } else if (Array.isArray(val)) {
+    // Stara struktura danych (tablica ze zdjęciami w środku) - jednorazowa migracja
+    // na nową, oszczędniejszą strukturę (metadane osobno od zdjęć).
+    const legacyGames = val.filter(Boolean);
+    const keyedGames = {};
+    const coverUpdates = {};
+    legacyGames.forEach(g => {
+      const { coverImage, ...meta } = g;
+      meta.hasCover = !!coverImage;
+      if (!meta.history) meta.history = [];
+      keyedGames[g.id] = meta;
+      if (coverImage) {
+        coverUpdates[g.id] = coverImage;
+        coverCache.set(g.id, coverImage);
+      }
+    });
+    gamesRef.set(keyedGames);
+    if (Object.keys(coverUpdates).length) coversRef.update(coverUpdates);
+    games = Object.values(keyedGames);
   } else {
-    games = Array.isArray(val) ? val.filter(Boolean) : Object.values(val);
+    games = Object.values(val);
   }
   firstLoad = false;
   document.getElementById('saveErrorBox').style.display = 'none';
