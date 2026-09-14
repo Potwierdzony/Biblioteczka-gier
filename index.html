@@ -396,6 +396,28 @@
   .cal-day.today { border-color: var(--gold); font-weight:700; }
   .cal-day.reserved { background: rgba(168,72,58,0.16); color: var(--red); font-weight:600; }
   .cal-day.selected { background: var(--green); color: #fff; }
+  .cal-day.clickable { cursor: pointer; transition: background 0.12s, transform 0.12s; }
+  .cal-day.clickable:hover { background: rgba(79,122,87,0.14); transform: scale(1.06); }
+  .cal-day.reserved.clickable { cursor: not-allowed; }
+  .cal-day.reserved.clickable:hover { background: rgba(168,72,58,0.16); transform: none; }
+  /* pasek wybranego terminu (Od → Do) */
+  .cal-day.sel-mid, .cal-day.sel-start, .cal-day.sel-end { color: #fff; font-weight: 600; z-index: 1; }
+  .cal-day.sel-mid::before, .cal-day.sel-start::before, .cal-day.sel-end::before {
+    content: ''; position: absolute; top: 4px; bottom: 4px; left: -3px; right: -3px;
+    background: var(--green); z-index: -1;
+  }
+  .cal-day.sel-start::before { left: 2px; border-radius: 8px 0 0 8px; }
+  .cal-day.sel-end::before { right: 2px; border-radius: 0 8px 8px 0; }
+  .cal-day.sel-start.sel-end::before { border-radius: 8px; }
+  .cal-day.sel-start, .cal-day.sel-end { background: var(--green); border-radius: 8px; }
+  .cal-day.sel-start.clickable:hover, .cal-day.sel-end.clickable:hover { background: var(--green); }
+  .cal-day.sel-mid.clickable:hover { background: transparent; }
+  .cal-day.sel-preview::before {
+    content: ''; position: absolute; top: 4px; bottom: 4px; left: -3px; right: -3px;
+    background: rgba(79,122,87,0.22); z-index: -1;
+  }
+  .cal-day.sel-preview.preview-end::before { right: 2px; border-radius: 0 8px 8px 0; }
+  .cal-hint { font-size: 11px; color: var(--label); margin-top: 6px; font-family:'JetBrains Mono', monospace; }
   .cal-legend { display:flex; gap:14px; margin-top:8px; font-size:11px; color: var(--ink-muted); font-family:'JetBrains Mono', monospace; }
   .cal-legend span { display:flex; align-items:center; gap:5px; }
   .cal-dot { width:9px; height:9px; border-radius:3px; display:inline-block; }
@@ -1775,7 +1797,9 @@ function openReservations(id) {
         <div class="cal-legend">
           <span><span class="cal-dot" style="background:rgba(168,72,58,0.3)"></span>Zarezerwowane</span>
           <span><span class="cal-dot" style="background:transparent;border:1px solid var(--gold)"></span>Dziś</span>
+          <span><span class="cal-dot" style="background:var(--green)"></span>Wybrany termin</span>
         </div>
+        <div class="cal-hint" id="cal-hint">Kliknij dzień w kalendarzu, aby ustawić datę „Od”, a potem drugi dzień jako „Do”.</div>
         <div style="margin-top:16px">
           <div class="field-hint" style="margin-bottom:6px">Nadchodzące rezerwacje</div>
           <div id="res-list"></div>
@@ -1795,6 +1819,15 @@ function openReservations(id) {
     </div>
   `);
 
+  let previewDate = '';
+
+  function getSel() {
+    const from = document.getElementById('f-res-from').value;
+    let to = document.getElementById('f-res-to').value;
+    if (from && to && to < from) to = '';
+    return { from, to };
+  }
+
   function renderCalendar() {
     const label = viewDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
     document.getElementById('cal-label').textContent = label;
@@ -1802,6 +1835,10 @@ function openReservations(id) {
     const firstDow = (new Date(year, month, 1).getDay() + 6) % 7; // Poniedziałek = 0
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = todayStr();
+    const { from, to } = getSel();
+    // zakres do podglądu (najechanie myszką po wybraniu "Od")
+    const pvFrom = from && !to && previewDate && previewDate > from ? from : '';
+    const pvTo = pvFrom ? previewDate : '';
     let cells = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'].map(d => `<div class="cal-dow">${d}</div>`).join('');
     for (let i = 0; i < firstDow; i++) cells += `<div class="cal-day empty"></div>`;
     for (let day = 1; day <= daysInMonth; day++) {
@@ -1809,10 +1846,76 @@ function openReservations(id) {
       const isReserved = g.reservations.some(r => dateStr >= r.dateFrom && dateStr <= r.dateTo);
       const isPast = dateStr < today;
       const isToday = dateStr === today;
-      cells += `<div class="cal-day ${isReserved ? 'reserved' : ''} ${isPast ? 'past' : ''} ${isToday ? 'today' : ''}">${day}</div>`;
+      const cls = [];
+      if (isReserved) cls.push('reserved');
+      if (isPast) cls.push('past');
+      if (isToday) cls.push('today');
+      if (!isPast) cls.push('clickable');
+      if (from) {
+        const end = to || from;
+        if (dateStr === from) cls.push('sel-start');
+        if (dateStr === end) cls.push('sel-end');
+        if (dateStr > from && dateStr < end) cls.push('sel-mid');
+      }
+      if (pvFrom && dateStr > pvFrom && dateStr <= pvTo) {
+        cls.push('sel-preview');
+        if (dateStr === pvTo) cls.push('preview-end');
+      }
+      cells += `<div class="cal-day ${cls.join(' ')}" data-date="${dateStr}" ${isReserved ? 'title="Termin już zarezerwowany"' : ''}>${day}</div>`;
     }
     document.getElementById('cal-grid').innerHTML = cells;
+    updateHint();
   }
+
+  function updateHint() {
+    const { from, to } = getSel();
+    const hint = document.getElementById('cal-hint');
+    if (!hint) return;
+    if (!from) hint.textContent = 'Kliknij dzień w kalendarzu, aby ustawić datę „Od”, a potem drugi dzień jako „Do”.';
+    else if (!to) hint.textContent = `Od ${fmtDate(from)} — teraz kliknij dzień zakończenia („Do”). Kliknięcie wcześniejszej daty zmieni „Od”.`;
+    else {
+      const days = Math.round((new Date(to) - new Date(from)) / 86400000) + 1;
+      hint.textContent = `Wybrano: ${fmtDate(from)} → ${fmtDate(to)} (${days} ${days === 1 ? 'dzień' : 'dni'}). Kliknij inny dzień, aby zacząć od nowa.`;
+    }
+  }
+
+  function onDayClick(dateStr) {
+    const fromEl = document.getElementById('f-res-from');
+    const toEl = document.getElementById('f-res-to');
+    const { from, to } = getSel();
+    if (!from || (from && to) || dateStr < from) {
+      // start nowego zakresu
+      fromEl.value = dateStr;
+      toEl.value = '';
+    } else {
+      // dateStr >= from, brak "Do"
+      toEl.value = dateStr;
+    }
+    previewDate = '';
+    document.getElementById('f-res-status').textContent = '';
+    document.getElementById('f-res-from-field').classList.remove('invalid');
+    renderCalendar();
+  }
+
+  const gridEl = document.getElementById('cal-grid');
+  gridEl.addEventListener('click', (e) => {
+    const cell = e.target.closest('.cal-day.clickable');
+    if (!cell || cell.classList.contains('reserved')) return;
+    onDayClick(cell.dataset.date);
+  });
+  gridEl.addEventListener('mouseover', (e) => {
+    const cell = e.target.closest('.cal-day.clickable');
+    if (!cell) return;
+    const { from, to } = getSel();
+    if (!from || to) return;
+    if (previewDate !== cell.dataset.date) { previewDate = cell.dataset.date; renderCalendar(); }
+  });
+  gridEl.addEventListener('mouseleave', () => {
+    if (previewDate) { previewDate = ''; renderCalendar(); }
+  });
+  // ręczna zmiana w polach Od / Do też odświeża pasek w kalendarzu
+  document.getElementById('f-res-from').addEventListener('change', renderCalendar);
+  document.getElementById('f-res-to').addEventListener('change', renderCalendar);
 
   function renderResList() {
     const list = upcomingReservations(g);
@@ -1867,6 +1970,7 @@ function openReservations(id) {
     document.getElementById('f-res-name').value = '';
     document.getElementById('f-res-from').value = '';
     document.getElementById('f-res-to').value = '';
+    renderCalendar();
     toast('Zarezerwowano termin dla ' + person);
     render();
   };
