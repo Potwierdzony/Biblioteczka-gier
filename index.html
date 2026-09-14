@@ -25,8 +25,10 @@
   html, body { overflow-x: hidden; }
   body {
     margin: 0;
-    background: linear-gradient(225deg, #0f5268 0%, #0d3244 45%, #081824 100%);
-    background-attachment: fixed;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMjAnIGhlaWdodD0nMzIwJyB2aWV3Qm94PScwIDAgMzIwIDMyMCc+CjxnIGZpbGw9J25vbmUnIHN0cm9rZT0ncmdiYSgyNTUsMjU1LDI1NSwwLjAzMiknIHN0cm9rZS13aWR0aD0nMS4zJz4KPHJlY3QgeD0nMzgnIHk9JzQ2JyB3aWR0aD0nMzgnIGhlaWdodD0nMzgnIHJ4PSc3JyB0cmFuc2Zvcm09J3JvdGF0ZSgtNiA1NyA2NSknLz4KPGNpcmNsZSBjeD0nNDknIGN5PSc1OCcgcj0nMi4zJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuMDMyKScgc3Ryb2tlPSdub25lJyB0cmFuc2Zvcm09J3JvdGF0ZSgtNiA1NyA2NSknLz4KPGNpcmNsZSBjeD0nNjUnIGN5PSc1OCcgcj0nMi4zJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuMDMyKScgc3Ryb2tlPSdub25lJyB0cmFuc2Zvcm09J3JvdGF0ZSgtNiA1NyA2NSknLz4KPGNpcmNsZSBjeD0nNDknIGN5PSc3Mycgcj0nMi4zJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuMDMyKScgc3Ryb2tlPSdub25lJyB0cmFuc2Zvcm09J3JvdGF0ZSgtNiA1NyA2NSknLz4KPGNpcmNsZSBjeD0nNjUnIGN5PSc3Mycgcj0nMi4zJyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuMDMyKScgc3Ryb2tlPSdub25lJyB0cmFuc2Zvcm09J3JvdGF0ZSgtNiA1NyA2NSknLz4KPHBhdGggZD0nTTIyOCAxNTBjOCAwIDEyIDggOC44IDEzLjZsOS40IDE3YzIuMiA0LTAuOSA4LjQtNC45IDguNGgtNS43djE5aC0xNC40di0xOWgtNS43Yy00IDAtNy4xLTQuNC00LjktOC40bDkuNC0xN2MtMy4yLTUuNiAwLjktMTMuNiA4LjktMTMuNnonIHRyYW5zZm9ybT0ncm90YXRlKDggMjMyIDE3OCknLz4KPHBvbHlnb24gcG9pbnRzPScxNTAsMjMwIDE2NiwyMjEgMTgyLDIzMCAxODIsMjUwIDE2NiwyNTkgMTUwLDI1MCcgdHJhbnNmb3JtPSdyb3RhdGUoLTQgMTY2IDI0MCknLz4KPC9nPgo8L3N2Zz4="), linear-gradient(225deg, #0f5268 0%, #0d3244 45%, #081824 100%);
+    background-size: 320px 320px, auto;
+    background-repeat: repeat, no-repeat;
+    background-attachment: fixed, fixed;
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
   }
@@ -66,7 +68,7 @@
   .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
   @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
 
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.16); }
   .card-top { padding: 16px 16px 12px; display:flex; justify-content:space-between; gap:12px; border-bottom: 1px dashed var(--border-card); }
   .card-top-main { display:flex; gap:12px; min-width:0; }
   .card-thumb { width: 56px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-card); flex-shrink: 0; background: var(--card-alt); }
@@ -101,7 +103,11 @@
   .qr-btn { background: none; border: none; cursor: pointer; display:flex; align-items:center; gap:6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink); }
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(15,20,17,0.7); display:flex; align-items:center; justify-content:center; padding: 16px; z-index: 100; }
-  .modal { background: var(--card); border-radius: 10px; width: 100%; max-width: 380px; overflow:hidden; }
+  .modal { background: var(--card); border-radius: 10px; width: 100%; max-width: 380px; max-height: 88vh; display:flex; flex-direction:column; overflow:hidden; }
+  .modal.modal-wide { max-width: min(480px, 94vw); }
+  .modal-body { overflow-y: auto; overflow-x: hidden; flex: 1 1 auto; min-height: 0; min-width: 0; }
+  .modal-head { flex-shrink: 0; }
+  .modal-foot { flex-shrink: 0; }
   .modal-head { padding: 16px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px dashed var(--border-card); }
   .modal-head h2 { margin:0; font-size: 18px; color: var(--ink); font-weight: 600; }
   .modal-head button { background:none; border:none; cursor:pointer; color: var(--label); }
@@ -124,7 +130,7 @@
   .modal-foot { padding: 16px 20px; border-top: 1px dashed var(--border-card); display:flex; justify-content:space-between; align-items:center; }
   .delete-link { background:none; border:none; cursor:pointer; color: var(--red); font-family:'JetBrains Mono', monospace; font-size:12px; display:flex; align-items:center; gap:5px; }
 
-  .qr-body { padding: 24px 20px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .qr-body { padding: 24px 20px; display:flex; flex-direction:column; align-items:center; gap:12px; overflow-y:auto; min-height:0; }
   .qr-body img { border-radius: 6px; }
   .qr-url { font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--label); text-align:center; word-break: break-all; padding: 0 8px; }
   .qr-hint { font-size: 12px; color: var(--ink-muted); text-align:center; padding: 0 16px; }
@@ -147,8 +153,10 @@
 
   /* ---- Motyw jasny ---- */
   body.light {
-    background: linear-gradient(225deg, #F2ECDD 0%, #EDE6D6 100%);
-    background-attachment: fixed;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMjAnIGhlaWdodD0nMzIwJyB2aWV3Qm94PScwIDAgMzIwIDMyMCc+CjxnIGZpbGw9J25vbmUnIHN0cm9rZT0ncmdiYSgyMiwzNSw0MywwLjAzKScgc3Ryb2tlLXdpZHRoPScxLjMnPgo8cmVjdCB4PSczOCcgeT0nNDYnIHdpZHRoPSczOCcgaGVpZ2h0PSczOCcgcng9JzcnIHRyYW5zZm9ybT0ncm90YXRlKC02IDU3IDY1KScvPgo8Y2lyY2xlIGN4PSc0OScgY3k9JzU4JyByPScyLjMnIGZpbGw9J3JnYmEoMjIsMzUsNDMsMC4wMyknIHN0cm9rZT0nbm9uZScgdHJhbnNmb3JtPSdyb3RhdGUoLTYgNTcgNjUpJy8+CjxjaXJjbGUgY3g9JzY1JyBjeT0nNTgnIHI9JzIuMycgZmlsbD0ncmdiYSgyMiwzNSw0MywwLjAzKScgc3Ryb2tlPSdub25lJyB0cmFuc2Zvcm09J3JvdGF0ZSgtNiA1NyA2NSknLz4KPGNpcmNsZSBjeD0nNDknIGN5PSc3Mycgcj0nMi4zJyBmaWxsPSdyZ2JhKDIyLDM1LDQzLDAuMDMpJyBzdHJva2U9J25vbmUnIHRyYW5zZm9ybT0ncm90YXRlKC02IDU3IDY1KScvPgo8Y2lyY2xlIGN4PSc2NScgY3k9JzczJyByPScyLjMnIGZpbGw9J3JnYmEoMjIsMzUsNDMsMC4wMyknIHN0cm9rZT0nbm9uZScgdHJhbnNmb3JtPSdyb3RhdGUoLTYgNTcgNjUpJy8+CjxwYXRoIGQ9J00yMjggMTUwYzggMCAxMiA4IDguOCAxMy42bDkuNCAxN2MyLjIgNC0wLjkgOC40LTQuOSA4LjRoLTUuN3YxOWgtMTQuNHYtMTloLTUuN2MtNCAwLTcuMS00LjQtNC45LTguNGw5LjQtMTdjLTMuMi01LjYgMC45LTEzLjYgOC45LTEzLjZ6JyB0cmFuc2Zvcm09J3JvdGF0ZSg4IDIzMiAxNzgpJy8+Cjxwb2x5Z29uIHBvaW50cz0nMTUwLDIzMCAxNjYsMjIxIDE4MiwyMzAgMTgyLDI1MCAxNjYsMjU5IDE1MCwyNTAnIHRyYW5zZm9ybT0ncm90YXRlKC00IDE2NiAyNDApJy8+CjwvZz4KPC9zdmc+"), linear-gradient(225deg, #F2ECDD 0%, #EDE6D6 100%);
+    background-size: 320px 320px, auto;
+    background-repeat: repeat, no-repeat;
+    background-attachment: fixed, fixed;
     --bg: #EDE6D6;
     --card: #FFFFFF;
     --card-alt: #F3EEE0;
@@ -210,6 +218,7 @@
   .shelf-tile { cursor:pointer; text-align:center; }
   .shelf-tile .shelf-img, .shelf-tile .shelf-placeholder {
     width:100%; aspect-ratio: 3/4; object-fit:cover; border-radius: 8px; border: 1px solid var(--border);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
   }
   .shelf-tile .shelf-placeholder { display:flex; align-items:center; justify-content:center; font-size: 26px; background: var(--card-alt); color: var(--label); }
   .shelf-tile .shelf-name { margin-top: 7px; font-size: 12px; font-weight: 500; line-height: 1.3; color: var(--heading); }
@@ -264,7 +273,7 @@
   }
 
   /* ---- Panel statystyk ---- */
-  .stats-row { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .stats-row { display:grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 10px; margin-bottom: 20px; min-width: 0; }
   .stat-box { background: #123648; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
   body.light .stat-box { background: #fff; border-color: var(--border-card); }
   .stat-box .stat-label { font-family:'JetBrains Mono', monospace; font-size: 10px; text-transform:uppercase; letter-spacing:0.05em; color: var(--muted); }
@@ -302,9 +311,270 @@
   .shake { animation: shake 0.3s ease; }
 
   /* ---- Potwierdzenie usunięcia ---- */
-  .confirm-body { padding: 20px; text-align:center; }
+  .confirm-body { padding: 20px; text-align:center; overflow-y:auto; min-height:0; }
   .confirm-body p { font-size: 14px; color: var(--ink); margin: 0 0 16px; }
   .confirm-actions { display:flex; gap:10px; justify-content:center; }
+
+  /* ---- Mikro-interakcje przycisków ---- */
+  .btn { transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease; }
+  .btn:not(:disabled):active { transform: scale(0.95); }
+  .btn:not(:disabled):hover { filter: brightness(1.06); }
+  .edit-btn, .qr-btn, .delete-link { transition: transform 0.12s ease, color 0.12s ease; }
+  .edit-btn:active, .qr-btn:active, .delete-link:active { transform: scale(0.92); }
+
+  /* ---- Wjazd panelu filtrów (płynne rozwijanie zamiast display:none) ---- */
+  .filter-panel {
+    display:flex; overflow:hidden; max-height: 0; padding-top:0; padding-bottom:0; margin-bottom:0;
+    border-width: 0; opacity: 0;
+    transition: max-height 0.22s ease, opacity 0.18s ease, padding 0.22s ease, margin 0.22s ease, border-color 0.18s ease;
+  }
+  .filter-panel.open { max-height: 220px; padding: 12px; margin-bottom: 16px; border-width: 1px; opacity: 1; }
+
+  /* ---- Wejście strony przy pierwszym załadowaniu (jedna, zorkiestrowana sekwencja) ---- */
+  .pre-intro header, .pre-intro .stats-row, .pre-intro .search-wrap, .pre-intro .controls-row { opacity: 0; transform: translateY(10px); }
+  .intro-play header { animation: intro-rise 0.5s cubic-bezier(.2,.7,.3,1) forwards; }
+  .intro-play .stats-row { animation: intro-rise 0.5s cubic-bezier(.2,.7,.3,1) forwards 0.09s; }
+  .intro-play .search-wrap { animation: intro-rise 0.5s cubic-bezier(.2,.7,.3,1) forwards 0.16s; }
+  .intro-play .controls-row { animation: intro-rise 0.5s cubic-bezier(.2,.7,.3,1) forwards 0.22s; }
+  @keyframes intro-rise { to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) {
+    .pre-intro header, .pre-intro .stats-row, .pre-intro .search-wrap, .pre-intro .controls-row { opacity:1 !important; transform:none !important; }
+    .intro-play header, .intro-play .stats-row, .intro-play .search-wrap, .intro-play .controls-row { animation:none !important; }
+  }
+
+  /* ---- Delikatne wejście kart przy zmianie widoku/filtrów ---- */
+  .card, .shelf-tile { animation: card-in 0.28s ease backwards; }
+  @keyframes card-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---- Toasty (zamiast alert()) ---- */
+  .toast-stack { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display:flex; flex-direction:column; gap:8px; z-index: 400; align-items:center; }
+  .toast {
+    background: var(--ink); color: var(--card); font-family:'JetBrains Mono', monospace; font-size: 12px;
+    padding: 10px 18px; border-radius: 20px; box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    display:flex; align-items:center; gap:8px; opacity:0; transform: translateY(10px) scale(0.96);
+    animation: toast-in 0.25s ease forwards;
+  }
+  .toast.leaving { animation: toast-out 0.2s ease forwards; }
+  @keyframes toast-in { to { opacity:1; transform: translateY(0) scale(1); } }
+  @keyframes toast-out { to { opacity:0; transform: translateY(6px) scale(0.96); } }
+
+  /* ---- Odznaka powiadomień ---- */
+  .notif-btn.active { color: var(--green); border-color: var(--green); }
+
+  /* ---- Pasek ikon-narzędzi (szybkie akcje w oknie gry) ---- */
+  .icon-toolbar { display:flex; align-items:center; gap:8px; padding-top: 12px; margin-top: 12px; border-top: 1px dashed var(--border-card); }
+  .icon-toolbar-btn {
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    background:none; border:1px solid var(--border-card); color: var(--ink);
+    width:40px; height:40px; border-radius:10px; cursor:pointer; font-size:16px; flex-shrink:0;
+    transition: background .15s ease, transform .12s ease, border-color .15s ease;
+  }
+  .icon-toolbar-btn:hover { background: var(--card-alt); border-color: var(--gold); }
+  .icon-toolbar-btn:active { transform: scale(0.92); }
+  .icon-toolbar-spacer { flex:1; }
+
+  /* ---- Odznaka rezerwacji na karcie ---- */
+  .reservation-badge {
+    display:inline-flex; align-items:center; gap:5px; font-family:'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--gold); background: rgba(184,147,95,0.12); border: 1px dashed var(--border-card);
+    padding: 4px 9px; border-radius: 20px; margin-top: 7px; cursor:pointer;
+  }
+
+  /* ---- Mini-kalendarz rezerwacji ---- */
+  .cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px; }
+  .cal-head button { background:none; border:1px solid var(--border-card); color: var(--ink); border-radius:8px; width:34px; height:34px; font-size:16px; cursor:pointer; }
+  .cal-head span { font-family:'Fraunces', serif; font-weight:600; font-size:16px; color: var(--ink); text-transform: capitalize; }
+  .cal-grid { display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: auto; grid-auto-rows: 44px; gap: 6px; min-width: 0; width: 100%; }
+  .cal-dow { text-align:center; font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--label); padding-bottom: 4px; }
+  .cal-day {
+    display:flex; align-items:center; justify-content:center; border-radius: 8px;
+    font-family:'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); position:relative;
+    border: 1px solid transparent;
+  }
+  .cal-day.empty { visibility:hidden; }
+  .cal-day.past { color: var(--label); opacity: 0.45; }
+  .cal-day.today { border-color: var(--gold); font-weight:700; }
+  .cal-day.reserved { background: rgba(168,72,58,0.16); color: var(--red); font-weight:600; }
+  .cal-day.selected { background: var(--green); color: #fff; }
+  .cal-legend { display:flex; gap:14px; margin-top:8px; font-size:11px; color: var(--ink-muted); font-family:'JetBrains Mono', monospace; }
+  .cal-legend span { display:flex; align-items:center; gap:5px; }
+  .cal-dot { width:9px; height:9px; border-radius:3px; display:inline-block; }
+  .reservation-row { display:flex; justify-content:space-between; align-items:center; gap:10px; font-family:'JetBrains Mono', monospace; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed var(--border-card); }
+  .reservation-row:last-child { border-bottom:none; }
+  .reservation-row button { background:none; border:none; color: var(--red); cursor:pointer; font-family:'JetBrains Mono', monospace; font-size: 11px; }
+
+  /* ---- Ranking / statystyki graczy ---- */
+  .rank-section-title { font-family:'JetBrains Mono', monospace; font-size: 11px; text-transform:uppercase; letter-spacing:0.06em; color: var(--muted); margin: 18px 0 10px; }
+  .rank-section-title:first-child { margin-top: 0; }
+  .rank-row { display:flex; align-items:center; gap:10px; margin-bottom: 10px; }
+  .rank-position { font-family:'Fraunces', serif; font-weight:700; font-size: 14px; color: var(--label); width: 18px; flex-shrink:0; }
+  .rank-label { display:flex; align-items:center; gap:7px; font-size:13px; color: var(--ink); min-width: 108px; flex-shrink:0; }
+  .rank-bar-track { flex:1; background: var(--card-alt); border-radius: 20px; height: 16px; overflow:hidden; }
+  .rank-bar-fill { height:100%; border-radius:20px; width:0%; transition: width 0.6s cubic-bezier(.2,.7,.3,1); }
+  .rank-count { font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); width: 38px; text-align:right; flex-shrink:0; }
+  .rank-empty { font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--label); }
+
+  /* ---- Dekoracyjne ilustracje po bokach (smok, zamek, pionki i kości, skrzynia z grami, stos pudełek, rycerz z magiem) ---- */
+  .deco-layer {
+    position: fixed; z-index: -1; pointer-events: none;
+    opacity: 0.62;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+  }
+  body.light .deco-layer { opacity: 0.5; filter: drop-shadow(0 6px 14px rgba(22,35,43,0.2)); }
+  .deco-layer svg { display:block; width:100%; height:100%; overflow:visible; }
+  .deco-layer svg * { stroke-linecap: round; stroke-linejoin: round; }
+
+  /* kolory dopasowane do dominującej palety strony (granat/teal + złoto + krem) */
+  .dc-gold   { fill: var(--gold); }
+  .dc-green  { fill: #2e7f9b; }        /* teal – główny kolor obiektów */
+  .dc-red    { fill: #3a6579; }        /* głębszy granatowo-teal (dachy, tunika, skrzynia) */
+  .dc-cream  { fill: var(--card); }
+  .dc-cream2 { fill: var(--card-alt); }
+  .dc-ink    { fill: var(--ink); }
+  .dc-muted  { fill: var(--muted); }
+  .dc-navy   { fill: #1d4b5e; }
+  .dc-line   { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+  .dc-line-gold { fill: none; stroke: var(--gold); stroke-width: 1.4; }
+  .dc-outline { stroke: rgba(8,24,36,0.6); stroke-width: 1.4; }
+
+  .deco-dragon   { top: 5%;  right: 1.5vw; width: 270px; height: 210px; animation: deco-fly 9s ease-in-out infinite; }
+  .deco-castle   { bottom: 3%; left: 1.5vw; width: 220px; height: 240px; }
+  .deco-meeples  { top: 17%; left: 2vw; width: 130px; height: 160px; }
+  .deco-wanderer { bottom: 6%; right: 2vw; width: 190px; height: 170px; animation: deco-bob 7s ease-in-out infinite 0.4s; }
+  .deco-chest    { top: 47%; left: 2vw; width: 190px; height: 160px; transform: translateY(-50%); }
+  .deco-boxes    { top: 47%; right: 2.5vw; width: 180px; height: 170px; transform: translateY(-50%); }
+
+  /* skrzynia z grami */
+  .dc-chest-glow { animation: dc-glow 2.6s ease-in-out infinite; transform-origin: 100px 74px; }
+  .dc-coin-a { animation: dc-coin 2.8s ease-in-out infinite; }
+  .dc-coin-b { animation: dc-coin 2.8s ease-in-out infinite 0.9s; }
+  .dc-coin-c { animation: dc-coin 2.8s ease-in-out infinite 1.8s; }
+  .dc-chest-lid { transform-origin: 30px 78px; animation: dc-lid 6s ease-in-out infinite; }
+
+  /* stos pudełek z klepsydrą */
+  .dc-sand-top    { transform-origin: 90px 62px; animation: dc-sand-top 6s linear infinite; }
+  .dc-sand-bottom { transform-origin: 90px 106px; animation: dc-sand-bottom 6s linear infinite; }
+  .dc-sand-stream { animation: deco-flicker 0.5s ease-in-out infinite; }
+  .dc-card-fan    { transform-origin: 40px 150px; animation: dc-fan 5s ease-in-out infinite; }
+
+  /* smok */
+  .dg-wing-front { transform-origin: 138px 104px; animation: dg-flap 1.7s ease-in-out infinite; }
+  .dg-wing-back  { transform-origin: 126px 108px; animation: dg-flap 1.7s ease-in-out infinite -0.85s; opacity: 0.8; }
+  .dg-tail       { transform-origin: 84px 128px;  animation: dg-tail 3.2s ease-in-out infinite; }
+  .dg-flame-a    { transform-origin: 226px 56px;  animation: dg-fire 0.9s ease-in-out infinite; }
+  .dg-flame-b    { transform-origin: 226px 56px;  animation: dg-fire 0.9s ease-in-out infinite 0.45s; }
+  .dg-smoke      { animation: dg-smoke 3s ease-out infinite; }
+  .dg-smoke-b    { animation-delay: 1.5s; }
+  .dg-eye        { animation: dg-blink 4.5s ease-in-out infinite; transform-origin: 190px 50px; }
+
+  /* zamek */
+  .deco-flag  { transform-origin: 110px 40px; animation: deco-flag 2.6s ease-in-out infinite; }
+  .dc-window  { animation: deco-flicker 1.8s ease-in-out infinite; }
+  .dc-window:nth-child(2) { animation-delay: 0.4s; }
+  .dc-window:nth-child(3) { animation-delay: 0.9s; }
+  .dc-window:nth-child(4) { animation-delay: 1.3s; }
+  .dc-star    { animation: dc-twinkle 2.4s ease-in-out infinite; }
+  .dc-star-b  { animation-delay: 0.8s; }
+  .dc-star-c  { animation-delay: 1.6s; }
+
+  /* pionki i kości */
+  .mp-a { animation: deco-bob 3.4s ease-in-out infinite; }
+  .mp-b { animation: deco-bob 3.4s ease-in-out infinite 0.5s; }
+  .mp-c { animation: deco-bob 3.4s ease-in-out infinite 1s; }
+  .dc-die-a { transform-origin: 34px 128px; animation: dc-roll 6s ease-in-out infinite; }
+  .dc-die-b { transform-origin: 88px 132px; animation: dc-roll 6s ease-in-out infinite -3s; }
+
+  /* rycerz i mag */
+  .dc-sword  { transform-origin: 62px 84px; animation: dc-swing 3s ease-in-out infinite; }
+  .dc-orb    { animation: dc-glow 2s ease-in-out infinite; transform-origin: 150px 34px; }
+  .dc-plume  { transform-origin: 56px 22px; animation: deco-flag 2.6s ease-in-out infinite 0.6s; }
+
+  @keyframes deco-fly {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-16px, -18px) rotate(-3deg); }
+  }
+  @keyframes deco-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes deco-flag {
+    0%, 100% { transform: rotate(-4deg) skewY(0deg); }
+    50% { transform: rotate(8deg) skewY(-6deg); }
+  }
+  @keyframes deco-flicker {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+  @keyframes dg-flap {
+    0%, 100% { transform: rotate(-14deg) scaleY(1); }
+    50% { transform: rotate(12deg) scaleY(0.85); }
+  }
+  @keyframes dg-tail {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(6deg); }
+  }
+  @keyframes dg-fire {
+    0%, 100% { transform: scale(0.85, 0.9); opacity: 0.6; }
+    50% { transform: scale(1.12, 1.08); opacity: 0.95; }
+  }
+  @keyframes dg-smoke {
+    0% { transform: translate(0,0) scale(0.6); opacity: 0; }
+    30% { opacity: 0.5; }
+    100% { transform: translate(14px,-40px) scale(1.4); opacity: 0; }
+  }
+  @keyframes dg-blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+  @keyframes dc-twinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+  @keyframes dc-roll {
+    0%, 40%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-18deg) translateY(-6px); }
+    60% { transform: rotate(12deg) translateY(0); }
+    70% { transform: rotate(-4deg); }
+    80% { transform: rotate(0deg); }
+  }
+  @keyframes dc-swing {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-14deg); }
+  }
+  @keyframes dc-coin {
+    0%, 100% { transform: translateY(0); opacity: 0.9; }
+    50% { transform: translateY(-5px); opacity: 1; }
+  }
+  @keyframes dc-lid {
+    0%, 100% { transform: rotate(-22deg); }
+    50% { transform: rotate(-30deg); }
+  }
+  @keyframes dc-sand-top {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(0.05); }
+  }
+  @keyframes dc-sand-bottom {
+    0% { transform: scaleY(0.05); }
+    100% { transform: scaleY(1); }
+  }
+  @keyframes dc-fan {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-4deg); }
+  }
+  @keyframes dc-glow {
+    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+  @media (max-width: 1280px) {
+    .deco-layer { display: none; }
+  }
+  @media (max-height: 820px) {
+    .deco-chest, .deco-boxes { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deco-layer, .deco-layer * { animation: none !important; }
+  }
+
   /* ---- Poprawki dla telefonów / wąskich ekranów ---- */
   @media (max-width: 600px) {
     .wrap { padding: 24px 14px; }
@@ -330,7 +600,270 @@
   }
 </style>
 </head>
-<body>
+<body class="pre-intro">
+
+<div class="deco-layer deco-dragon" aria-hidden="true">
+  <svg viewBox="0 0 270 200">
+    <!-- dym -->
+    <g class="dc-cream">
+      <circle class="dg-smoke" cx="240" cy="40" r="6" />
+      <circle class="dg-smoke dg-smoke-b" cx="250" cy="34" r="4" />
+    </g>
+    <!-- tylne skrzydło -->
+    <g class="dg-wing-back">
+      <path class="dc-green dc-outline" d="M126 108 C 108 70, 84 54, 56 60 L 70 72 C 56 76, 48 88, 44 102 L 68 92 C 60 104, 60 112, 66 120 L 96 104 C 92 112, 98 116, 108 116 Z"/>
+      <path class="dc-line-gold" d="M126 108 L 70 72 M126 108 L 68 92 M126 108 L 96 104"/>
+    </g>
+    <!-- ogon -->
+    <g class="dg-tail">
+      <path class="dc-green dc-outline" d="M88 126 C 58 122, 38 140, 22 166 L 32 174 C 48 152, 62 142, 86 142 Z"/>
+      <path class="dc-gold dc-outline" d="M28 168 L 10 160 L 18 182 L 34 178 Z"/>
+      <path class="dc-gold" d="M64 130 l3 -8 l3 8 z M50 136 l3 -8 l3 8 z"/>
+    </g>
+    <!-- nogi -->
+    <path class="dc-green dc-outline" d="M112 146 L 106 166 L 120 166 L 122 150 Z M150 146 L 146 166 L 160 166 L 162 150 Z"/>
+    <path class="dc-gold" d="M104 166 l-6 4 l8 0 z M112 166 l-4 5 l8 0 z M144 166 l-6 4 l8 0 z M152 166 l-4 5 l8 0 z"/>
+    <!-- tułów i brzuch -->
+    <ellipse class="dc-green dc-outline" cx="130" cy="125" rx="50" ry="28"/>
+    <ellipse class="dc-gold" cx="132" cy="136" rx="36" ry="13" opacity="0.85"/>
+    <path class="dc-line-gold" d="M104 134 h56 M100 140 h64 M106 146 h52"/>
+    <!-- kolce na grzbiecie -->
+    <path class="dc-gold dc-outline" d="M96 106 l5 -12 l5 12 z M112 100 l5 -13 l5 13 z M130 98 l5 -14 l5 14 z M148 100 l5 -13 l5 13 z"/>
+    <!-- szyja -->
+    <path class="dc-green dc-outline" d="M164 106 C 178 94, 184 78, 178 60 L 196 58 C 202 82, 194 106, 178 120 Z"/>
+    <path class="dc-gold" d="M178 84 h14 M176 94 h14 M174 104 h12" style="stroke: var(--gold); stroke-width: 3; fill:none"/>
+    <!-- głowa -->
+    <path class="dc-green dc-outline" d="M170 46 C 172 38, 186 34, 200 40 L 226 46 L 218 54 L 228 60 L 202 66 C 188 70, 174 68, 170 60 Z"/>
+    <path class="dc-gold dc-outline" d="M182 42 L 172 24 L 190 38 Z M196 40 L 194 24 L 204 40 Z"/>
+    <g class="dg-eye">
+      <ellipse class="dc-gold" cx="190" cy="50" rx="4" ry="3.6"/>
+      <ellipse class="dc-ink" cx="191" cy="50" rx="1.3" ry="2.6"/>
+    </g>
+    <circle class="dc-ink" cx="220" cy="50" r="1.4"/>
+    <path class="dc-cream" d="M212 58 l3 5 l3 -5 z M204 62 l3 5 l3 -5 z"/>
+    <!-- przednie skrzydło -->
+    <g class="dg-wing-front">
+      <path class="dc-green dc-outline" d="M138 104 C 118 60, 90 40, 58 44 L 74 58 C 58 60, 48 72, 42 88 L 68 80 C 58 92, 56 102, 60 112 L 92 96 C 84 104, 86 110, 98 114 Z"/>
+      <path class="dc-line-gold" d="M138 104 L 74 58 M138 104 L 68 80 M138 104 L 92 96"/>
+    </g>
+    <!-- ogień -->
+    <path class="dc-gold dg-flame-a" d="M228 54 C 244 42, 258 44, 266 36 C 262 50, 256 60, 246 64 C 254 66, 260 72, 264 80 C 252 76, 240 68, 228 60 Z"/>
+    <path class="dc-cream dg-flame-b" d="M228 55 C 240 48, 250 48, 256 44 C 252 52, 248 58, 242 61 C 248 63, 252 66, 254 72 C 246 68, 236 62, 228 59 Z"/>
+  </svg>
+</div>
+
+<div class="deco-layer deco-castle" aria-hidden="true">
+  <svg viewBox="0 0 220 240">
+    <defs>
+      <linearGradient id="dcSky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2a8bb0"/>
+        <stop offset="0.55" stop-color="#0f5268"/>
+        <stop offset="1" stop-color="#081824"/>
+      </linearGradient>
+      <linearGradient id="dcHill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2e7f9b"/>
+        <stop offset="1" stop-color="#2c4a58"/>
+      </linearGradient>
+      <clipPath id="dcClip"><circle cx="110" cy="122" r="104"/></clipPath>
+    </defs>
+    <!-- niebiesko-gradientowe tło (medalion) -->
+    <circle cx="110" cy="122" r="104" fill="url(#dcSky)"/>
+    <circle cx="110" cy="122" r="104" fill="none" stroke="var(--gold)" stroke-width="2" opacity="0.7"/>
+    <!-- księżyc i gwiazdy -->
+    <circle class="dc-cream" cx="160" cy="54" r="14"/>
+    <circle cx="154" cy="50" r="12" fill="#1c6d8a" opacity="0.7"/>
+    <circle class="dc-cream dc-star" cx="40" cy="60" r="2"/>
+    <circle class="dc-cream dc-star dc-star-b" cx="72" cy="36" r="1.6"/>
+    <circle class="dc-cream dc-star dc-star-c" cx="190" cy="96" r="1.8"/>
+    <circle class="dc-cream dc-star dc-star-b" cx="28" cy="110" r="1.4"/>
+    <!-- wzgórze -->
+    <g clip-path="url(#dcClip)">
+      <path fill="url(#dcHill)" d="M0 232 C 40 186, 90 178, 110 180 C 140 182, 180 190, 220 226 L 220 240 L 0 240 Z"/>
+    </g>
+    <!-- zamek: wieże boczne -->
+    <rect class="dc-cream2 dc-outline" x="34" y="98" width="30" height="94" rx="1"/>
+    <rect class="dc-cream2 dc-outline" x="156" y="98" width="30" height="94" rx="1"/>
+    <path class="dc-red dc-outline" d="M30 100 L 49 62 L 68 100 Z M152 100 L 171 62 L 190 100 Z"/>
+    <!-- mur -->
+    <rect class="dc-cream2 dc-outline" x="64" y="132" width="92" height="60"/>
+    <path class="dc-cream2 dc-outline" d="M64 132 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h2"/>
+    <!-- donżon -->
+    <rect class="dc-cream dc-outline" x="88" y="90" width="44" height="46"/>
+    <path class="dc-cream dc-outline" d="M88 90 v-8 h8 v8 h8 v-8 h8 v8 h8 v-8 h8 v8"/>
+    <path class="dc-red dc-outline" d="M84 82 L 110 48 L 136 82 Z"/>
+    <!-- maszt i flaga -->
+    <path class="dc-line" d="M110 48 V 26" style="stroke: var(--gold); stroke-width: 2"/>
+    <path class="dc-gold deco-flag" d="M110 27 L 136 33 L 110 40 Z"/>
+    <!-- kamienie -->
+    <path class="dc-line" d="M70 150 h12 M90 150 h12 M124 150 h12 M144 150 h8 M80 164 h12 M110 164 h14 M140 164 h10 M70 178 h10 M94 178 h10 M128 178 h10" style="stroke: var(--border-card); stroke-width: 1.4"/>
+    <!-- okna (migoczą) -->
+    <g class="dc-gold">
+      <rect class="dc-window" x="45" y="116" width="8" height="12" rx="4"/>
+      <rect class="dc-window" x="167" y="116" width="8" height="12" rx="4"/>
+      <rect class="dc-window" x="98" y="104" width="7" height="10" rx="3.5"/>
+      <rect class="dc-window" x="115" y="104" width="7" height="10" rx="3.5"/>
+      <rect class="dc-window" x="45" y="152" width="8" height="12" rx="4"/>
+      <rect class="dc-window" x="167" y="152" width="8" height="12" rx="4"/>
+    </g>
+    <!-- brama -->
+    <path class="dc-ink" d="M98 192 v-24 a12 12 0 0 1 24 0 v24 Z"/>
+    <path class="dc-line-gold" d="M110 168 v24 M104 178 h12"/>
+  </svg>
+</div>
+
+<div class="deco-layer deco-meeples" aria-hidden="true">
+  <svg viewBox="0 0 130 160">
+    <defs>
+      <symbol id="dcMeeple" viewBox="0 0 36 54">
+        <path class="dc-outline" d="M18 2c6 0 9 6 6.6 10.4L32 28c1.6 3-0.6 6.4-4 6.4h-4.4V49H12.4V34.4H8c-3.4 0-5.6-3.4-4-6.4l7.4-15.6C9 8 12 2 18 2z"/>
+        <circle class="dc-ink" cx="15" cy="12" r="1.3"/>
+        <circle class="dc-ink" cx="21" cy="12" r="1.3"/>
+        <path class="dc-line" d="M15 16 q3 2.5 6 0" style="stroke-width:1.2"/>
+      </symbol>
+    </defs>
+    <!-- pionki (podskakują naprzemiennie) -->
+    <g class="mp-a dc-gold"><use href="#dcMeeple" x="4" y="14" width="40" height="60"/></g>
+    <g class="mp-b dc-cream"><use href="#dcMeeple" x="42" y="4" width="46" height="69"/></g>
+    <g class="mp-c dc-green"><use href="#dcMeeple" x="88" y="16" width="40" height="60"/></g>
+    <!-- kości -->
+    <g class="dc-die-a">
+      <rect class="dc-cream dc-outline" x="16" y="110" width="36" height="36" rx="6"/>
+      <circle class="dc-ink" cx="26" cy="120" r="3"/>
+      <circle class="dc-ink" cx="42" cy="120" r="3"/>
+      <circle class="dc-gold" cx="34" cy="128" r="3"/>
+      <circle class="dc-ink" cx="26" cy="136" r="3"/>
+      <circle class="dc-ink" cx="42" cy="136" r="3"/>
+    </g>
+    <g class="dc-die-b">
+      <rect class="dc-cream dc-outline" x="70" y="114" width="36" height="36" rx="6"/>
+      <circle class="dc-ink" cx="80" cy="124" r="3"/>
+      <circle class="dc-ink" cx="96" cy="124" r="3"/>
+      <circle class="dc-ink" cx="80" cy="140" r="3"/>
+      <circle class="dc-ink" cx="96" cy="140" r="3"/>
+    </g>
+    <ellipse class="dc-ink" cx="62" cy="154" rx="52" ry="3" opacity="0.35"/>
+  </svg>
+</div>
+
+<div class="deco-layer deco-wanderer" aria-hidden="true">
+  <svg viewBox="0 0 190 170">
+    <ellipse class="dc-ink" cx="96" cy="164" rx="80" ry="4" opacity="0.35"/>
+    <!-- RYCERZ -->
+    <!-- miecz (kołysze się) -->
+    <g class="dc-sword">
+      <path class="dc-cream dc-outline" d="M62 84 L 26 22 L 32 18 L 66 80 Z"/>
+      <path class="dc-gold dc-outline" d="M52 84 L 74 72 L 76 78 L 56 90 Z"/>
+      <path class="dc-ink" d="M62 88 L 70 100 L 66 102 L 58 90 Z"/>
+    </g>
+    <!-- tułów, tunika -->
+    <path class="dc-red dc-outline" d="M52 62 C 40 68, 36 84, 36 104 L 36 124 L 84 124 L 84 104 C 84 84, 80 68, 68 62 Z"/>
+    <path class="dc-gold" d="M60 76 l4 8 l-4 8 l-4 -8 z"/>
+    <path class="dc-line-gold" d="M40 96 h40"/>
+    <!-- nogi -->
+    <path class="dc-muted dc-outline" d="M42 124 v28 h14 v-28 Z M64 124 v28 h14 v-28 Z"/>
+    <path class="dc-ink" d="M40 152 h18 v8 h-22 Z M62 152 h18 v8 h-14 Z"/>
+    <!-- głowa i hełm -->
+    <circle class="dc-cream2 dc-outline" cx="60" cy="44" r="15"/>
+    <path class="dc-muted dc-outline" d="M45 44 a15 15 0 0 1 30 0 v4 h-30 Z"/>
+    <path class="dc-line" d="M50 46 h20"/>
+    <path class="dc-gold dc-plume" d="M56 22 C 66 6, 82 8, 90 18 C 78 14, 68 20, 62 30 Z"/>
+    <!-- tarcza -->
+    <path class="dc-green dc-outline" d="M76 84 L 106 84 L 106 106 C 106 118, 98 126, 91 130 C 84 126, 76 118, 76 106 Z"/>
+    <path class="dc-gold" d="M88 90 h6 v10 h10 v6 h-10 v14 h-6 v-14 h-10 v-6 h10 z"/>
+    <!-- MAG -->
+    <!-- laska z kulą -->
+    <path class="dc-line" d="M148 40 V 158" style="stroke: var(--gold); stroke-width: 3"/>
+    <g class="dc-orb">
+      <circle class="dc-muted" cx="150" cy="34" r="12" opacity="0.5"/>
+      <circle class="dc-cream" cx="150" cy="34" r="7"/>
+    </g>
+    <!-- szata -->
+    <path class="dc-muted dc-outline" d="M128 70 C 112 92, 106 124, 104 158 L 176 158 C 174 124, 168 92, 152 70 Z"/>
+    <path class="dc-gold" d="M136 100 l3 6 l-3 6 l-3 -6 z M146 118 l3 6 l-3 6 l-3 -6 z M158 96 l3 6 l-3 6 l-3 -6 z"/>
+    <!-- broda i twarz -->
+    <circle class="dc-cream2 dc-outline" cx="140" cy="58" r="12"/>
+    <path class="dc-cream dc-outline" d="M130 62 C 128 78, 134 90, 140 96 C 146 90, 152 78, 150 62 C 146 66, 134 66, 130 62 Z"/>
+    <circle class="dc-ink" cx="136" cy="56" r="1.4"/>
+    <circle class="dc-ink" cx="144" cy="56" r="1.4"/>
+    <!-- kapelusz -->
+    <path class="dc-green dc-outline" d="M122 52 L 158 52 L 140 6 Z"/>
+    <path class="dc-green dc-outline" d="M114 52 L 166 52 L 164 58 L 116 58 Z"/>
+    <path class="dc-gold" d="M138 28 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z"/>
+  </svg>
+</div>
+
+<div class="deco-layer deco-chest" aria-hidden="true">
+  <svg viewBox="0 0 190 160">
+    <defs>
+      <radialGradient id="dcChestGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="#B8935F" stop-opacity="0.55"/>
+        <stop offset="1" stop-color="#B8935F" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <ellipse class="dc-ink" cx="96" cy="154" rx="78" ry="4" opacity="0.35"/>
+    <!-- poświata ze skrzyni -->
+    <ellipse class="dc-chest-glow" cx="100" cy="74" rx="66" ry="40" fill="url(#dcChestGlow)"/>
+    <!-- otwarta pokrywa (z tyłu) -->
+    <g class="dc-chest-lid">
+      <path class="dc-red dc-outline" d="M30 78 C 30 52, 58 40, 100 40 C 142 40, 170 52, 170 78 Z"/>
+      <path class="dc-gold dc-outline" d="M56 78 C 56 58, 70 46, 72 46 L 84 46 C 84 46, 70 58, 70 78 Z M118 78 C 118 58, 106 46, 106 46 L 118 46 C 118 46, 132 58, 132 78 Z"/>
+      <rect class="dc-cream2" x="30" y="72" width="140" height="6" opacity="0.6"/>
+    </g>
+    <!-- zawartość: karty, kości, pionek, monety -->
+    <g transform="translate(0,0)">
+      <rect class="dc-cream dc-outline" x="52" y="58" width="26" height="36" rx="3" transform="rotate(-14 65 76)"/>
+      <rect class="dc-cream dc-outline" x="64" y="56" width="26" height="36" rx="3" transform="rotate(-4 77 74)"/>
+      <path class="dc-gold" d="M76 66 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z"/>
+      <rect class="dc-cream dc-outline" x="112" y="62" width="24" height="24" rx="5" transform="rotate(12 124 74)"/>
+      <circle class="dc-ink" cx="119" cy="70" r="2.2"/><circle class="dc-ink" cx="130" cy="79" r="2.2"/><circle class="dc-gold" cx="124.5" cy="74.5" r="2.2"/>
+      <path class="dc-green dc-outline" d="M98 52c4 0 6 4 4.4 7L107 68c1 2-0.4 4.2-2.7 4.2H101v10h-6v-10h-3.3c-2.3 0-3.7-2.2-2.7-4.2L93.6 59C92 56 94 52 98 52z"/>
+      <circle class="dc-gold dc-outline dc-coin-a" cx="46" cy="86" r="6"/>
+      <circle class="dc-gold dc-outline dc-coin-b" cx="150" cy="84" r="6"/>
+      <circle class="dc-gold dc-outline dc-coin-c" cx="138" cy="92" r="5"/>
+    </g>
+    <!-- korpus skrzyni -->
+    <rect class="dc-red dc-outline" x="30" y="86" width="140" height="62" rx="5"/>
+    <rect class="dc-gold dc-outline" x="56" y="86" width="14" height="62"/>
+    <rect class="dc-gold dc-outline" x="118" y="86" width="14" height="62"/>
+    <rect class="dc-cream2" x="30" y="86" width="140" height="5" opacity="0.5"/>
+    <path class="dc-line" d="M42 100 h8 M42 112 h8 M42 124 h8 M42 136 h8 M144 100 h10 M144 112 h10 M144 124 h10 M144 136 h10" style="stroke: rgba(8,24,36,0.45)"/>
+    <!-- zamek -->
+    <rect class="dc-gold dc-outline" x="84" y="88" width="22" height="24" rx="4"/>
+    <circle class="dc-ink" cx="95" cy="98" r="2.6"/>
+    <path class="dc-ink" d="M94 99 h2 v7 h-2 z"/>
+  </svg>
+</div>
+
+<div class="deco-layer deco-boxes" aria-hidden="true">
+  <svg viewBox="0 0 180 170">
+    <ellipse class="dc-ink" cx="94" cy="164" rx="76" ry="4" opacity="0.35"/>
+    <!-- stos pudełek z grami -->
+    <rect class="dc-red dc-outline" x="52" y="134" width="112" height="28" rx="3"/>
+    <rect class="dc-gold" x="60" y="146" width="44" height="4" rx="2"/>
+    <rect class="dc-cream2" x="112" y="146" width="20" height="4" rx="2"/>
+    <rect class="dc-green dc-outline" x="46" y="108" width="112" height="26" rx="3" transform="rotate(-2 102 121)"/>
+    <rect class="dc-cream" x="56" y="119" width="52" height="4" rx="2" transform="rotate(-2 102 121)"/>
+    <rect class="dc-gold" x="116" y="119" width="14" height="4" rx="2" transform="rotate(-2 102 121)"/>
+    <rect class="dc-navy dc-outline" x="58" y="84" width="104" height="24" rx="3" transform="rotate(1.5 110 96)"/>
+    <rect class="dc-gold" x="66" y="94" width="36" height="4" rx="2" transform="rotate(1.5 110 96)"/>
+    <rect class="dc-cream2" x="108" y="94" width="30" height="4" rx="2" transform="rotate(1.5 110 96)"/>
+    <!-- klepsydra na stosie -->
+    <rect class="dc-gold dc-outline" x="66" y="30" width="48" height="6" rx="2"/>
+    <rect class="dc-gold dc-outline" x="66" y="112" width="48" height="6" rx="2" transform="translate(0,-32)"/>
+    <path class="dc-line-gold" d="M70 36 V 80 M110 36 V 80" style="stroke-width:2.6"/>
+    <path fill="rgba(240,234,217,0.14)" class="dc-outline" d="M72 36 C 72 56, 88 58, 90 60 C 92 58, 108 56, 108 36 Z M72 80 C 72 60, 88 58, 90 56 C 92 58, 108 60, 108 80 Z"/>
+    <path class="dc-cream dc-sand-top" d="M76 44 C 76 56, 88 58, 90 60 C 92 58, 104 56, 104 44 Z"/>
+    <path class="dc-cream dc-sand-bottom" d="M74 80 C 74 70, 86 66, 90 62 C 94 66, 106 70, 106 80 Z"/>
+    <path class="dc-sand-stream" d="M90 60 V 78" style="stroke: var(--card); stroke-width: 1.4; fill:none"/>
+    <!-- wachlarz kart oparty o pudełka -->
+    <g class="dc-card-fan">
+      <rect class="dc-cream dc-outline" x="18" y="108" width="26" height="40" rx="3" transform="rotate(-24 31 148)"/>
+      <rect class="dc-cream dc-outline" x="24" y="106" width="26" height="40" rx="3" transform="rotate(-10 37 148)"/>
+      <rect class="dc-cream dc-outline" x="30" y="106" width="26" height="40" rx="3" transform="rotate(4 43 148)"/>
+      <path class="dc-gold" d="M41 118 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z" transform="rotate(4 43 148)"/>
+    </g>
+  </svg>
+</div>
 
 <div class="wrap">
   <header>
@@ -344,7 +877,9 @@
     </div>
     <div class="header-actions">
       <span class="viewer-badge" id="viewerBadge" style="display:none"><span class="viewer-dot"></span><span id="viewerCount"></span></span>
+      <button class="btn btn-outline notif-btn" id="notifToggle" title="Powiadomienia o terminach zwrotu">🔔</button>
       <button class="btn btn-outline" id="themeToggle" title="Zmień motyw">☀️</button>
+      <button class="btn btn-outline" id="rankingBtn">🏆 Ranking</button>
       <button class="btn btn-outline" id="shareBtn">🔗 Udostępnij</button>
       <button class="btn btn-outline" id="importBtn">📋 Import listy</button>
       <button class="btn btn-gold" id="addBtn">+ Dodaj grę</button>
@@ -383,7 +918,7 @@
     </label>
   </div>
 
-  <div class="filter-panel" id="filterPanel" style="display:none">
+  <div class="filter-panel" id="filterPanel">
     <select class="ctrl-select" id="filterStatus">
       <option value="">Status: wszystkie</option>
       <option value="available">Dostępne</option>
@@ -409,6 +944,7 @@
 </div>
 
 <div id="modalRoot"></div>
+<div class="toast-stack" id="toastStack"></div>
 
 <!-- ====================== KONFIGURACJA FIREBASE ======================
      Podmień poniższy obiekt na dane skopiowane z konsoli Firebase
@@ -462,6 +998,23 @@ function daysUntil(d) {
   const today = new Date(todayStr() + "T00:00:00");
   const target = new Date(d + "T00:00:00");
   return Math.round((target - today) / 86400000);
+}
+
+// ---- Pomocnicze funkcje do rezerwacji ----
+function rangesOverlap(aFrom, aTo, bFrom, bTo) {
+  return aFrom <= bTo && bFrom <= aTo;
+}
+function upcomingReservations(g) {
+  const today = todayStr();
+  return (g.reservations || [])
+    .filter(r => r.dateTo >= today)
+    .sort((a, b) => a.dateFrom.localeCompare(b.dateFrom));
+}
+function nextReservation(g) {
+  return upcomingReservations(g)[0] || null;
+}
+function findReservationConflict(g, dateFrom, dateTo, excludeId) {
+  return (g.reservations || []).find(r => r.id !== excludeId && rangesOverlap(r.dateFrom, r.dateTo, dateFrom, dateTo)) || null;
 }
 
 let games = [];
@@ -553,7 +1106,7 @@ function resizeImageFile(file, maxWidth) {
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.88));
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
       };
       img.src = reader.result;
     };
@@ -651,6 +1204,8 @@ function matchesFilters(g) {
 function cardHtml(g) {
   const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
   const loanCount = (g.history || []).length;
+  const nextRes = nextReservation(g);
+  const resBadge = nextRes ? `<div class="reservation-badge" onclick="openReservations('${g.id}')">📅 ${daysUntil(nextRes.dateFrom) === 0 ? 'dziś' : fmtDate(nextRes.dateFrom)} → ${escapeHtml(nextRes.person)}</div>` : '';
   const statusHtml = g.status === 'available'
     ? `<div class="status-row">
          <span class="status-available">✓ Dostępna</span>
@@ -693,12 +1248,13 @@ function cardHtml(g) {
         </div>
         <button class="edit-btn" onclick="openEdit('${g.id}')" title="Edytuj">✎</button>
       </div>
-      <div class="card-body">${statusHtml}</div>
+      <div class="card-body">${statusHtml}${resBadge}</div>
       <div class="card-footer">
         <span>#${g.id}${loanCount ? ` <span class="loan-count">· wypożyczano ${loanCount}x</span>` : ''}</span>
-        <div style="display:flex; gap:12px">
-          <button class="qr-btn" onclick="openHistory('${g.id}')">🕑 Historia</button>
-          <button class="qr-btn" onclick="openQr('${g.id}')">▦ QR</button>
+        <div style="display:flex; gap:6px">
+          <button class="icon-toolbar-btn" style="width:32px; height:32px; font-size:14px" onclick="openReservations('${g.id}')" title="Rezerwuj termin">📅</button>
+          <button class="icon-toolbar-btn" style="width:32px; height:32px; font-size:14px" onclick="openHistory('${g.id}')" title="Historia wypożyczeń">🕑</button>
+          <button class="icon-toolbar-btn" style="width:32px; height:32px; font-size:14px" onclick="openQr('${g.id}')" title="Kod QR">▦</button>
         </div>
       </div>
     </div>
@@ -866,6 +1422,19 @@ function confirmAction(message, onConfirm) {
   document.getElementById('confirm-yes').onclick = () => { closeModal(); onConfirm(); };
 }
 
+function toast(message, kind) {
+  const stack = document.getElementById('toastStack');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  const icon = kind === 'error' ? '⚠️' : '✓';
+  el.innerHTML = `<span>${icon}</span><span>${escapeHtml(message)}</span>`;
+  stack.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('leaving');
+    setTimeout(() => el.remove(), 220);
+  }, 3200);
+}
+
 function spawnConfetti() {
   const colors = ['#B8935F', '#4F7A57', '#A8483A', '#F0EAD9'];
   for (let i = 0; i < 24; i++) {
@@ -950,11 +1519,11 @@ function openAdd() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      pendingCover = await resizeImageFile(file, 640);
+      pendingCover = await resizeImageFile(file, 1000);
       document.getElementById('f-cover-img').src = pendingCover;
       document.getElementById('f-cover-preview').style.display = 'flex';
     } catch (err) {
-      alert('Nie udało się wczytać zdjęcia: ' + err.message);
+      toast('Nie udało się wczytać zdjęcia: ' + err.message, 'error');
     }
   };
   document.getElementById('f-cover-clear').onclick = () => {
@@ -977,7 +1546,7 @@ function openAdd() {
     const duration = document.getElementById('f-duration').value.trim();
     const players = document.getElementById('f-players').value.trim();
     const tags = document.getElementById('f-tags').value.trim();
-    const newGame = { id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, hasCover: !!pendingCover, category, duration, players, tags, history: [] };
+    const newGame = { id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '', notes, bggUrl, hasCover: !!pendingCover, category, duration, players, tags, history: [], reservations: [] };
     games.push(newGame);
     closeModal();
     saveGameWithCover(newGame, pendingCover);
@@ -1052,11 +1621,11 @@ function openEdit(id) {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      pendingCover = await resizeImageFile(file, 640);
+      pendingCover = await resizeImageFile(file, 1000);
       document.getElementById('f-cover-img').src = pendingCover;
       document.getElementById('f-cover-preview').style.display = 'flex';
     } catch (err) {
-      alert('Nie udało się wczytać zdjęcia: ' + err.message);
+      toast('Nie udało się wczytać zdjęcia: ' + err.message, 'error');
     }
   };
   document.getElementById('f-cover-clear').onclick = () => {
@@ -1187,13 +1756,138 @@ function openHistory(id) {
   `);
 }
 
+function openReservations(id) {
+  const g = games.find(x => x.id === id);
+  if (!g.reservations) g.reservations = [];
+  let viewDate = new Date();
+  viewDate.setDate(1);
+
+  openModal(`
+    <div class="modal modal-wide">
+      <div class="modal-head"><h2 class="display">Rezerwacje: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="cal-head">
+          <button type="button" id="cal-prev">‹</button>
+          <span id="cal-label"></span>
+          <button type="button" id="cal-next">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <span><span class="cal-dot" style="background:rgba(168,72,58,0.3)"></span>Zarezerwowane</span>
+          <span><span class="cal-dot" style="background:transparent;border:1px solid var(--gold)"></span>Dziś</span>
+        </div>
+        <div style="margin-top:16px">
+          <div class="field-hint" style="margin-bottom:6px">Nadchodzące rezerwacje</div>
+          <div id="res-list"></div>
+        </div>
+        <div style="border-top:1px dashed var(--border-card); margin-top:8px; padding-top:14px; display:flex; flex-direction:column; gap:12px">
+          <div class="field" id="f-res-name-field"><label>Kto rezerwuje</label><input id="f-res-name" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
+          <div style="display:flex; gap:10px">
+            <div class="field" style="flex:1" id="f-res-from-field"><label>Od</label><input id="f-res-from" type="date" min="${todayStr()}"><div class="field-error">Wybierz poprawny zakres dat</div></div>
+            <div class="field" style="flex:1"><label>Do</label><input id="f-res-to" type="date" min="${todayStr()}"></div>
+          </div>
+          <div class="field-hint" id="f-res-status"></div>
+        </div>
+      </div>
+      <div class="modal-foot" style="justify-content:flex-end">
+        <button class="btn btn-green" id="f-res-save">📅 Zarezerwuj termin</button>
+      </div>
+    </div>
+  `);
+
+  function renderCalendar() {
+    const label = viewDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+    document.getElementById('cal-label').textContent = label;
+    const year = viewDate.getFullYear(), month = viewDate.getMonth();
+    const firstDow = (new Date(year, month, 1).getDay() + 6) % 7; // Poniedziałek = 0
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = todayStr();
+    let cells = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+    for (let i = 0; i < firstDow; i++) cells += `<div class="cal-day empty"></div>`;
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const isReserved = g.reservations.some(r => dateStr >= r.dateFrom && dateStr <= r.dateTo);
+      const isPast = dateStr < today;
+      const isToday = dateStr === today;
+      cells += `<div class="cal-day ${isReserved ? 'reserved' : ''} ${isPast ? 'past' : ''} ${isToday ? 'today' : ''}">${day}</div>`;
+    }
+    document.getElementById('cal-grid').innerHTML = cells;
+  }
+
+  function renderResList() {
+    const list = upcomingReservations(g);
+    document.getElementById('res-list').innerHTML = list.length
+      ? list.map(r => `
+          <div class="reservation-row">
+            <span style="display:flex; align-items:center; gap:7px">${avatarHtml(r.person)}<b style="color:var(--ink)">${escapeHtml(r.person)}</b> · ${fmtDate(r.dateFrom)} → ${fmtDate(r.dateTo)}</span>
+            <button onclick="removeReservation('${g.id}','${r.id}')">Usuń</button>
+          </div>`).join('')
+      : `<div class="rank-empty">Brak nadchodzących rezerwacji.</div>`;
+  }
+
+  renderCalendar();
+  renderResList();
+
+  document.getElementById('cal-prev').onclick = () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); };
+  document.getElementById('cal-next').onclick = () => { viewDate.setMonth(viewDate.getMonth() + 1); renderCalendar(); };
+
+  document.getElementById('f-res-save').onclick = () => {
+    const person = document.getElementById('f-res-name').value.trim();
+    const from = document.getElementById('f-res-from').value;
+    const to = document.getElementById('f-res-to').value || from;
+    const nameField = document.getElementById('f-res-name-field');
+    const fromField = document.getElementById('f-res-from-field');
+    const statusEl = document.getElementById('f-res-status');
+    nameField.classList.remove('invalid');
+    fromField.classList.remove('invalid');
+    statusEl.textContent = '';
+    statusEl.style.color = '';
+
+    if (!person) {
+      nameField.classList.add('invalid', 'shake');
+      document.getElementById('f-res-name').focus();
+      setTimeout(() => nameField.classList.remove('shake'), 300);
+      return;
+    }
+    if (!from || to < from) {
+      fromField.classList.add('invalid', 'shake');
+      setTimeout(() => fromField.classList.remove('shake'), 300);
+      return;
+    }
+    const conflict = findReservationConflict(g, from, to);
+    if (conflict) {
+      statusEl.style.color = '#A8483A';
+      statusEl.textContent = `⚠ Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)})`;
+      return;
+    }
+    g.reservations.push({ id: uid(), person, dateFrom: from, dateTo: to });
+    saveGameMeta(g);
+    renderCalendar();
+    renderResList();
+    document.getElementById('f-res-name').value = '';
+    document.getElementById('f-res-from').value = '';
+    document.getElementById('f-res-to').value = '';
+    toast('Zarezerwowano termin dla ' + person);
+    render();
+  };
+}
+
+function removeReservation(gameId, resId) {
+  const g = games.find(x => x.id === gameId);
+  g.reservations = (g.reservations || []).filter(r => r.id !== resId);
+  saveGameMeta(g);
+  closeModal();
+  openReservations(gameId);
+  render();
+}
+
 function openQuickActions(id) {
   const g = games.find(x => x.id === id);
   const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
   const loanCount = (g.history || []).length;
   openModal(`
     <div class="modal">
-      ${g.hasCover ? `<img data-cover-id="${g.id}" alt="Okładka" style="width:100%; max-height:220px; object-fit:cover; display:block; background:var(--card-alt);">` : ''}
+      ${g.hasCover ? `<img data-cover-id="${g.id}" alt="Okładka" style="width:100%; max-height:280px; object-fit:cover; display:block; background:var(--card-alt);">` : ''}
       <div class="modal-head"><h2 class="display">${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
         ${g.notes ? `<p style="margin:0; font-size:13px; color:var(--ink-muted)">${escapeHtml(g.notes)}</p>` : ''}
@@ -1211,18 +1905,21 @@ function openQuickActions(id) {
           : `<div class="borrow-info" style="display:flex; align-items:center; gap:8px">${avatarHtml(g.borrower)}<span><span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span><br>Kto: <b>${escapeHtml(g.borrower)}</b><br>Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}${(g.extensions || []).length ? ' · przedłużono ' + g.extensions.length + 'x' : ''}</span></div>`}
         </div>
         ${loanCount ? `<div class="loan-count" style="margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:11px">Wypożyczano łącznie ${loanCount}x</div>` : ''}
+        ${(() => { const nr = nextReservation(g); return nr ? `<div class="reservation-badge" onclick="openReservations('${g.id}')" style="margin-top:8px">📅 ${daysUntil(nr.dateFrom) === 0 ? 'dziś' : fmtDate(nr.dateFrom)} → ${escapeHtml(nr.person)}</div>` : ''; })()}
+        <div class="icon-toolbar">
+          <button class="icon-toolbar-btn" onclick="openReservations('${id}')" title="Rezerwuj termin">📅</button>
+          <button class="icon-toolbar-btn" onclick="openHistory('${id}')" title="Historia wypożyczeń">🕑</button>
+          <button class="icon-toolbar-btn" onclick="openQr('${id}')" title="Kod QR">▦</button>
+          <span class="icon-toolbar-spacer"></span>
+          <button class="icon-toolbar-btn" onclick="openEdit('${id}')" title="Edytuj grę">✎</button>
+        </div>
       </div>
       <div class="modal-foot">
-        <div style="display:flex; gap:14px">
-          <button class="qr-btn" onclick="openHistory('${id}')">🕑 Historia</button>
-          <button class="qr-btn" onclick="openQr('${id}')">▦ QR</button>
-          <button class="edit-btn" onclick="openEdit('${id}')" title="Edytuj">✎</button>
-        </div>
         ${g.status === 'available'
-          ? `<button class="btn btn-dark" onclick="openBorrow('${id}')">Wypożycz</button>`
-          : `<div style="display:flex; gap:8px">
-               <button class="btn btn-outline btn-sm" onclick="openExtend('${id}')">⏳ Przedłuż</button>
-               <button class="btn btn-green" onclick="returnGame('${id}'); closeModal()">↺ Zwrot</button>
+          ? `<button class="btn btn-dark" style="width:100%; justify-content:center" onclick="openBorrow('${id}')">Wypożycz</button>`
+          : `<div style="display:flex; gap:8px; width:100%">
+               <button class="btn btn-outline" style="flex:1; justify-content:center" onclick="openExtend('${id}')">⏳ Przedłuż</button>
+               <button class="btn btn-green" style="flex:1; justify-content:center" onclick="returnGame('${id}'); closeModal()">↺ Zwrot</button>
              </div>`}
       </div>
     </div>
@@ -1244,6 +1941,78 @@ function openQr(id) {
       </div>
     </div>
   `);
+}
+
+function openStats() {
+  const borrowerCounts = new Map();
+  const gameCounts = new Map();
+  let totalLoans = 0;
+  let totalDurationDays = 0, durationSamples = 0;
+
+  games.forEach(g => {
+    const hist = g.history || [];
+    let count = hist.length;
+    hist.forEach(h => {
+      if (h.borrower) borrowerCounts.set(h.borrower, (borrowerCounts.get(h.borrower) || 0) + 1);
+      if (h.borrowedDate && h.returnedDate) {
+        const days = Math.max(0, (new Date(h.returnedDate) - new Date(h.borrowedDate)) / 86400000);
+        totalDurationDays += days;
+        durationSamples++;
+      }
+    });
+    if (g.status === 'borrowed' && g.borrower) {
+      count++;
+      borrowerCounts.set(g.borrower, (borrowerCounts.get(g.borrower) || 0) + 1);
+    }
+    if (count > 0) gameCounts.set(g.name, count);
+    totalLoans += count;
+  });
+
+  const topBorrowers = [...borrowerCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topGames = [...gameCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const avgDuration = durationSamples ? Math.round(totalDurationDays / durationSamples) : null;
+  const maxBorrower = topBorrowers[0]?.[1] || 1;
+  const maxGame = topGames[0]?.[1] || 1;
+  const palette = ['#B8935F', '#4F7A57', '#A8483A', '#6B7A8F', '#8F6B8A'];
+
+  const borrowerRows = topBorrowers.length ? topBorrowers.map(([name, count], i) => `
+    <div class="rank-row">
+      <span class="rank-position">${i + 1}</span>
+      <span class="rank-label">${avatarHtml(name)}${escapeHtml(name)}</span>
+      <div class="rank-bar-track"><div class="rank-bar-fill" style="background:${palette[i % palette.length]}" data-w="${(count / maxBorrower * 100).toFixed(0)}"></div></div>
+      <span class="rank-count">${count}x</span>
+    </div>`).join('') : `<div class="rank-empty">Brak jeszcze żadnych wypożyczeń.</div>`;
+
+  const gameRows = topGames.length ? topGames.map(([name, count], i) => `
+    <div class="rank-row">
+      <span class="rank-position">${i + 1}</span>
+      <span class="rank-label">🎲 ${escapeHtml(name)}</span>
+      <div class="rank-bar-track"><div class="rank-bar-fill" style="background:${palette[i % palette.length]}" data-w="${(count / maxGame * 100).toFixed(0)}"></div></div>
+      <span class="rank-count">${count}x</span>
+    </div>`).join('') : `<div class="rank-empty">Brak jeszcze żadnych wypożyczeń.</div>`;
+
+  openModal(`
+    <div class="modal modal-wide">
+      <div class="modal-head"><h2 class="display">🏆 Ranking i statystyki</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="stats-row" style="margin-bottom:6px">
+          <div class="stat-box"><div class="stat-label">Łącznie wypożyczeń</div><div class="stat-value">${totalLoans}</div></div>
+          <div class="stat-box"><div class="stat-label">Śr. czas wypożyczenia</div><div class="stat-value">${avgDuration !== null ? avgDuration + ' dni' : '—'}</div></div>
+        </div>
+        <div class="rank-section-title">👤 Najaktywniejsi gracze</div>
+        ${borrowerRows}
+        <div class="rank-section-title">🎲 Najpopularniejsze gry</div>
+        ${gameRows}
+      </div>
+    </div>
+  `);
+  // Paski rosną od zera po otwarciu modala - jeden, celowy moment animacji.
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#overlay .rank-bar-fill').forEach(el => {
+      const w = el.getAttribute('data-w');
+      requestAnimationFrame(() => { el.style.width = w + '%'; });
+    });
+  });
 }
 
 function openImport() {
@@ -1276,7 +2045,7 @@ Brzdęk: Katakumby
       if (existingNames.has(name.toLowerCase())) { skipped++; return; }
       const newGame = {
         id: uid(), name, status: 'available', borrower: '', borrowedDate: '', dueDate: '',
-        notes: '', bggUrl: '', hasCover: false, category: '', duration: '', players: '', tags: '', history: []
+        notes: '', bggUrl: '', hasCover: false, category: '', duration: '', players: '', tags: '', history: [], reservations: []
       };
       games.push(newGame);
       updates['games/' + newGame.id] = newGame;
@@ -1289,12 +2058,13 @@ Brzdęk: Katakumby
         document.getElementById('saveErrorBox').style.display = 'block';
       });
     }
-    setTimeout(() => alert(`Dodano ${added} gier.${skipped ? ' Pominięto ' + skipped + ' (już były na liście).' : ''}`), 300);
+    toast(`Dodano ${added} gier.${skipped ? ' Pominięto ' + skipped + ' (już były na liście).' : ''}`);
   };
 }
 
 document.getElementById('addBtn').onclick = openAdd;
 document.getElementById('importBtn').onclick = openImport;
+document.getElementById('rankingBtn').onclick = openStats;
 document.getElementById('searchInput').oninput = (e) => { query = e.target.value; render(); };
 function filterBy(value) {
   query = value;
@@ -1321,8 +2091,7 @@ document.getElementById('viewShelfBtn').onclick = () => {
 document.getElementById('groupByCategory').onchange = (e) => { groupByCat = e.target.checked; render(); };
 
 document.getElementById('filterToggleBtn').onclick = () => {
-  const panel = document.getElementById('filterPanel');
-  panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+  document.getElementById('filterPanel').classList.toggle('open');
 };
 document.getElementById('filterStatus').onchange = (e) => { filters.status = e.target.value; render(); };
 document.getElementById('filterCategory').onchange = (e) => { filters.category = e.target.value; render(); };
@@ -1345,6 +2114,72 @@ document.getElementById('themeToggle').onclick = () => {
   localStorage.setItem(THEME_KEY, next);
   applyTheme(next);
 };
+// ---- Powiadomienia (wersja "lite" - działają tylko gdy ta karta jest otwarta) ----
+const NOTIF_KEY = 'biblioteczka-gier-notif-enabled';
+const NOTIF_SEEN_KEY = 'biblioteczka-gier-notif-seen';
+function notifSupported() { return 'Notification' in window; }
+function notifEnabled() { return notifSupported() && Notification.permission === 'granted' && localStorage.getItem(NOTIF_KEY) === '1'; }
+function updateNotifBtn() {
+  const btn = document.getElementById('notifToggle');
+  if (!notifSupported()) { btn.title = 'Ta przeglądarka nie obsługuje powiadomień'; btn.disabled = true; return; }
+  btn.classList.toggle('active', notifEnabled());
+  btn.title = notifEnabled()
+    ? 'Powiadomienia włączone (działają, gdy ta karta jest otwarta)'
+    : 'Włącz powiadomienia o zbliżających się terminach zwrotu';
+}
+function getNotifSeen() {
+  try { return JSON.parse(localStorage.getItem(NOTIF_SEEN_KEY) || '{}'); } catch (e) { return {}; }
+}
+function markNotifSeen(key) {
+  const seen = getNotifSeen();
+  seen[key] = todayStr();
+  localStorage.setItem(NOTIF_SEEN_KEY, JSON.stringify(seen));
+}
+function checkDueNotifications() {
+  if (!notifEnabled()) return;
+  const seen = getNotifSeen();
+  games.forEach(g => {
+    if (g.status === 'borrowed' && g.dueDate) {
+      const d = daysUntil(g.dueDate);
+      const key = 'due:' + g.id + ':' + g.dueDate;
+      if (d !== null && d <= 1 && !seen[key]) {
+        const body = d < 0 ? `Termin zwrotu minął ${Math.abs(d)} dni temu (${g.borrower})` : d === 0 ? `Termin zwrotu mija dziś (${g.borrower})` : `Termin zwrotu mija jutro (${g.borrower})`;
+        new Notification('🎲 ' + g.name, { body, tag: key });
+        markNotifSeen(key);
+      }
+    }
+    (g.reservations || []).forEach(r => {
+      const d = daysUntil(r.dateFrom);
+      const key = 'res:' + g.id + ':' + r.id;
+      if (d !== null && (d === 0 || d === 1) && !seen[key]) {
+        new Notification('📅 ' + g.name, { body: d === 0 ? `Rezerwacja ${r.person} zaczyna się dziś` : `Rezerwacja ${r.person} zaczyna się jutro`, tag: key });
+        markNotifSeen(key);
+      }
+    });
+  });
+}
+document.getElementById('notifToggle').onclick = async () => {
+  if (!notifSupported()) return;
+  if (notifEnabled()) {
+    localStorage.setItem(NOTIF_KEY, '0');
+    updateNotifBtn();
+    toast('Powiadomienia wyłączone.');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    localStorage.setItem(NOTIF_KEY, '1');
+    updateNotifBtn();
+    toast('Powiadomienia włączone — działają, gdy ta karta jest otwarta.');
+    checkDueNotifications();
+  } else {
+    toast('Brak zgody na powiadomienia w przeglądarce.', 'error');
+  }
+};
+updateNotifBtn();
+setInterval(checkDueNotifications, 30 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkDueNotifications(); });
+
 document.getElementById('shareBtn').onclick = () => {
   const base = window.location.href.split('#')[0];
   navigator.clipboard?.writeText(base).then(() => {
@@ -1384,8 +2219,8 @@ gamesRef.on('value', (snapshot) => {
     // Baza pusta - wgrywamy dane startowe tylko przy pierwszym uruchomieniu
     if (firstLoad) {
       const seedGames = [
-        { id: uid(), name: "Nemesis: Odwet", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", hasCover: false, category: "", duration: "", players: "", tags: "", history: [] },
-        { id: uid(), name: "Gloomhaven", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", hasCover: false, category: "", duration: "", players: "", tags: "", history: [] },
+        { id: uid(), name: "Nemesis: Odwet", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", hasCover: false, category: "", duration: "", players: "", tags: "", history: [], reservations: [] },
+        { id: uid(), name: "Gloomhaven", status: "available", borrower: "", borrowedDate: "", dueDate: "", notes: "", bggUrl: "", hasCover: false, category: "", duration: "", players: "", tags: "", history: [], reservations: [] },
       ];
       const seedUpdates = {};
       seedGames.forEach(g => { seedUpdates['games/' + g.id] = g; });
@@ -1402,6 +2237,7 @@ gamesRef.on('value', (snapshot) => {
       const { coverImage, ...meta } = g;
       meta.hasCover = !!coverImage;
       if (!meta.history) meta.history = [];
+      if (!meta.reservations) meta.reservations = [];
       keyedGames[g.id] = meta;
       if (coverImage) {
         coverUpdates[g.id] = coverImage;
@@ -1414,14 +2250,24 @@ gamesRef.on('value', (snapshot) => {
   } else {
     games = Object.values(val);
   }
+  // Zabezpieczenie dla starszych wpisów zapisanych zanim dodano rezerwacje.
+  games.forEach(g => { if (!g.reservations) g.reservations = []; if (!g.history) g.history = []; });
   firstLoad = false;
   document.getElementById('saveErrorBox').style.display = 'none';
   render();
-  if (wasFirstLoad) handleQrDeepLink();
+  if (wasFirstLoad) {
+    handleQrDeepLink();
+    document.body.classList.remove('pre-intro');
+    document.body.classList.add('intro-play');
+  }
+  checkDueNotifications();
 }, (error) => {
   document.getElementById('saveErrorBox').style.display = 'block';
   document.getElementById('saveErrorBox').textContent = '⚠️ Błąd połączenia z bazą danych: ' + error.message;
+  document.body.classList.remove('pre-intro');
 });
+// Zabezpieczenie: gdyby z jakiegoś powodu dane nigdy nie doszły, i tak pokaż stronę.
+setTimeout(() => document.body.classList.remove('pre-intro'), 4000);
 
 // Obsługa linku z kodu QR (#g-ID) - otwiera pełne okno szczegółów gry,
 // działa niezależnie od trybu widoku (Lista / Półka)
