@@ -398,7 +398,9 @@
   .cal-day.selected { background: var(--green); color: #fff; }
   .cal-day.clickable { cursor: pointer; transition: background 0.12s, transform 0.12s; }
   .cal-day.clickable:hover { background: rgba(79,122,87,0.14); transform: scale(1.06); }
-  .cal-day.reserved.clickable { cursor: not-allowed; }
+  .cal-day.borrowed { background: rgba(184,147,95,0.2); color: #8a6a3a; font-weight:600; }
+  .cal-day.reserved.clickable, .cal-day.borrowed.clickable { cursor: not-allowed; }
+  .cal-day.borrowed.clickable:hover { background: rgba(184,147,95,0.2); transform: none; }
   .cal-day.reserved.clickable:hover { background: rgba(168,72,58,0.16); transform: none; }
   /* pasek wybranego terminu (Od → Do) */
   .cal-day.sel-mid, .cal-day.sel-start, .cal-day.sel-end { color: #fff; font-weight: 600; z-index: 1; }
@@ -1015,6 +1017,7 @@ function fmtDate(d) {
   const dt = new Date(d + "T00:00:00");
   return dt.toLocaleDateString("pl-PL", { day: "2-digit", month: "short", year: "numeric" });
 }
+function nextDayStr(d) { const dt = new Date(d + 'T00:00:00'); dt.setDate(dt.getDate() + 1); return dt.toISOString().slice(0, 10); }
 function daysUntil(d) {
   if (!d) return null;
   const today = new Date(todayStr() + "T00:00:00");
@@ -1037,6 +1040,49 @@ function nextReservation(g) {
 }
 function findReservationConflict(g, dateFrom, dateTo, excludeId) {
   return (g.reservations || []).find(r => r.id !== excludeId && rangesOverlap(r.dateFrom, r.dateTo, dateFrom, dateTo)) || null;
+}
+function sameName(a, b) { return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase(); }
+// Czy aktualne wypożyczenie blokuje zakres [from, to]? Brak terminu zwrotu = blokada bez końca.
+function borrowBlocksRange(g, from, to) {
+  if (g.status !== 'borrowed') return false;
+  if (!g.dueDate) return true;
+  return from <= g.dueDate;
+}
+// Rezerwacja (innej osoby), która koliduje z wypożyczeniem od dziś do dueDate (brak dueDate = bez końca).
+function reservationBlockingBorrow(g, borrower, dueDate) {
+  const today = todayStr();
+  return upcomingReservations(g).find(r => !sameName(r.person, borrower) && (!dueDate || rangesOverlap(r.dateFrom, r.dateTo, today, dueDate))) || null;
+}
+// Ostatni dopuszczalny dzień zwrotu przy wypożyczeniu dziś (dzień przed najbliższą obcą rezerwacją).
+function maxDueDateFor(g, borrower) {
+  const today = todayStr();
+  const r = upcomingReservations(g).find(r => !sameName(r.person, borrower) && r.dateTo >= today);
+  if (!r) return '';
+  if (r.dateFrom <= today) return null; // trwa już rezerwacja innej osoby
+  const d = new Date(r.dateFrom + 'T00:00:00'); d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+// Atomowy zapis zmian jednej gry. Funkcja mutate(g) dostaje AKTUALNY stan z serwera
+// (nie kopię lokalną), więc dwie osoby klikające w tym samym momencie nie nadpiszą się nawzajem.
+// mutate zwraca tekst błędu, aby przerwać zapis, lub nic, aby go zatwierdzić.
+function commitGame(id, mutate) {
+  let abortReason = '';
+  return db.ref('games/' + id).transaction(cur => {
+    if (cur === null) return cur;
+    if (!cur.reservations) cur.reservations = [];
+    if (!cur.history) cur.history = [];
+    abortReason = mutate(cur) || '';
+    if (abortReason) return; // undefined = przerwij transakcję
+    return cur;
+  }).then(res => {
+    if (!res.committed) throw new Error(abortReason || 'Ktoś w tym samym czasie zmienił tę grę. Odświeżono dane – spróbuj ponownie.');
+    if (res.snapshot.val() === null) throw new Error('Ta gra została w międzyczasie usunięta.');
+    return res.snapshot.val();
+  }).catch(err => {
+    toast(err.message || 'Nie udało się zapisać zmian.', 'error');
+    throw err;
+  });
 }
 
 let games = [];
@@ -1685,27 +1731,92 @@ function openEdit(id) {
 
 function openBorrow(id) {
   const g = games.find(x => x.id === id);
+  const upcoming = upcomingReservations(g);
+  const resInfo = upcoming.length ? `
+        <div class="field-hint" id="f-borrow-res-info" style="padding:8px 10px; border-radius:6px; background: rgba(184,147,95,0.14); color: var(--ink-muted); line-height:1.5">
+          📅 Nadchodzące rezerwacje:<br>${upcoming.slice(0, 3).map(r => `<b style="color:var(--ink)">${escapeHtml(r.person)}</b> · ${fmtDate(r.dateFrom)} → ${fmtDate(r.dateTo)}`).join('<br>')}
+          <br><span id="f-borrow-cap"></span>
+        </div>` : '';
   openModal(`
     <div class="modal">
       <div class="modal-head"><h2 class="display">Wypożycz: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        <div class="field"><label>Kto wypożycza</label><input id="f-borrower" placeholder="Imię i nazwisko" autofocus></div>
-        <div class="field"><label>Termin zwrotu (opcjonalnie)</label><input id="f-due" type="date"></div>
+        ${resInfo}
+        <div class="field" id="f-borrower-field"><label>Kto wypożycza</label><input id="f-borrower" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
+        <div class="field" id="f-due-field"><label>Termin zwrotu ${upcoming.length ? '' : '(opcjonalnie)'}</label><input id="f-due" type="date" min="${todayStr()}"><div class="field-error" id="f-due-error">Termin koliduje z rezerwacją</div></div>
+        <div class="field-hint" id="f-borrow-status"></div>
       </div>
       <div class="modal-foot" style="justify-content:flex-end">
         <button class="btn btn-green" id="f-confirm">Potwierdź wypożyczenie</button>
       </div>
     </div>
   `);
+
+  const borrowerEl = document.getElementById('f-borrower');
+  const dueEl = document.getElementById('f-due');
+  function refreshCap() {
+    const capEl = document.getElementById('f-borrow-cap');
+    const maxDue = maxDueDateFor(g, borrowerEl.value);
+    if (maxDue === null) {
+      if (capEl) capEl.textContent = 'Trwa rezerwacja innej osoby – wypożyczyć może tylko ona.';
+      dueEl.removeAttribute('max');
+    } else if (maxDue) {
+      if (capEl) capEl.textContent = `Zwrot najpóźniej ${fmtDate(maxDue)}, aby nie kolidować z rezerwacją.`;
+      dueEl.max = maxDue;
+    } else {
+      if (capEl) capEl.textContent = upcoming.length ? 'To Twoja rezerwacja – odbierając grę, zostanie ona zrealizowana.' : '';
+      dueEl.removeAttribute('max');
+    }
+  }
+  refreshCap();
+  borrowerEl.addEventListener('input', refreshCap);
+
   document.getElementById('f-confirm').onclick = () => {
-    const borrower = document.getElementById('f-borrower').value.trim();
-    if (!borrower) return;
-    g.status = 'borrowed';
-    g.borrower = borrower;
-    g.borrowedDate = todayStr();
-    g.dueDate = document.getElementById('f-due').value;
-    closeModal();
-    saveGameMeta(g);
+    const borrower = borrowerEl.value.trim();
+    const due = dueEl.value;
+    const bField = document.getElementById('f-borrower-field');
+    const dField = document.getElementById('f-due-field');
+    const statusEl = document.getElementById('f-borrow-status');
+    bField.classList.remove('invalid'); dField.classList.remove('invalid');
+    statusEl.textContent = ''; statusEl.style.color = '';
+    if (!borrower) {
+      bField.classList.add('invalid', 'shake'); borrowerEl.focus();
+      setTimeout(() => bField.classList.remove('shake'), 300);
+      return;
+    }
+    if (due && due < todayStr()) {
+      document.getElementById('f-due-error').textContent = 'Termin zwrotu nie może być w przeszłości';
+      dField.classList.add('invalid', 'shake');
+      setTimeout(() => dField.classList.remove('shake'), 300);
+      return;
+    }
+    // Wstępna kontrola lokalna (szybka informacja); ostateczna odbywa się atomowo w commitGame.
+    const localConflict = reservationBlockingBorrow(g, borrower, due);
+    if (localConflict) {
+      document.getElementById('f-due-error').textContent = due
+        ? `Termin koliduje z rezerwacją: ${localConflict.person} (${fmtDate(localConflict.dateFrom)} → ${fmtDate(localConflict.dateTo)})`
+        : `Podaj termin zwrotu przed rezerwacją: ${localConflict.person} od ${fmtDate(localConflict.dateFrom)}`;
+      dField.classList.add('invalid', 'shake');
+      setTimeout(() => dField.classList.remove('shake'), 300);
+      return;
+    }
+    const btn = document.getElementById('f-confirm');
+    btn.disabled = true;
+    commitGame(id, cur => {
+      if (cur.status === 'borrowed') return `Gra została właśnie wypożyczona przez: ${cur.borrower || 'inną osobę'}.`;
+      const conflict = reservationBlockingBorrow(cur, borrower, due);
+      if (conflict) return `Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)}).`;
+      // Odbiór własnej rezerwacji: zamieniamy ją na wypożyczenie.
+      const today = todayStr();
+      cur.reservations = (cur.reservations || []).filter(r => !(sameName(r.person, borrower) && r.dateFrom <= today && r.dateTo >= today));
+      cur.status = 'borrowed';
+      cur.borrower = borrower;
+      cur.borrowedDate = today;
+      cur.dueDate = due;
+    }).then(() => {
+      closeModal();
+      toast('Wypożyczono: ' + borrower);
+    }).catch(() => { btn.disabled = false; });
   };
 }
 
@@ -1739,26 +1850,27 @@ function openExtend(id) {
       return;
     }
     const newDue = document.getElementById('f-extend-due').value;
-    if (!g.extensions) g.extensions = [];
-    g.extensions.push({ date: todayStr(), previousDueDate: g.dueDate, newDueDate: newDue, by: typedName });
-    g.dueDate = newDue;
-    closeModal();
-    saveGameMeta(g);
+    if (!newDue) return;
+    commitGame(id, cur => {
+      if (cur.status !== 'borrowed' || !sameName(cur.borrower, typedName)) return 'Stan wypożyczenia w międzyczasie się zmienił.';
+      const conflict = reservationBlockingBorrow(cur, typedName, newDue);
+      if (conflict) return `Nie można przedłużyć: koliduje z rezerwacją ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)}).`;
+      if (!cur.extensions) cur.extensions = [];
+      cur.extensions.push({ date: todayStr(), previousDueDate: cur.dueDate || '', newDueDate: newDue, by: typedName });
+      cur.dueDate = newDue;
+    }).then(() => { closeModal(); toast('Przedłużono do ' + fmtDate(newDue)); }).catch(() => {});
   };
 }
 
 function returnGame(id) {
-  const g = games.find(x => x.id === id);
-  if (!g.history) g.history = [];
-  if (g.borrower) {
-    g.history.push({ borrower: g.borrower, borrowedDate: g.borrowedDate, returnedDate: todayStr() });
-  }
-  g.status = 'available';
-  g.borrower = '';
-  g.borrowedDate = '';
-  g.dueDate = '';
-  saveGameMeta(g);
-  spawnConfetti();
+  commitGame(id, cur => {
+    if (cur.status !== 'borrowed') return 'Ta gra jest już oznaczona jako dostępna.';
+    if (cur.borrower) cur.history.push({ borrower: cur.borrower, borrowedDate: cur.borrowedDate || '', returnedDate: todayStr() });
+    cur.status = 'available';
+    cur.borrower = '';
+    cur.borrowedDate = '';
+    cur.dueDate = '';
+  }).then(() => spawnConfetti()).catch(() => {});
 }
 
 function openHistory(id) {
@@ -1797,6 +1909,7 @@ function openReservations(id) {
         <div class="cal-legend">
           <span><span class="cal-dot" style="background:rgba(168,72,58,0.3)"></span>Zarezerwowane</span>
           <span><span class="cal-dot" style="background:transparent;border:1px solid var(--gold)"></span>Dziś</span>
+          <span><span class="cal-dot" style="background:rgba(184,147,95,0.35)"></span>Wypożyczona</span>
           <span><span class="cal-dot" style="background:var(--green)"></span>Wybrany termin</span>
         </div>
         <div class="cal-hint" id="cal-hint">Kliknij dzień w kalendarzu, aby ustawić datę „Od”, a potem drugi dzień jako „Do”.</div>
@@ -1844,10 +1957,12 @@ function openReservations(id) {
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const isReserved = g.reservations.some(r => dateStr >= r.dateFrom && dateStr <= r.dateTo);
+      const isBorrowed = g.status === 'borrowed' && dateStr >= today && (!g.dueDate || dateStr <= g.dueDate);
       const isPast = dateStr < today;
       const isToday = dateStr === today;
       const cls = [];
       if (isReserved) cls.push('reserved');
+      if (isBorrowed && !isReserved) cls.push('borrowed');
       if (isPast) cls.push('past');
       if (isToday) cls.push('today');
       if (!isPast) cls.push('clickable');
@@ -1861,7 +1976,8 @@ function openReservations(id) {
         cls.push('sel-preview');
         if (dateStr === pvTo) cls.push('preview-end');
       }
-      cells += `<div class="cal-day ${cls.join(' ')}" data-date="${dateStr}" ${isReserved ? 'title="Termin już zarezerwowany"' : ''}>${day}</div>`;
+      const title = isReserved ? 'Termin już zarezerwowany' : (isBorrowed ? `Gra wypożyczona${g.dueDate ? ' do ' + fmtDate(g.dueDate) : ''}` : '');
+      cells += `<div class="cal-day ${cls.join(' ')}" data-date="${dateStr}" ${title ? `title="${title}"` : ''}>${day}</div>`;
     }
     document.getElementById('cal-grid').innerHTML = cells;
     updateHint();
@@ -1900,7 +2016,7 @@ function openReservations(id) {
   const gridEl = document.getElementById('cal-grid');
   gridEl.addEventListener('click', (e) => {
     const cell = e.target.closest('.cal-day.clickable');
-    if (!cell || cell.classList.contains('reserved')) return;
+    if (!cell || cell.classList.contains('reserved') || cell.classList.contains('borrowed')) return;
     onDayClick(cell.dataset.date);
   });
   gridEl.addEventListener('mouseover', (e) => {
@@ -1957,32 +2073,44 @@ function openReservations(id) {
       setTimeout(() => fromField.classList.remove('shake'), 300);
       return;
     }
+    const showConflict = (msg) => { statusEl.style.color = '#A8483A'; statusEl.textContent = '⚠ ' + msg; };
     const conflict = findReservationConflict(g, from, to);
-    if (conflict) {
-      statusEl.style.color = '#A8483A';
-      statusEl.textContent = `⚠ Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)})`;
-      return;
+    if (conflict) return showConflict(`Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)})`);
+    if (borrowBlocksRange(g, from, to) && !sameName(g.borrower, person)) {
+      return showConflict(g.dueDate
+        ? `Gra jest wypożyczona przez ${g.borrower} do ${fmtDate(g.dueDate)} – wybierz termin od ${fmtDate(nextDayStr(g.dueDate))}.`
+        : `Gra jest obecnie wypożyczona przez ${g.borrower} bez określonego terminu zwrotu.`);
     }
-    g.reservations.push({ id: uid(), person, dateFrom: from, dateTo: to });
-    saveGameMeta(g);
-    renderCalendar();
-    renderResList();
-    document.getElementById('f-res-name').value = '';
-    document.getElementById('f-res-from').value = '';
-    document.getElementById('f-res-to').value = '';
-    renderCalendar();
-    toast('Zarezerwowano termin dla ' + person);
-    render();
+    const saveBtn = document.getElementById('f-res-save');
+    saveBtn.disabled = true;
+    commitGame(g.id, cur => {
+      const c = findReservationConflict(cur, from, to);
+      if (c) return `Ktoś właśnie zarezerwował ten termin: ${c.person} (${fmtDate(c.dateFrom)} → ${fmtDate(c.dateTo)}).`;
+      if (borrowBlocksRange(cur, from, to) && !sameName(cur.borrower, person)) return `Gra została właśnie wypożyczona${cur.dueDate ? ' do ' + fmtDate(cur.dueDate) : ''}.`;
+      cur.reservations.push({ id: uid(), person, dateFrom: from, dateTo: to });
+    }).then(updated => {
+      g.reservations = updated.reservations || [];
+      renderResList();
+      document.getElementById('f-res-name').value = '';
+      document.getElementById('f-res-from').value = '';
+      document.getElementById('f-res-to').value = '';
+      renderCalendar();
+      toast('Zarezerwowano termin dla ' + person);
+    }).catch(err => {
+      showConflict(err.message);
+      // odśwież kalendarz o stan z serwera
+      const fresh = games.find(x => x.id === g.id); if (fresh) { g.reservations = fresh.reservations || []; renderCalendar(); renderResList(); }
+    }).finally(() => { saveBtn.disabled = false; });
   };
 }
 
 function removeReservation(gameId, resId) {
-  const g = games.find(x => x.id === gameId);
-  g.reservations = (g.reservations || []).filter(r => r.id !== resId);
-  saveGameMeta(g);
-  closeModal();
-  openReservations(gameId);
-  render();
+  commitGame(gameId, cur => {
+    cur.reservations = (cur.reservations || []).filter(r => r.id !== resId);
+  }).then(() => {
+    closeModal();
+    openReservations(gameId);
+  }).catch(() => {});
 }
 
 function openQuickActions(id) {
