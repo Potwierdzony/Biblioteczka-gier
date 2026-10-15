@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biblioteczka Gier JFF</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0d3244;
@@ -36,7 +36,13 @@
   .mono { font-family: 'JetBrains Mono', monospace; }
   .wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
 
-  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+  header { display: flex; flex-direction: column; gap: 22px; margin-bottom: 32px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .header-brand { min-width: 0; }
+  .header-utils { display: flex; gap: 8px; flex-shrink: 0; padding-top: 4px; }
+  .btn-icon { width: 40px; height: 40px; padding: 0; justify-content: center; font-size: 15px; }
+  .sub-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: 8px; }
+  .sub-row .sub { margin: 0; }
   .eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:4px; color: var(--gold); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
   h1 { color: var(--card); font-weight: 600; font-size: 40px; margin: 0; }
   .author-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 4px; vertical-align: middle; }
@@ -54,7 +60,14 @@
   .btn-green { background: var(--green); color: var(--card); font-weight: 500; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .header-actions { display:flex; flex-wrap: wrap; gap:8px; align-items:center; justify-content: flex-end; }
+  .header-actions { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .header-actions .btn { justify-content: center; white-space: nowrap; min-width: 0; padding: 11px 8px; }
+  @media (max-width: 760px) {
+    .header-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .header-actions #addBtn { grid-column: 1 / -1; order: -1; }
+    .author-tag { display: block; margin-left: 0; margin-top: 3px; }
+  }
+  .author-tag { white-space: nowrap; }
 
   .search-wrap { position: relative; margin-bottom: 24px; }
   .search-wrap input {
@@ -142,7 +155,7 @@
   .sync-dot.offline { background: #A8483A; }
   .viewer-badge {
     display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size: 12px;
-    color: var(--muted); background: #123648; border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px;
+    color: var(--muted); background: #123648; border: 1px solid var(--border); padding: 3px 10px; border-radius: 20px; font-size: 11px;
   }
   .viewer-badge .viewer-dot { width:7px; height:7px; border-radius:50%; background:#4F7A57; box-shadow: 0 0 0 0 rgba(79,122,87,0.6); animation: pulse 2s infinite; }
   @keyframes pulse {
@@ -396,47 +409,6 @@
   .cal-day.today { border-color: var(--gold); font-weight:700; }
   .cal-day.reserved { background: rgba(168,72,58,0.16); color: var(--red); font-weight:600; }
   .cal-day.selected { background: var(--green); color: #fff; }
-  .cal-day.clickable { cursor: pointer; transition: background 0.12s, transform 0.12s; }
-  .cal-day.clickable:hover { background: rgba(79,122,87,0.14); transform: scale(1.06); }
-  .cal-day.borrowed { background: rgba(184,147,95,0.2); color: #8a6a3a; font-weight:600; }
-  .cal-day.reserved.clickable, .cal-day.borrowed.clickable { cursor: not-allowed; }
-  .cal-day.borrowed.clickable:hover { background: rgba(184,147,95,0.2); transform: none; }
-  .cal-day.reserved.clickable:hover { background: rgba(168,72,58,0.16); transform: none; }
-  /* pasek wybranego terminu (Od → Do) */
-  .cal-day.sel-mid, .cal-day.sel-start, .cal-day.sel-end { color: #fff; font-weight: 600; z-index: 1; }
-  .cal-day.sel-mid::before, .cal-day.sel-start::before, .cal-day.sel-end::before {
-    content: ''; position: absolute; top: 4px; bottom: 4px; left: -3px; right: -3px;
-    background: var(--green); z-index: -1;
-  }
-  .cal-day.sel-start::before { left: 2px; border-radius: 8px 0 0 8px; }
-  .cal-day.sel-end::before { right: 2px; border-radius: 0 8px 8px 0; }
-  .cal-day.sel-start.sel-end::before { border-radius: 8px; }
-  .cal-day.sel-start, .cal-day.sel-end { background: var(--green); border-radius: 8px; }
-  .cal-day.sel-start.clickable:hover, .cal-day.sel-end.clickable:hover { background: var(--green); }
-  .cal-day.sel-mid.clickable:hover { background: transparent; }
-  .cal-day.sel-preview::before {
-    content: ''; position: absolute; top: 4px; bottom: 4px; left: -3px; right: -3px;
-    background: rgba(79,122,87,0.22); z-index: -1;
-  }
-  .cal-day.sel-preview.preview-end::before { right: 2px; border-radius: 0 8px 8px 0; }
-  .cal-hint { font-size: 11px; color: var(--label); margin-top: 6px; font-family:'JetBrains Mono', monospace; }
-  /* kolor paska zależny od trybu: wypożyczenie = złoty, rezerwacja = czerwony (jak w legendzie) */
-  .cal-grid.mode-borrow .cal-day.sel-mid::before, .cal-grid.mode-borrow .cal-day.sel-start::before, .cal-grid.mode-borrow .cal-day.sel-end::before,
-  .cal-grid.mode-borrow .cal-day.sel-start, .cal-grid.mode-borrow .cal-day.sel-end,
-  .cal-grid.mode-borrow .cal-day.sel-start.clickable:hover, .cal-grid.mode-borrow .cal-day.sel-end.clickable:hover { background: var(--gold); }
-  .cal-grid.mode-borrow .cal-day.sel-mid, .cal-grid.mode-borrow .cal-day.sel-start, .cal-grid.mode-borrow .cal-day.sel-end { color: #1f1a12; }
-  .cal-grid.mode-borrow .cal-day.sel-preview::before { background: rgba(184,147,95,0.3); }
-  .cal-grid.mode-reserve .cal-day.sel-mid::before, .cal-grid.mode-reserve .cal-day.sel-start::before, .cal-grid.mode-reserve .cal-day.sel-end::before,
-  .cal-grid.mode-reserve .cal-day.sel-start, .cal-grid.mode-reserve .cal-day.sel-end,
-  .cal-grid.mode-reserve .cal-day.sel-start.clickable:hover, .cal-grid.mode-reserve .cal-day.sel-end.clickable:hover { background: var(--red); }
-  .cal-grid.mode-reserve .cal-day.sel-preview::before { background: rgba(168,72,58,0.28); }
-  /* przełącznik trybu */
-  .cal-mode { display:flex; gap:6px; padding:4px; border:1px solid var(--border-card); border-radius:10px; background: rgba(0,0,0,0.03); }
-  .cal-mode-btn { flex:1; border:none; background:transparent; color: var(--ink-muted); border-radius:7px; padding:8px 10px; font-family:'JetBrains Mono', monospace; font-size:12px; cursor:pointer; transition: background .15s, color .15s; }
-  .cal-mode-btn:hover:not(:disabled) { background: rgba(0,0,0,0.05); color: var(--ink); }
-  .cal-mode-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .cal-mode-btn.active[data-mode="borrow"] { background: var(--gold); color: #1f1a12; font-weight:600; }
-  .cal-mode-btn.active[data-mode="reserve"] { background: var(--red); color: #fff; font-weight:600; }
   .cal-legend { display:flex; gap:14px; margin-top:8px; font-size:11px; color: var(--ink-muted); font-family:'JetBrains Mono', monospace; }
   .cal-legend span { display:flex; align-items:center; gap:5px; }
   .cal-dot { width:9px; height:9px; border-radius:3px; display:inline-block; }
@@ -455,177 +427,87 @@
   .rank-count { font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); width: 38px; text-align:right; flex-shrink:0; }
   .rank-empty { font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--label); }
 
-  /* ---- Dekoracyjne ilustracje po bokach (smok, zamek, pionki i kości, skrzynia z grami, stos pudełek, rycerz z magiem) ---- */
+  /* ---- Dekoracyjne ilustracje po bokach (smok, zamek, pionki, wędrowiec) ---- */
   .deco-layer {
     position: fixed; z-index: -1; pointer-events: none;
-    opacity: 0.62;
-    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+    color: rgba(255,255,255,0.15);
   }
-  body.light .deco-layer { opacity: 0.5; filter: drop-shadow(0 6px 14px rgba(22,35,43,0.2)); }
+  body.light .deco-layer { color: rgba(22,35,43,0.13); }
   .deco-layer svg { display:block; width:100%; height:100%; overflow:visible; }
-  .deco-layer svg * { stroke-linecap: round; stroke-linejoin: round; }
+  .deco-layer, .deco-layer * { fill:none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .deco-flame { stroke: none; fill: var(--gold); opacity: 0.55; }
 
-  /* kolory dopasowane do dominującej palety strony (granat/teal + złoto + krem) */
-  .dc-gold   { fill: var(--gold); }
-  .dc-green  { fill: #2e7f9b; }        /* teal – główny kolor obiektów */
-  .dc-red    { fill: #3a6579; }        /* głębszy granatowo-teal (dachy, tunika, skrzynia) */
-  .dc-cream  { fill: var(--card); }
-  .dc-cream2 { fill: var(--card-alt); }
-  .dc-ink    { fill: var(--ink); }
-  .dc-muted  { fill: var(--muted); }
-  .dc-navy   { fill: #1d4b5e; }
-  .dc-line   { fill: none; stroke: var(--ink); stroke-width: 1.6; }
-  .dc-line-gold { fill: none; stroke: var(--gold); stroke-width: 1.4; }
-  .dc-outline { stroke: rgba(8,24,36,0.6); stroke-width: 1.4; }
-
-  .deco-dragon   { top: 5%;  right: 1.5vw; width: 270px; height: 210px; animation: deco-fly 9s ease-in-out infinite; }
-  .deco-castle   { bottom: 3%; left: 1.5vw; width: 220px; height: 240px; }
-  .deco-meeples  { top: 17%; left: 2vw; width: 130px; height: 160px; }
-  .deco-wanderer { bottom: 6%; right: 2vw; width: 190px; height: 170px; animation: deco-bob 7s ease-in-out infinite 0.4s; }
-  .deco-chest    { top: 47%; left: 2vw; width: 190px; height: 160px; transform: translateY(-50%); }
-  .deco-boxes    { top: 47%; right: 2.5vw; width: 180px; height: 170px; transform: translateY(-50%); }
-
-  /* skrzynia z grami */
-  .dc-chest-glow { animation: dc-glow 2.6s ease-in-out infinite; transform-origin: 100px 74px; }
-  .dc-coin-a { animation: dc-coin 2.8s ease-in-out infinite; }
-  .dc-coin-b { animation: dc-coin 2.8s ease-in-out infinite 0.9s; }
-  .dc-coin-c { animation: dc-coin 2.8s ease-in-out infinite 1.8s; }
-  .dc-chest-lid { transform-origin: 30px 78px; animation: dc-lid 6s ease-in-out infinite; }
-
-  /* stos pudełek z klepsydrą */
-  .dc-sand-top    { transform-origin: 90px 62px; animation: dc-sand-top 6s linear infinite; }
-  .dc-sand-bottom { transform-origin: 90px 106px; animation: dc-sand-bottom 6s linear infinite; }
-  .dc-sand-stream { animation: deco-flicker 0.5s ease-in-out infinite; }
-  .dc-card-fan    { transform-origin: 40px 150px; animation: dc-fan 5s ease-in-out infinite; }
-
-  /* smok */
-  .dg-wing-front { transform-origin: 138px 104px; animation: dg-flap 1.7s ease-in-out infinite; }
-  .dg-wing-back  { transform-origin: 126px 108px; animation: dg-flap 1.7s ease-in-out infinite -0.85s; opacity: 0.8; }
-  .dg-tail       { transform-origin: 84px 128px;  animation: dg-tail 3.2s ease-in-out infinite; }
-  .dg-flame-a    { transform-origin: 226px 56px;  animation: dg-fire 0.9s ease-in-out infinite; }
-  .dg-flame-b    { transform-origin: 226px 56px;  animation: dg-fire 0.9s ease-in-out infinite 0.45s; }
-  .dg-smoke      { animation: dg-smoke 3s ease-out infinite; }
-  .dg-smoke-b    { animation-delay: 1.5s; }
-  .dg-eye        { animation: dg-blink 4.5s ease-in-out infinite; transform-origin: 190px 50px; }
-
-  /* zamek */
-  .deco-flag  { transform-origin: 110px 40px; animation: deco-flag 2.6s ease-in-out infinite; }
-  .dc-window  { animation: deco-flicker 1.8s ease-in-out infinite; }
-  .dc-window:nth-child(2) { animation-delay: 0.4s; }
-  .dc-window:nth-child(3) { animation-delay: 0.9s; }
-  .dc-window:nth-child(4) { animation-delay: 1.3s; }
-  .dc-star    { animation: dc-twinkle 2.4s ease-in-out infinite; }
-  .dc-star-b  { animation-delay: 0.8s; }
-  .dc-star-c  { animation-delay: 1.6s; }
-
-  /* pionki i kości */
-  .mp-a { animation: deco-bob 3.4s ease-in-out infinite; }
-  .mp-b { animation: deco-bob 3.4s ease-in-out infinite 0.5s; }
-  .mp-c { animation: deco-bob 3.4s ease-in-out infinite 1s; }
-  .dc-die-a { transform-origin: 34px 128px; animation: dc-roll 6s ease-in-out infinite; }
-  .dc-die-b { transform-origin: 88px 132px; animation: dc-roll 6s ease-in-out infinite -3s; }
-
-  /* rycerz i mag */
-  .dc-sword  { transform-origin: 62px 84px; animation: dc-swing 3s ease-in-out infinite; }
-  .dc-orb    { animation: dc-glow 2s ease-in-out infinite; transform-origin: 150px 34px; }
-  .dc-plume  { transform-origin: 56px 22px; animation: deco-flag 2.6s ease-in-out infinite 0.6s; }
+  .deco-dragon { top: 7%; right: 2.5vw; width: 190px; height: 142px; animation: deco-fly 9s ease-in-out infinite; }
+  .deco-castle { bottom: 5%; left: 2vw; width: 120px; height: 150px; }
+  .deco-meeples { top: 20%; left: 2.5vw; width: 66px; height: 96px; animation: deco-bob 6s ease-in-out infinite; }
+  .deco-wanderer { bottom: 9%; right: 3vw; width: 92px; height: 132px; animation: deco-bob 7s ease-in-out infinite 0.4s; }
+  .deco-flag { transform-origin: 62px 18px; animation: deco-flag 2.6s ease-in-out infinite; }
+  .deco-flame-a { animation: deco-flicker 1.6s ease-in-out infinite; }
+  .deco-flame-b { animation: deco-flicker 1.6s ease-in-out infinite 0.3s; }
+  .deco-flame-c { animation: deco-flicker 1.6s ease-in-out infinite 0.6s; }
 
   @keyframes deco-fly {
     0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(-16px, -18px) rotate(-3deg); }
+    50% { transform: translate(-14px, -16px) rotate(-3deg); }
   }
   @keyframes deco-bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
   @keyframes deco-flag {
-    0%, 100% { transform: rotate(-4deg) skewY(0deg); }
-    50% { transform: rotate(8deg) skewY(-6deg); }
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
   }
   @keyframes deco-flicker {
-    0%, 100% { opacity: 0.55; }
-    50% { opacity: 1; }
-  }
-  @keyframes dg-flap {
-    0%, 100% { transform: rotate(-14deg) scaleY(1); }
-    50% { transform: rotate(12deg) scaleY(0.85); }
-  }
-  @keyframes dg-tail {
-    0%, 100% { transform: rotate(-5deg); }
-    50% { transform: rotate(6deg); }
-  }
-  @keyframes dg-fire {
-    0%, 100% { transform: scale(0.85, 0.9); opacity: 0.6; }
-    50% { transform: scale(1.12, 1.08); opacity: 0.95; }
-  }
-  @keyframes dg-smoke {
-    0% { transform: translate(0,0) scale(0.6); opacity: 0; }
-    30% { opacity: 0.5; }
-    100% { transform: translate(14px,-40px) scale(1.4); opacity: 0; }
-  }
-  @keyframes dg-blink {
-    0%, 92%, 100% { transform: scaleY(1); }
-    95% { transform: scaleY(0.1); }
-  }
-  @keyframes dc-twinkle {
-    0%, 100% { opacity: 0.25; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.15); }
-  }
-  @keyframes dc-roll {
-    0%, 40%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-18deg) translateY(-6px); }
-    60% { transform: rotate(12deg) translateY(0); }
-    70% { transform: rotate(-4deg); }
-    80% { transform: rotate(0deg); }
-  }
-  @keyframes dc-swing {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-14deg); }
-  }
-  @keyframes dc-coin {
-    0%, 100% { transform: translateY(0); opacity: 0.9; }
-    50% { transform: translateY(-5px); opacity: 1; }
-  }
-  @keyframes dc-lid {
-    0%, 100% { transform: rotate(-22deg); }
-    50% { transform: rotate(-30deg); }
-  }
-  @keyframes dc-sand-top {
-    0% { transform: scaleY(1); }
-    100% { transform: scaleY(0.05); }
-  }
-  @keyframes dc-sand-bottom {
-    0% { transform: scaleY(0.05); }
-    100% { transform: scaleY(1); }
-  }
-  @keyframes dc-fan {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-4deg); }
-  }
-  @keyframes dc-glow {
-    0%, 100% { opacity: 0.6; transform: scale(0.9); }
-    50% { opacity: 1; transform: scale(1.15); }
+    0%, 100% { opacity: 0.35; transform: scale(0.92); }
+    50% { opacity: 0.65; transform: scale(1.08); }
   }
   @media (max-width: 1280px) {
     .deco-layer { display: none; }
   }
-  @media (max-height: 820px) {
-    .deco-chest, .deco-boxes { display: none; }
-  }
   @media (prefers-reduced-motion: reduce) {
-    .deco-layer, .deco-layer * { animation: none !important; }
+    .deco-dragon, .deco-meeples, .deco-wanderer, .deco-flag, .deco-flame-a, .deco-flame-b, .deco-flame-c { animation: none; }
   }
 
-  /* ---- Minigra ---- */
+  /* ---- Minigra "Lot nad miastem" ---- */
   .modal.modal-game { max-width: min(760px, 96vw); }
-  .game-canvas {
-    display:block; width:100%; height:auto; aspect-ratio: 16 / 9;
-    image-rendering: pixelated; image-rendering: crisp-edges;
-    border-radius: 8px; border: 2px solid var(--border-card); cursor: pointer;
-    touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
-    background: #3f7cc0;
+  .arcade-wrap {
+    position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden;
+    border: 2px solid #1E2B38; background: #3E78A8; touch-action: manipulation; user-select: none;
+    -webkit-user-select: none; cursor: pointer; flex-shrink: 0;
   }
-  .game-hint { font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); text-align:center; line-height:1.5; }
+  .arcade-wrap canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .arcade-overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; text-align: center; color: #fff; font-family: 'JetBrains Mono', monospace; padding: 12px;
+  }
+  .arcade-overlay.hidden { display: none; }
+  .arcade-overlay.ready { pointer-events: none; background: linear-gradient(180deg, rgba(10,25,40,0) 30%, rgba(10,25,40,0.35)); }
+  .arcade-overlay.over { background: rgba(10,25,40,0.45); cursor: default; }
+  .arcade-title { font-family: 'Fraunces', serif; font-size: clamp(18px, 4.2vw, 30px); font-weight: 700; text-shadow: 2px 2px 0 #1E2B38; }
+  .arcade-hint { font-size: clamp(10px, 1.8vw, 13px); text-shadow: 1px 1px 0 #1E2B38; animation: arcade-blink 1.1s steps(2, start) infinite; }
+  @keyframes arcade-blink { 50% { opacity: 0.25; } }
+  .arcade-card {
+    background: rgba(14,30,44,0.9); border: 2px solid #B8935F; border-radius: 8px; padding: 12px 16px;
+    display: flex; flex-direction: column; gap: 8px; align-items: center; width: min(300px, 92%);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+  }
+  .arcade-card .arcade-title { font-size: clamp(16px, 3.4vw, 22px); }
+  .arcade-score-big { font-size: clamp(22px, 5vw, 32px); font-weight: 700; color: #F2D27A; line-height: 1; }
+  .arcade-sub { font-size: 11px; color: #C8D3DC; }
+  .arcade-record { font-size: 11px; color: #F2D27A; letter-spacing: 0.08em; animation: arcade-blink 0.8s steps(2, start) infinite; }
+  .arcade-save-row { display: flex; gap: 6px; width: 100%; }
+  .arcade-save-row input {
+    flex: 1; min-width: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 7px 9px;
+    border-radius: 6px; border: 1px solid #B8935F; background: #F0EAD9; color: #16232B;
+  }
+  .arcade-save-row .btn, .arcade-card > .btn { font-size: 12px; padding: 7px 12px; }
+  .arcade-controls { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); text-align: center; }
+  .arcade-board-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--border-card); font-size: 13px; color: var(--ink); }
+  .arcade-board-row:last-child { border-bottom: none; }
+  .arcade-board-row .pos { font-family: 'Fraunces', serif; font-weight: 700; width: 24px; color: var(--label); }
+  .arcade-board-row .who { flex: 1; display: flex; align-items: center; gap: 7px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .arcade-board-row .pts { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); }
 
   /* ---- Poprawki dla telefonów / wąskich ekranów ---- */
   @media (max-width: 600px) {
@@ -634,9 +516,9 @@
     .site-logo { width: 36px; height: 36px; }
     .author-tag { display: block; margin-left: 0; margin-top: 3px; }
     header { gap: 12px; }
-    .header-actions { justify-content: flex-start; width: 100%; }
-    .header-actions .btn { padding: 8px 12px; font-size: 11px; }
-    .viewer-badge { font-size: 11px; padding: 5px 10px; }
+    .header-actions .btn { padding: 10px 8px; font-size: 11px; }
+    .btn-icon { width: 36px; height: 36px; }
+    .header-utils { padding-top: 0; }
     .controls-row { width: 100%; }
     .controls-row > * { flex: 1 1 auto; }
     select.ctrl-select { min-width: 0; }
@@ -655,284 +537,75 @@
 <body class="pre-intro">
 
 <div class="deco-layer deco-dragon" aria-hidden="true">
-  <svg viewBox="0 0 270 200">
-    <!-- dym -->
-    <g class="dc-cream">
-      <circle class="dg-smoke" cx="240" cy="40" r="6" />
-      <circle class="dg-smoke dg-smoke-b" cx="250" cy="34" r="4" />
+  <svg viewBox="0 0 200 150">
+    <path d="M12 140 C 6 143, 5 150, 11 152 C 15 153, 18 149, 16 144"/>
+    <path d="M16 144 C 30 132, 40 118, 52 106 C 60 98, 66 90, 78 80 C 86 74, 92 70, 102 60 C 112 52, 118 47, 128 42 C 133 39, 137 38, 140 38"/>
+    <path d="M50 108 L44 98"/>
+    <path d="M100 62 L96 51"/>
+    <path d="M122 44 L112 30"/>
+    <path d="M140 38 L174 27"/>
+    <path d="M140 38 L166 48"/>
+    <path d="M84 76 L46 27 C 55 46, 60 58, 68 67 C 73 71, 78 74, 84 76 Z"/>
+    <path d="M84 76 L64 49"/>
+    <g class="deco-flame">
+      <path class="deco-flame-a" d="M180 22 C 189 17, 195 8, 190 2 C 199 6, 203 16, 195 23 C 191 26, 184 25, 180 22 Z"/>
+      <path class="deco-flame-b" d="M178 42 C 186 40, 191 33, 187 27 C 195 30, 198 38, 192 44 C 188 47, 181 46, 178 42 Z"/>
     </g>
-    <!-- tylne skrzydło -->
-    <g class="dg-wing-back">
-      <path class="dc-green dc-outline" d="M126 108 C 108 70, 84 54, 56 60 L 70 72 C 56 76, 48 88, 44 102 L 68 92 C 60 104, 60 112, 66 120 L 96 104 C 92 112, 98 116, 108 116 Z"/>
-      <path class="dc-line-gold" d="M126 108 L 70 72 M126 108 L 68 92 M126 108 L 96 104"/>
-    </g>
-    <!-- ogon -->
-    <g class="dg-tail">
-      <path class="dc-green dc-outline" d="M88 126 C 58 122, 38 140, 22 166 L 32 174 C 48 152, 62 142, 86 142 Z"/>
-      <path class="dc-gold dc-outline" d="M28 168 L 10 160 L 18 182 L 34 178 Z"/>
-      <path class="dc-gold" d="M64 130 l3 -8 l3 8 z M50 136 l3 -8 l3 8 z"/>
-    </g>
-    <!-- nogi -->
-    <path class="dc-green dc-outline" d="M112 146 L 106 166 L 120 166 L 122 150 Z M150 146 L 146 166 L 160 166 L 162 150 Z"/>
-    <path class="dc-gold" d="M104 166 l-6 4 l8 0 z M112 166 l-4 5 l8 0 z M144 166 l-6 4 l8 0 z M152 166 l-4 5 l8 0 z"/>
-    <!-- tułów i brzuch -->
-    <ellipse class="dc-green dc-outline" cx="130" cy="125" rx="50" ry="28"/>
-    <ellipse class="dc-gold" cx="132" cy="136" rx="36" ry="13" opacity="0.85"/>
-    <path class="dc-line-gold" d="M104 134 h56 M100 140 h64 M106 146 h52"/>
-    <!-- kolce na grzbiecie -->
-    <path class="dc-gold dc-outline" d="M96 106 l5 -12 l5 12 z M112 100 l5 -13 l5 13 z M130 98 l5 -14 l5 14 z M148 100 l5 -13 l5 13 z"/>
-    <!-- szyja -->
-    <path class="dc-green dc-outline" d="M164 106 C 178 94, 184 78, 178 60 L 196 58 C 202 82, 194 106, 178 120 Z"/>
-    <path class="dc-gold" d="M178 84 h14 M176 94 h14 M174 104 h12" style="stroke: var(--gold); stroke-width: 3; fill:none"/>
-    <!-- głowa -->
-    <path class="dc-green dc-outline" d="M170 46 C 172 38, 186 34, 200 40 L 226 46 L 218 54 L 228 60 L 202 66 C 188 70, 174 68, 170 60 Z"/>
-    <path class="dc-gold dc-outline" d="M182 42 L 172 24 L 190 38 Z M196 40 L 194 24 L 204 40 Z"/>
-    <g class="dg-eye">
-      <ellipse class="dc-gold" cx="190" cy="50" rx="4" ry="3.6"/>
-      <ellipse class="dc-ink" cx="191" cy="50" rx="1.3" ry="2.6"/>
-    </g>
-    <circle class="dc-ink" cx="220" cy="50" r="1.4"/>
-    <path class="dc-cream" d="M212 58 l3 5 l3 -5 z M204 62 l3 5 l3 -5 z"/>
-    <!-- przednie skrzydło -->
-    <g class="dg-wing-front">
-      <path class="dc-green dc-outline" d="M138 104 C 118 60, 90 40, 58 44 L 74 58 C 58 60, 48 72, 42 88 L 68 80 C 58 92, 56 102, 60 112 L 92 96 C 84 104, 86 110, 98 114 Z"/>
-      <path class="dc-line-gold" d="M138 104 L 74 58 M138 104 L 68 80 M138 104 L 92 96"/>
-    </g>
-    <!-- ogień -->
-    <path class="dc-gold dg-flame-a" d="M228 54 C 244 42, 258 44, 266 36 C 262 50, 256 60, 246 64 C 254 66, 260 72, 264 80 C 252 76, 240 68, 228 60 Z"/>
-    <path class="dc-cream dg-flame-b" d="M228 55 C 240 48, 250 48, 256 44 C 252 52, 248 58, 242 61 C 248 63, 252 66, 254 72 C 246 68, 236 62, 228 59 Z"/>
   </svg>
 </div>
 
 <div class="deco-layer deco-castle" aria-hidden="true">
-  <svg viewBox="0 0 220 240">
-    <defs>
-      <linearGradient id="dcSky" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#2a8bb0"/>
-        <stop offset="0.55" stop-color="#0f5268"/>
-        <stop offset="1" stop-color="#081824"/>
-      </linearGradient>
-      <linearGradient id="dcHill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#2e7f9b"/>
-        <stop offset="1" stop-color="#2c4a58"/>
-      </linearGradient>
-      <clipPath id="dcClip"><circle cx="110" cy="122" r="104"/></clipPath>
-    </defs>
-    <!-- niebiesko-gradientowe tło (medalion) -->
-    <circle cx="110" cy="122" r="104" fill="url(#dcSky)"/>
-    <circle cx="110" cy="122" r="104" fill="none" stroke="var(--gold)" stroke-width="2" opacity="0.7"/>
-    <!-- księżyc i gwiazdy -->
-    <circle class="dc-cream" cx="160" cy="54" r="14"/>
-    <circle cx="154" cy="50" r="12" fill="#1c6d8a" opacity="0.7"/>
-    <circle class="dc-cream dc-star" cx="40" cy="60" r="2"/>
-    <circle class="dc-cream dc-star dc-star-b" cx="72" cy="36" r="1.6"/>
-    <circle class="dc-cream dc-star dc-star-c" cx="190" cy="96" r="1.8"/>
-    <circle class="dc-cream dc-star dc-star-b" cx="28" cy="110" r="1.4"/>
-    <!-- wzgórze -->
-    <g clip-path="url(#dcClip)">
-      <path fill="url(#dcHill)" d="M0 232 C 40 186, 90 178, 110 180 C 140 182, 180 190, 220 226 L 220 240 L 0 240 Z"/>
-    </g>
-    <!-- zamek: wieże boczne -->
-    <rect class="dc-cream2 dc-outline" x="34" y="98" width="30" height="94" rx="1"/>
-    <rect class="dc-cream2 dc-outline" x="156" y="98" width="30" height="94" rx="1"/>
-    <path class="dc-red dc-outline" d="M30 100 L 49 62 L 68 100 Z M152 100 L 171 62 L 190 100 Z"/>
-    <!-- mur -->
-    <rect class="dc-cream2 dc-outline" x="64" y="132" width="92" height="60"/>
-    <path class="dc-cream2 dc-outline" d="M64 132 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h2"/>
-    <!-- donżon -->
-    <rect class="dc-cream dc-outline" x="88" y="90" width="44" height="46"/>
-    <path class="dc-cream dc-outline" d="M88 90 v-8 h8 v8 h8 v-8 h8 v8 h8 v-8 h8 v8"/>
-    <path class="dc-red dc-outline" d="M84 82 L 110 48 L 136 82 Z"/>
-    <!-- maszt i flaga -->
-    <path class="dc-line" d="M110 48 V 26" style="stroke: var(--gold); stroke-width: 2"/>
-    <path class="dc-gold deco-flag" d="M110 27 L 136 33 L 110 40 Z"/>
-    <!-- kamienie -->
-    <path class="dc-line" d="M70 150 h12 M90 150 h12 M124 150 h12 M144 150 h8 M80 164 h12 M110 164 h14 M140 164 h10 M70 178 h10 M94 178 h10 M128 178 h10" style="stroke: var(--border-card); stroke-width: 1.4"/>
-    <!-- okna (migoczą) -->
-    <g class="dc-gold">
-      <rect class="dc-window" x="45" y="116" width="8" height="12" rx="4"/>
-      <rect class="dc-window" x="167" y="116" width="8" height="12" rx="4"/>
-      <rect class="dc-window" x="98" y="104" width="7" height="10" rx="3.5"/>
-      <rect class="dc-window" x="115" y="104" width="7" height="10" rx="3.5"/>
-      <rect class="dc-window" x="45" y="152" width="8" height="12" rx="4"/>
-      <rect class="dc-window" x="167" y="152" width="8" height="12" rx="4"/>
-    </g>
-    <!-- brama -->
-    <path class="dc-ink" d="M98 192 v-24 a12 12 0 0 1 24 0 v24 Z"/>
-    <path class="dc-line-gold" d="M110 168 v24 M104 178 h12"/>
+  <svg viewBox="0 0 120 150">
+    <path d="M20 148 L20 60 L14 60 L14 46 L26 46 L26 58 L38 58 L38 40 L32 40 L32 26 L44 26 L44 40 L38 40"/>
+    <path d="M38 58 L82 58 L82 40 L76 40 L76 26 L88 26 L88 40 L82 40"/>
+    <path d="M82 58 L108 58 L108 46 L100 46 L100 60 L108 60 L108 148 L20 148"/>
+    <rect x="52" y="90" width="16" height="26" rx="1"/>
+    <path d="M62 26 L62 4"/>
+    <path class="deco-flag" d="M62 6 L84 12 L62 18 Z"/>
   </svg>
 </div>
 
 <div class="deco-layer deco-meeples" aria-hidden="true">
-  <svg viewBox="0 0 130 160">
-    <defs>
-      <symbol id="dcMeeple" viewBox="0 0 36 54">
-        <path class="dc-outline" d="M18 2c6 0 9 6 6.6 10.4L32 28c1.6 3-0.6 6.4-4 6.4h-4.4V49H12.4V34.4H8c-3.4 0-5.6-3.4-4-6.4l7.4-15.6C9 8 12 2 18 2z"/>
-        <circle class="dc-ink" cx="15" cy="12" r="1.3"/>
-        <circle class="dc-ink" cx="21" cy="12" r="1.3"/>
-        <path class="dc-line" d="M15 16 q3 2.5 6 0" style="stroke-width:1.2"/>
-      </symbol>
-    </defs>
-    <!-- pionki (podskakują naprzemiennie) -->
-    <g class="mp-a dc-gold"><use href="#dcMeeple" x="4" y="14" width="40" height="60"/></g>
-    <g class="mp-b dc-cream"><use href="#dcMeeple" x="42" y="4" width="46" height="69"/></g>
-    <g class="mp-c dc-green"><use href="#dcMeeple" x="88" y="16" width="40" height="60"/></g>
-    <!-- kości -->
-    <g class="dc-die-a">
-      <rect class="dc-cream dc-outline" x="16" y="110" width="36" height="36" rx="6"/>
-      <circle class="dc-ink" cx="26" cy="120" r="3"/>
-      <circle class="dc-ink" cx="42" cy="120" r="3"/>
-      <circle class="dc-gold" cx="34" cy="128" r="3"/>
-      <circle class="dc-ink" cx="26" cy="136" r="3"/>
-      <circle class="dc-ink" cx="42" cy="136" r="3"/>
-    </g>
-    <g class="dc-die-b">
-      <rect class="dc-cream dc-outline" x="70" y="114" width="36" height="36" rx="6"/>
-      <circle class="dc-ink" cx="80" cy="124" r="3"/>
-      <circle class="dc-ink" cx="96" cy="124" r="3"/>
-      <circle class="dc-ink" cx="80" cy="140" r="3"/>
-      <circle class="dc-ink" cx="96" cy="140" r="3"/>
-    </g>
-    <ellipse class="dc-ink" cx="62" cy="154" rx="52" ry="3" opacity="0.35"/>
+  <svg viewBox="0 0 66 96">
+    <path d="M18 6c6 0 9 6 6.6 10.4L32 32c1.6 3-0.6 6.4-4 6.4h-4.4v14.6H12.4V38.4H8c-3.4 0-5.6-3.4-4-6.4l7.4-15.6C9 12 12 6 18 6z"/>
+    <path d="M46 46c7 0 10.5 7 7.7 12.1L62 76c1.9 3.5-0.7 7.5-4.7 7.5h-5.1v17H37.8v-17h-5.1c-4 0-6.6-4-4.7-7.5l8.3-17.9C33.5 53 39 46 46 46z"/>
   </svg>
 </div>
 
 <div class="deco-layer deco-wanderer" aria-hidden="true">
-  <svg viewBox="0 0 190 170">
-    <ellipse class="dc-ink" cx="96" cy="164" rx="80" ry="4" opacity="0.35"/>
-    <!-- RYCERZ -->
-    <!-- miecz (kołysze się) -->
-    <g class="dc-sword">
-      <path class="dc-cream dc-outline" d="M62 84 L 26 22 L 32 18 L 66 80 Z"/>
-      <path class="dc-gold dc-outline" d="M52 84 L 74 72 L 76 78 L 56 90 Z"/>
-      <path class="dc-ink" d="M62 88 L 70 100 L 66 102 L 58 90 Z"/>
-    </g>
-    <!-- tułów, tunika -->
-    <path class="dc-red dc-outline" d="M52 62 C 40 68, 36 84, 36 104 L 36 124 L 84 124 L 84 104 C 84 84, 80 68, 68 62 Z"/>
-    <path class="dc-gold" d="M60 76 l4 8 l-4 8 l-4 -8 z"/>
-    <path class="dc-line-gold" d="M40 96 h40"/>
-    <!-- nogi -->
-    <path class="dc-muted dc-outline" d="M42 124 v28 h14 v-28 Z M64 124 v28 h14 v-28 Z"/>
-    <path class="dc-ink" d="M40 152 h18 v8 h-22 Z M62 152 h18 v8 h-14 Z"/>
-    <!-- głowa i hełm -->
-    <circle class="dc-cream2 dc-outline" cx="60" cy="44" r="15"/>
-    <path class="dc-muted dc-outline" d="M45 44 a15 15 0 0 1 30 0 v4 h-30 Z"/>
-    <path class="dc-line" d="M50 46 h20"/>
-    <path class="dc-gold dc-plume" d="M56 22 C 66 6, 82 8, 90 18 C 78 14, 68 20, 62 30 Z"/>
-    <!-- tarcza -->
-    <path class="dc-green dc-outline" d="M76 84 L 106 84 L 106 106 C 106 118, 98 126, 91 130 C 84 126, 76 118, 76 106 Z"/>
-    <path class="dc-gold" d="M88 90 h6 v10 h10 v6 h-10 v14 h-6 v-14 h-10 v-6 h10 z"/>
-    <!-- MAG -->
-    <!-- laska z kulą -->
-    <path class="dc-line" d="M148 40 V 158" style="stroke: var(--gold); stroke-width: 3"/>
-    <g class="dc-orb">
-      <circle class="dc-muted" cx="150" cy="34" r="12" opacity="0.5"/>
-      <circle class="dc-cream" cx="150" cy="34" r="7"/>
-    </g>
-    <!-- szata -->
-    <path class="dc-muted dc-outline" d="M128 70 C 112 92, 106 124, 104 158 L 176 158 C 174 124, 168 92, 152 70 Z"/>
-    <path class="dc-gold" d="M136 100 l3 6 l-3 6 l-3 -6 z M146 118 l3 6 l-3 6 l-3 -6 z M158 96 l3 6 l-3 6 l-3 -6 z"/>
-    <!-- broda i twarz -->
-    <circle class="dc-cream2 dc-outline" cx="140" cy="58" r="12"/>
-    <path class="dc-cream dc-outline" d="M130 62 C 128 78, 134 90, 140 96 C 146 90, 152 78, 150 62 C 146 66, 134 66, 130 62 Z"/>
-    <circle class="dc-ink" cx="136" cy="56" r="1.4"/>
-    <circle class="dc-ink" cx="144" cy="56" r="1.4"/>
-    <!-- kapelusz -->
-    <path class="dc-green dc-outline" d="M122 52 L 158 52 L 140 6 Z"/>
-    <path class="dc-green dc-outline" d="M114 52 L 166 52 L 164 58 L 116 58 Z"/>
-    <path class="dc-gold" d="M138 28 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z"/>
-  </svg>
-</div>
-
-<div class="deco-layer deco-chest" aria-hidden="true">
-  <svg viewBox="0 0 190 160">
-    <defs>
-      <radialGradient id="dcChestGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0" stop-color="#B8935F" stop-opacity="0.55"/>
-        <stop offset="1" stop-color="#B8935F" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-    <ellipse class="dc-ink" cx="96" cy="154" rx="78" ry="4" opacity="0.35"/>
-    <!-- poświata ze skrzyni -->
-    <ellipse class="dc-chest-glow" cx="100" cy="74" rx="66" ry="40" fill="url(#dcChestGlow)"/>
-    <!-- otwarta pokrywa (z tyłu) -->
-    <g class="dc-chest-lid">
-      <path class="dc-red dc-outline" d="M30 78 C 30 52, 58 40, 100 40 C 142 40, 170 52, 170 78 Z"/>
-      <path class="dc-gold dc-outline" d="M56 78 C 56 58, 70 46, 72 46 L 84 46 C 84 46, 70 58, 70 78 Z M118 78 C 118 58, 106 46, 106 46 L 118 46 C 118 46, 132 58, 132 78 Z"/>
-      <rect class="dc-cream2" x="30" y="72" width="140" height="6" opacity="0.6"/>
-    </g>
-    <!-- zawartość: karty, kości, pionek, monety -->
-    <g transform="translate(0,0)">
-      <rect class="dc-cream dc-outline" x="52" y="58" width="26" height="36" rx="3" transform="rotate(-14 65 76)"/>
-      <rect class="dc-cream dc-outline" x="64" y="56" width="26" height="36" rx="3" transform="rotate(-4 77 74)"/>
-      <path class="dc-gold" d="M76 66 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z"/>
-      <rect class="dc-cream dc-outline" x="112" y="62" width="24" height="24" rx="5" transform="rotate(12 124 74)"/>
-      <circle class="dc-ink" cx="119" cy="70" r="2.2"/><circle class="dc-ink" cx="130" cy="79" r="2.2"/><circle class="dc-gold" cx="124.5" cy="74.5" r="2.2"/>
-      <path class="dc-green dc-outline" d="M98 52c4 0 6 4 4.4 7L107 68c1 2-0.4 4.2-2.7 4.2H101v10h-6v-10h-3.3c-2.3 0-3.7-2.2-2.7-4.2L93.6 59C92 56 94 52 98 52z"/>
-      <circle class="dc-gold dc-outline dc-coin-a" cx="46" cy="86" r="6"/>
-      <circle class="dc-gold dc-outline dc-coin-b" cx="150" cy="84" r="6"/>
-      <circle class="dc-gold dc-outline dc-coin-c" cx="138" cy="92" r="5"/>
-    </g>
-    <!-- korpus skrzyni -->
-    <rect class="dc-red dc-outline" x="30" y="86" width="140" height="62" rx="5"/>
-    <rect class="dc-gold dc-outline" x="56" y="86" width="14" height="62"/>
-    <rect class="dc-gold dc-outline" x="118" y="86" width="14" height="62"/>
-    <rect class="dc-cream2" x="30" y="86" width="140" height="5" opacity="0.5"/>
-    <path class="dc-line" d="M42 100 h8 M42 112 h8 M42 124 h8 M42 136 h8 M144 100 h10 M144 112 h10 M144 124 h10 M144 136 h10" style="stroke: rgba(8,24,36,0.45)"/>
-    <!-- zamek -->
-    <rect class="dc-gold dc-outline" x="84" y="88" width="22" height="24" rx="4"/>
-    <circle class="dc-ink" cx="95" cy="98" r="2.6"/>
-    <path class="dc-ink" d="M94 99 h2 v7 h-2 z"/>
-  </svg>
-</div>
-
-<div class="deco-layer deco-boxes" aria-hidden="true">
-  <svg viewBox="0 0 180 170">
-    <ellipse class="dc-ink" cx="94" cy="164" rx="76" ry="4" opacity="0.35"/>
-    <!-- stos pudełek z grami -->
-    <rect class="dc-red dc-outline" x="52" y="134" width="112" height="28" rx="3"/>
-    <rect class="dc-gold" x="60" y="146" width="44" height="4" rx="2"/>
-    <rect class="dc-cream2" x="112" y="146" width="20" height="4" rx="2"/>
-    <rect class="dc-green dc-outline" x="46" y="108" width="112" height="26" rx="3" transform="rotate(-2 102 121)"/>
-    <rect class="dc-cream" x="56" y="119" width="52" height="4" rx="2" transform="rotate(-2 102 121)"/>
-    <rect class="dc-gold" x="116" y="119" width="14" height="4" rx="2" transform="rotate(-2 102 121)"/>
-    <rect class="dc-navy dc-outline" x="58" y="84" width="104" height="24" rx="3" transform="rotate(1.5 110 96)"/>
-    <rect class="dc-gold" x="66" y="94" width="36" height="4" rx="2" transform="rotate(1.5 110 96)"/>
-    <rect class="dc-cream2" x="108" y="94" width="30" height="4" rx="2" transform="rotate(1.5 110 96)"/>
-    <!-- klepsydra na stosie -->
-    <rect class="dc-gold dc-outline" x="66" y="30" width="48" height="6" rx="2"/>
-    <rect class="dc-gold dc-outline" x="66" y="112" width="48" height="6" rx="2" transform="translate(0,-32)"/>
-    <path class="dc-line-gold" d="M70 36 V 80 M110 36 V 80" style="stroke-width:2.6"/>
-    <path fill="rgba(240,234,217,0.14)" class="dc-outline" d="M72 36 C 72 56, 88 58, 90 60 C 92 58, 108 56, 108 36 Z M72 80 C 72 60, 88 58, 90 56 C 92 58, 108 60, 108 80 Z"/>
-    <path class="dc-cream dc-sand-top" d="M76 44 C 76 56, 88 58, 90 60 C 92 58, 104 56, 104 44 Z"/>
-    <path class="dc-cream dc-sand-bottom" d="M74 80 C 74 70, 86 66, 90 62 C 94 66, 106 70, 106 80 Z"/>
-    <path class="dc-sand-stream" d="M90 60 V 78" style="stroke: var(--card); stroke-width: 1.4; fill:none"/>
-    <!-- wachlarz kart oparty o pudełka -->
-    <g class="dc-card-fan">
-      <rect class="dc-cream dc-outline" x="18" y="108" width="26" height="40" rx="3" transform="rotate(-24 31 148)"/>
-      <rect class="dc-cream dc-outline" x="24" y="106" width="26" height="40" rx="3" transform="rotate(-10 37 148)"/>
-      <rect class="dc-cream dc-outline" x="30" y="106" width="26" height="40" rx="3" transform="rotate(4 43 148)"/>
-      <path class="dc-gold" d="M41 118 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z" transform="rotate(4 43 148)"/>
-    </g>
+  <svg viewBox="0 0 92 132">
+    <circle cx="46" cy="20" r="14"/>
+    <path d="M46 34 C 22 40, 14 62, 16 96 C 17 108, 20 118, 24 126 L68 126 C 72 118, 75 108, 76 96 C 78 62, 70 40, 46 34 Z"/>
+    <path d="M46 34 L46 90"/>
+    <path d="M30 60 C 36 66, 56 66, 62 60"/>
+    <path d="M78 40 L88 120"/>
+    <circle cx="88" cy="14" r="6"/>
+    <path d="M88 20 L78 40"/>
   </svg>
 </div>
 
 <div class="wrap">
   <header>
-    <div>
-      <div class="eyebrow">🎲 <span>Katalog wypożyczeń</span></div>
-      <div class="title-row">
-        <img class="site-logo" src="data:image/jpeg;base64,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" alt="Logo JFF">
-        <h1 class="display">Biblioteczka Gier JFF <span class="author-tag">by Artur Oleksiak</span></h1>
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="eyebrow">🎲 <span>Katalog wypożyczeń</span></div>
+        <div class="title-row">
+          <img class="site-logo" src="data:image/jpeg;base64,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" alt="Logo JFF">
+          <h1 class="display">Biblioteczka Gier JFF <span class="author-tag">by Artur Oleksiak</span></h1>
+        </div>
+        <div class="sub-row">
+          <p class="sub mono" id="subCount"><span class="sync-dot offline" id="syncDot"></span>Łączenie z bazą danych...</p>
+          <span class="viewer-badge" id="viewerBadge" style="display:none"><span class="viewer-dot"></span><span id="viewerCount"></span></span>
+        </div>
       </div>
-      <p class="sub mono" id="subCount"><span class="sync-dot offline" id="syncDot"></span>Łączenie z bazą danych...</p>
+      <div class="header-utils">
+        <button class="btn btn-outline btn-icon notif-btn" id="notifToggle" title="Powiadomienia o terminach zwrotu">🔔</button>
+        <button class="btn btn-outline btn-icon" id="themeToggle" title="Zmień motyw">☀️</button>
+      </div>
     </div>
     <div class="header-actions">
-      <span class="viewer-badge" id="viewerBadge" style="display:none"><span class="viewer-dot"></span><span id="viewerCount"></span></span>
-      <button class="btn btn-outline notif-btn" id="notifToggle" title="Powiadomienia o terminach zwrotu">🔔</button>
-      <button class="btn btn-outline" id="themeToggle" title="Zmień motyw">☀️</button>
       <button class="btn btn-outline" id="rankingBtn">🏆 Ranking</button>
-      <button class="btn btn-outline" id="gameBtn" title="Minigra">🎮 Minigra</button>
+      <button class="btn btn-outline" id="arcadeBtn">🎮 Minigra</button>
       <button class="btn btn-outline" id="shareBtn">🔗 Udostępnij</button>
       <button class="btn btn-outline" id="importBtn">📋 Import listy</button>
       <button class="btn btn-gold" id="addBtn">+ Dodaj grę</button>
@@ -1046,46 +719,12 @@ function fmtDate(d) {
   const dt = new Date(d + "T00:00:00");
   return dt.toLocaleDateString("pl-PL", { day: "2-digit", month: "short", year: "numeric" });
 }
-function nextDayStr(d) { const dt = new Date(d + 'T00:00:00'); dt.setDate(dt.getDate() + 1); return dt.toISOString().slice(0, 10); }
 function daysUntil(d) {
   if (!d) return null;
   const today = new Date(todayStr() + "T00:00:00");
   const target = new Date(d + "T00:00:00");
   return Math.round((target - today) / 86400000);
 }
-
-// ---- Automatyczna realizacja rezerwacji ----
-// Gdy nadejdzie dzień "Od" rezerwacji, gra staje się WYPOŻYCZONA (ten sam stan, kolor i miejsce
-// w sekcji "Wypożyczone" co przy zwykłym wypożyczeniu); rezerwacja znika z listy nadchodzących.
-const activatingIds = new Set();
-function activateReservation(cur, r) {
-  cur.status = 'borrowed';
-  cur.borrower = r.person;
-  cur.borrowedDate = r.dateFrom < todayStr() ? todayStr() : r.dateFrom;
-  cur.dueDate = r.dateTo;
-  cur.reservations = (cur.reservations || []).filter(x => x.id !== r.id);
-}
-function findActiveReservation(g) {
-  const today = todayStr();
-  return (g.reservations || []).find(r => r.dateFrom <= today && r.dateTo >= today) || null;
-}
-function activateDueReservations() {
-  const today = todayStr();
-  games.forEach(g => {
-    if (activatingIds.has(g.id)) return;
-    const active = g.status !== 'borrowed' ? findActiveReservation(g) : null;
-    const expired = (g.reservations || []).some(r => r.dateTo < today);
-    if (!active && !expired) return;
-    activatingIds.add(g.id);
-    commitGame(g.id, cur => {
-      cur.reservations = (cur.reservations || []).filter(r => r.dateTo >= today); // porządek: minione rezerwacje
-      if (cur.status === 'borrowed') return;
-      const r = findActiveReservation(cur);
-      if (r) activateReservation(cur, r);
-    }).catch(() => {}).finally(() => activatingIds.delete(g.id));
-  });
-}
-setInterval(activateDueReservations, 5 * 60 * 1000); // np. po przejściu przez północ przy otwartej stronie
 
 // ---- Pomocnicze funkcje do rezerwacji ----
 function rangesOverlap(aFrom, aTo, bFrom, bTo) {
@@ -1102,49 +741,6 @@ function nextReservation(g) {
 }
 function findReservationConflict(g, dateFrom, dateTo, excludeId) {
   return (g.reservations || []).find(r => r.id !== excludeId && rangesOverlap(r.dateFrom, r.dateTo, dateFrom, dateTo)) || null;
-}
-function sameName(a, b) { return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase(); }
-// Czy aktualne wypożyczenie blokuje zakres [from, to]? Brak terminu zwrotu = blokada bez końca.
-function borrowBlocksRange(g, from, to) {
-  if (g.status !== 'borrowed') return false;
-  if (!g.dueDate) return true;
-  return from <= g.dueDate;
-}
-// Rezerwacja (innej osoby), która koliduje z wypożyczeniem od dziś do dueDate (brak dueDate = bez końca).
-function reservationBlockingBorrow(g, borrower, dueDate) {
-  const today = todayStr();
-  return upcomingReservations(g).find(r => !sameName(r.person, borrower) && (!dueDate || rangesOverlap(r.dateFrom, r.dateTo, today, dueDate))) || null;
-}
-// Ostatni dopuszczalny dzień zwrotu przy wypożyczeniu dziś (dzień przed najbliższą obcą rezerwacją).
-function maxDueDateFor(g, borrower) {
-  const today = todayStr();
-  const r = upcomingReservations(g).find(r => !sameName(r.person, borrower) && r.dateTo >= today);
-  if (!r) return '';
-  if (r.dateFrom <= today) return null; // trwa już rezerwacja innej osoby
-  const d = new Date(r.dateFrom + 'T00:00:00'); d.setDate(d.getDate() - 1);
-  return d.toISOString().slice(0, 10);
-}
-
-// Atomowy zapis zmian jednej gry. Funkcja mutate(g) dostaje AKTUALNY stan z serwera
-// (nie kopię lokalną), więc dwie osoby klikające w tym samym momencie nie nadpiszą się nawzajem.
-// mutate zwraca tekst błędu, aby przerwać zapis, lub nic, aby go zatwierdzić.
-function commitGame(id, mutate) {
-  let abortReason = '';
-  return db.ref('games/' + id).transaction(cur => {
-    if (cur === null) return cur;
-    if (!cur.reservations) cur.reservations = [];
-    if (!cur.history) cur.history = [];
-    abortReason = mutate(cur) || '';
-    if (abortReason) return; // undefined = przerwij transakcję
-    return cur;
-  }).then(res => {
-    if (!res.committed) throw new Error(abortReason || 'Ktoś w tym samym czasie zmienił tę grę. Odświeżono dane – spróbuj ponownie.');
-    if (res.snapshot.val() === null) throw new Error('Ta gra została w międzyczasie usunięta.');
-    return res.snapshot.val();
-  }).catch(err => {
-    toast(err.message || 'Nie udało się zapisać zmian.', 'error');
-    throw err;
-  });
 }
 
 let games = [];
@@ -1331,20 +927,11 @@ function matchesFilters(g) {
   return true;
 }
 
-function reservationBadgeHtml(g, extraStyle) {
-  const list = upcomingReservations(g);
-  if (!list.length) return '';
-  const nr = list[0];
-  const more = list.length > 1 ? ` <span style="opacity:.7">+${list.length - 1}</span>` : '';
-  const when = daysUntil(nr.dateFrom) === 0 ? 'od dziś' : `${fmtDate(nr.dateFrom)} → ${fmtDate(nr.dateTo)}`;
-  return `<div class="reservation-badge" onclick="openReservations('${g.id}')" ${extraStyle ? `style="${extraStyle}"` : ''} title="Zarezerwowane – kliknij, aby zobaczyć kalendarz">📅 Zarezerwowane: ${when} · ${escapeHtml(nr.person)}${more}</div>`;
-}
-
 function cardHtml(g) {
   const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
   const loanCount = (g.history || []).length;
   const nextRes = nextReservation(g);
-  const resBadge = reservationBadgeHtml(g);
+  const resBadge = nextRes ? `<div class="reservation-badge" onclick="openReservations('${g.id}')">📅 ${daysUntil(nextRes.dateFrom) === 0 ? 'dziś' : fmtDate(nextRes.dateFrom)} → ${escapeHtml(nextRes.person)}</div>` : '';
   const statusHtml = g.status === 'available'
     ? `<div class="status-row">
          <span class="status-available">✓ Dostępna</span>
@@ -1802,92 +1389,27 @@ function openEdit(id) {
 
 function openBorrow(id) {
   const g = games.find(x => x.id === id);
-  const upcoming = upcomingReservations(g);
-  const resInfo = upcoming.length ? `
-        <div class="field-hint" id="f-borrow-res-info" style="padding:8px 10px; border-radius:6px; background: rgba(184,147,95,0.14); color: var(--ink-muted); line-height:1.5">
-          📅 Nadchodzące rezerwacje:<br>${upcoming.slice(0, 3).map(r => `<b style="color:var(--ink)">${escapeHtml(r.person)}</b> · ${fmtDate(r.dateFrom)} → ${fmtDate(r.dateTo)}`).join('<br>')}
-          <br><span id="f-borrow-cap"></span>
-        </div>` : '';
   openModal(`
     <div class="modal">
       <div class="modal-head"><h2 class="display">Wypożycz: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        ${resInfo}
-        <div class="field" id="f-borrower-field"><label>Kto wypożycza</label><input id="f-borrower" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
-        <div class="field" id="f-due-field"><label>Termin zwrotu ${upcoming.length ? '' : '(opcjonalnie)'}</label><input id="f-due" type="date" min="${todayStr()}"><div class="field-error" id="f-due-error">Termin koliduje z rezerwacją</div></div>
-        <div class="field-hint" id="f-borrow-status"></div>
+        <div class="field"><label>Kto wypożycza</label><input id="f-borrower" placeholder="Imię i nazwisko" autofocus></div>
+        <div class="field"><label>Termin zwrotu (opcjonalnie)</label><input id="f-due" type="date"></div>
       </div>
       <div class="modal-foot" style="justify-content:flex-end">
         <button class="btn btn-green" id="f-confirm">Potwierdź wypożyczenie</button>
       </div>
     </div>
   `);
-
-  const borrowerEl = document.getElementById('f-borrower');
-  const dueEl = document.getElementById('f-due');
-  function refreshCap() {
-    const capEl = document.getElementById('f-borrow-cap');
-    const maxDue = maxDueDateFor(g, borrowerEl.value);
-    if (maxDue === null) {
-      if (capEl) capEl.textContent = 'Trwa rezerwacja innej osoby – wypożyczyć może tylko ona.';
-      dueEl.removeAttribute('max');
-    } else if (maxDue) {
-      if (capEl) capEl.textContent = `Zwrot najpóźniej ${fmtDate(maxDue)}, aby nie kolidować z rezerwacją.`;
-      dueEl.max = maxDue;
-    } else {
-      if (capEl) capEl.textContent = upcoming.length ? 'To Twoja rezerwacja – odbierając grę, zostanie ona zrealizowana.' : '';
-      dueEl.removeAttribute('max');
-    }
-  }
-  refreshCap();
-  borrowerEl.addEventListener('input', refreshCap);
-
   document.getElementById('f-confirm').onclick = () => {
-    const borrower = borrowerEl.value.trim();
-    const due = dueEl.value;
-    const bField = document.getElementById('f-borrower-field');
-    const dField = document.getElementById('f-due-field');
-    const statusEl = document.getElementById('f-borrow-status');
-    bField.classList.remove('invalid'); dField.classList.remove('invalid');
-    statusEl.textContent = ''; statusEl.style.color = '';
-    if (!borrower) {
-      bField.classList.add('invalid', 'shake'); borrowerEl.focus();
-      setTimeout(() => bField.classList.remove('shake'), 300);
-      return;
-    }
-    if (due && due < todayStr()) {
-      document.getElementById('f-due-error').textContent = 'Termin zwrotu nie może być w przeszłości';
-      dField.classList.add('invalid', 'shake');
-      setTimeout(() => dField.classList.remove('shake'), 300);
-      return;
-    }
-    // Wstępna kontrola lokalna (szybka informacja); ostateczna odbywa się atomowo w commitGame.
-    const localConflict = reservationBlockingBorrow(g, borrower, due);
-    if (localConflict) {
-      document.getElementById('f-due-error').textContent = due
-        ? `Termin koliduje z rezerwacją: ${localConflict.person} (${fmtDate(localConflict.dateFrom)} → ${fmtDate(localConflict.dateTo)})`
-        : `Podaj termin zwrotu przed rezerwacją: ${localConflict.person} od ${fmtDate(localConflict.dateFrom)}`;
-      dField.classList.add('invalid', 'shake');
-      setTimeout(() => dField.classList.remove('shake'), 300);
-      return;
-    }
-    const btn = document.getElementById('f-confirm');
-    btn.disabled = true;
-    commitGame(id, cur => {
-      if (cur.status === 'borrowed') return `Gra została właśnie wypożyczona przez: ${cur.borrower || 'inną osobę'}.`;
-      const conflict = reservationBlockingBorrow(cur, borrower, due);
-      if (conflict) return `Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)}).`;
-      // Odbiór własnej rezerwacji: zamieniamy ją na wypożyczenie.
-      const today = todayStr();
-      cur.reservations = (cur.reservations || []).filter(r => !(sameName(r.person, borrower) && r.dateFrom <= today && r.dateTo >= today));
-      cur.status = 'borrowed';
-      cur.borrower = borrower;
-      cur.borrowedDate = today;
-      cur.dueDate = due;
-    }).then(() => {
-      closeModal();
-      toast('Wypożyczono: ' + borrower);
-    }).catch(() => { btn.disabled = false; });
+    const borrower = document.getElementById('f-borrower').value.trim();
+    if (!borrower) return;
+    g.status = 'borrowed';
+    g.borrower = borrower;
+    g.borrowedDate = todayStr();
+    g.dueDate = document.getElementById('f-due').value;
+    closeModal();
+    saveGameMeta(g);
   };
 }
 
@@ -1921,27 +1443,26 @@ function openExtend(id) {
       return;
     }
     const newDue = document.getElementById('f-extend-due').value;
-    if (!newDue) return;
-    commitGame(id, cur => {
-      if (cur.status !== 'borrowed' || !sameName(cur.borrower, typedName)) return 'Stan wypożyczenia w międzyczasie się zmienił.';
-      const conflict = reservationBlockingBorrow(cur, typedName, newDue);
-      if (conflict) return `Nie można przedłużyć: koliduje z rezerwacją ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)}).`;
-      if (!cur.extensions) cur.extensions = [];
-      cur.extensions.push({ date: todayStr(), previousDueDate: cur.dueDate || '', newDueDate: newDue, by: typedName });
-      cur.dueDate = newDue;
-    }).then(() => { closeModal(); toast('Przedłużono do ' + fmtDate(newDue)); }).catch(() => {});
+    if (!g.extensions) g.extensions = [];
+    g.extensions.push({ date: todayStr(), previousDueDate: g.dueDate, newDueDate: newDue, by: typedName });
+    g.dueDate = newDue;
+    closeModal();
+    saveGameMeta(g);
   };
 }
 
 function returnGame(id) {
-  commitGame(id, cur => {
-    if (cur.status !== 'borrowed') return 'Ta gra jest już oznaczona jako dostępna.';
-    if (cur.borrower) cur.history.push({ borrower: cur.borrower, borrowedDate: cur.borrowedDate || '', returnedDate: todayStr() });
-    cur.status = 'available';
-    cur.borrower = '';
-    cur.borrowedDate = '';
-    cur.dueDate = '';
-  }).then(() => spawnConfetti()).catch(() => {});
+  const g = games.find(x => x.id === id);
+  if (!g.history) g.history = [];
+  if (g.borrower) {
+    g.history.push({ borrower: g.borrower, borrowedDate: g.borrowedDate, returnedDate: todayStr() });
+  }
+  g.status = 'available';
+  g.borrower = '';
+  g.borrowedDate = '';
+  g.dueDate = '';
+  saveGameMeta(g);
+  spawnConfetti();
 }
 
 function openHistory(id) {
@@ -1969,16 +1490,8 @@ function openReservations(id) {
 
   openModal(`
     <div class="modal modal-wide">
-      <div class="modal-head"><h2 class="display">Wypożyczenie i rezerwacje: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-head"><h2 class="display">Rezerwacje: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        <div style="margin-bottom:14px">
-          <div class="field-hint" style="margin-bottom:6px">Co chcesz zrobić?</div>
-          <div class="cal-mode" id="cal-mode">
-            <button type="button" class="cal-mode-btn" data-mode="borrow" id="cal-mode-borrow">⏱ Wypożycz od dziś</button>
-            <button type="button" class="cal-mode-btn" data-mode="reserve" id="cal-mode-reserve">📅 Zarezerwuj termin</button>
-          </div>
-          <div class="cal-hint" id="cal-mode-hint"></div>
-        </div>
         <div class="cal-head">
           <button type="button" id="cal-prev">‹</button>
           <span id="cal-label"></span>
@@ -1988,15 +1501,13 @@ function openReservations(id) {
         <div class="cal-legend">
           <span><span class="cal-dot" style="background:rgba(168,72,58,0.3)"></span>Zarezerwowane</span>
           <span><span class="cal-dot" style="background:transparent;border:1px solid var(--gold)"></span>Dziś</span>
-          <span><span class="cal-dot" style="background:rgba(184,147,95,0.35)"></span>Wypożyczona</span>
         </div>
-        <div class="cal-hint" id="cal-hint">Kliknij dzień w kalendarzu, aby ustawić datę „Od”, a potem drugi dzień jako „Do”.</div>
         <div style="margin-top:16px">
           <div class="field-hint" style="margin-bottom:6px">Nadchodzące rezerwacje</div>
           <div id="res-list"></div>
         </div>
         <div style="border-top:1px dashed var(--border-card); margin-top:8px; padding-top:14px; display:flex; flex-direction:column; gap:12px">
-          <div class="field" id="f-res-name-field"><label id="f-res-name-label">Kto rezerwuje</label><input id="f-res-name" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
+          <div class="field" id="f-res-name-field"><label>Kto rezerwuje</label><input id="f-res-name" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
           <div style="display:flex; gap:10px">
             <div class="field" style="flex:1" id="f-res-from-field"><label>Od</label><input id="f-res-from" type="date" min="${todayStr()}"><div class="field-error">Wybierz poprawny zakres dat</div></div>
             <div class="field" style="flex:1"><label>Do</label><input id="f-res-to" type="date" min="${todayStr()}"></div>
@@ -2010,47 +1521,6 @@ function openReservations(id) {
     </div>
   `);
 
-  let previewDate = '';
-  let mode = g.status === 'borrowed' ? 'reserve' : 'borrow'; // 'borrow' = wypożyczenie od dziś, 'reserve' = rezerwacja
-
-  function setMode(m) {
-    if (m === 'borrow' && g.status === 'borrowed') m = 'reserve';
-    mode = m;
-    const fromEl = document.getElementById('f-res-from');
-    const toEl = document.getElementById('f-res-to');
-    document.querySelectorAll('.cal-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-    document.getElementById('cal-mode-borrow').disabled = g.status === 'borrowed';
-    document.getElementById('cal-mode-borrow').title = g.status === 'borrowed' ? `Gra jest już wypożyczona${g.borrower ? ' przez ' + g.borrower : ''}` : '';
-    const saveBtn = document.getElementById('f-res-save');
-    if (mode === 'borrow') {
-      fromEl.value = todayStr(); fromEl.readOnly = true; fromEl.style.opacity = '0.7';
-      const maxDue = maxDueDateFor(g, document.getElementById('f-res-name').value);
-      if (maxDue) toEl.max = maxDue; else toEl.removeAttribute('max');
-      document.getElementById('f-res-name-label').textContent = 'Kto wypożycza';
-      document.getElementById('cal-mode-hint').textContent = maxDue === null
-        ? 'Trwa rezerwacja innej osoby – wypożyczyć może tylko ona.'
-        : (maxDue ? `Wypożyczenie zaczyna się dziś. Zwrot najpóźniej ${fmtDate(maxDue)} (przed następną rezerwacją).` : 'Wypożyczenie zaczyna się dziś. Kliknij dzień zwrotu w kalendarzu (opcjonalnie).');
-      saveBtn.className = 'btn btn-dark';
-      saveBtn.textContent = '⏱ Wypożycz';
-    } else {
-      if (fromEl.readOnly) { fromEl.value = ''; toEl.value = ''; }
-      fromEl.readOnly = false; fromEl.style.opacity = ''; toEl.removeAttribute('max');
-      document.getElementById('f-res-name-label').textContent = 'Kto rezerwuje';
-      document.getElementById('cal-mode-hint').textContent = 'Rezerwacja blokuje termin w przyszłości. W dniu „Od” gra automatycznie stanie się wypożyczona.';
-      saveBtn.className = 'btn btn-green';
-      saveBtn.textContent = '📅 Zarezerwuj termin';
-    }
-    document.getElementById('f-res-status').textContent = '';
-    renderCalendar();
-  }
-
-  function getSel() {
-    const from = document.getElementById('f-res-from').value;
-    let to = document.getElementById('f-res-to').value;
-    if (from && to && to < from) to = '';
-    return { from, to };
-  }
-
   function renderCalendar() {
     const label = viewDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
     document.getElementById('cal-label').textContent = label;
@@ -2058,102 +1528,17 @@ function openReservations(id) {
     const firstDow = (new Date(year, month, 1).getDay() + 6) % 7; // Poniedziałek = 0
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = todayStr();
-    const { from, to } = getSel();
-    // zakres do podglądu (najechanie myszką po wybraniu "Od")
-    const pvFrom = from && !to && previewDate && previewDate > from ? from : '';
-    const pvTo = pvFrom ? previewDate : '';
     let cells = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'].map(d => `<div class="cal-dow">${d}</div>`).join('');
     for (let i = 0; i < firstDow; i++) cells += `<div class="cal-day empty"></div>`;
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const isReserved = g.reservations.some(r => dateStr >= r.dateFrom && dateStr <= r.dateTo);
-      const isBorrowed = g.status === 'borrowed' && dateStr >= today && (!g.dueDate || dateStr <= g.dueDate);
       const isPast = dateStr < today;
       const isToday = dateStr === today;
-      const cls = [];
-      if (isReserved) cls.push('reserved');
-      if (isBorrowed && !isReserved) cls.push('borrowed');
-      if (isPast) cls.push('past');
-      if (isToday) cls.push('today');
-      if (!isPast) cls.push('clickable');
-      if (from) {
-        const end = to || from;
-        if (dateStr === from) cls.push('sel-start');
-        if (dateStr === end) cls.push('sel-end');
-        if (dateStr > from && dateStr < end) cls.push('sel-mid');
-      }
-      if (pvFrom && dateStr > pvFrom && dateStr <= pvTo) {
-        cls.push('sel-preview');
-        if (dateStr === pvTo) cls.push('preview-end');
-      }
-      const title = isReserved ? 'Termin już zarezerwowany' : (isBorrowed ? `Gra wypożyczona${g.dueDate ? ' do ' + fmtDate(g.dueDate) : ''}` : '');
-      cells += `<div class="cal-day ${cls.join(' ')}" data-date="${dateStr}" ${title ? `title="${title}"` : ''}>${day}</div>`;
+      cells += `<div class="cal-day ${isReserved ? 'reserved' : ''} ${isPast ? 'past' : ''} ${isToday ? 'today' : ''}">${day}</div>`;
     }
-    const grid = document.getElementById('cal-grid');
-    grid.innerHTML = cells;
-    grid.classList.toggle('mode-borrow', mode === 'borrow');
-    grid.classList.toggle('mode-reserve', mode === 'reserve');
-    updateHint();
+    document.getElementById('cal-grid').innerHTML = cells;
   }
-
-  function updateHint() {
-    const { from, to } = getSel();
-    const hint = document.getElementById('cal-hint');
-    if (!hint) return;
-    const days = from && to ? Math.round((new Date(to) - new Date(from)) / 86400000) + 1 : 0;
-    if (mode === 'borrow') {
-      hint.textContent = to
-        ? `Wypożyczenie: dziś → ${fmtDate(to)} (${days} ${days === 1 ? 'dzień' : 'dni'}). Kliknij inny dzień, aby zmienić termin zwrotu.`
-        : 'Kliknij dzień w kalendarzu, aby ustawić termin zwrotu („Do”).';
-      return;
-    }
-    if (!from) hint.textContent = 'Kliknij dzień w kalendarzu, aby ustawić datę „Od”, a potem drugi dzień jako „Do”.';
-    else if (!to) hint.textContent = `Od ${fmtDate(from)} — teraz kliknij dzień zakończenia („Do”). Kliknięcie wcześniejszej daty zmieni „Od”.`;
-    else hint.textContent = `Rezerwacja: ${fmtDate(from)} → ${fmtDate(to)} (${days} ${days === 1 ? 'dzień' : 'dni'}). Kliknij inny dzień, aby zacząć od nowa.`;
-  }
-
-  function onDayClick(dateStr) {
-    const fromEl = document.getElementById('f-res-from');
-    const toEl = document.getElementById('f-res-to');
-    const { from, to } = getSel();
-    if (mode === 'borrow') {
-      fromEl.value = todayStr();
-      toEl.value = dateStr; // w trybie wypożyczenia klik ustawia termin zwrotu
-    } else if (!from || (from && to) || dateStr < from) {
-      // start nowego zakresu
-      fromEl.value = dateStr;
-      toEl.value = '';
-    } else {
-      // dateStr >= from, brak "Do"
-      toEl.value = dateStr;
-    }
-    previewDate = '';
-    document.getElementById('f-res-status').textContent = '';
-    document.getElementById('f-res-from-field').classList.remove('invalid');
-    renderCalendar();
-  }
-
-  const gridEl = document.getElementById('cal-grid');
-  gridEl.addEventListener('click', (e) => {
-    const cell = e.target.closest('.cal-day.clickable');
-    if (!cell || cell.classList.contains('reserved') || cell.classList.contains('borrowed')) return;
-    onDayClick(cell.dataset.date);
-  });
-  gridEl.addEventListener('mouseover', (e) => {
-    const cell = e.target.closest('.cal-day.clickable');
-    if (!cell) return;
-    const { from, to } = getSel();
-    if (!from || to) return;
-    if (previewDate !== cell.dataset.date) { previewDate = cell.dataset.date; renderCalendar(); }
-  });
-  gridEl.addEventListener('mouseleave', () => {
-    if (previewDate) { previewDate = ''; renderCalendar(); }
-  });
-  // ręczna zmiana w polach Od / Do też odświeża pasek w kalendarzu
-  document.getElementById('f-res-from').addEventListener('change', renderCalendar);
-  document.getElementById('f-res-to').addEventListener('change', renderCalendar);
-  document.querySelectorAll('.cal-mode-btn').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
-  document.getElementById('f-res-name').addEventListener('input', () => { if (mode === 'borrow') setMode('borrow'); });
 
   function renderResList() {
     const list = upcomingReservations(g);
@@ -2166,7 +1551,7 @@ function openReservations(id) {
       : `<div class="rank-empty">Brak nadchodzących rezerwacji.</div>`;
   }
 
-  setMode(mode);
+  renderCalendar();
   renderResList();
 
   document.getElementById('cal-prev').onclick = () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); };
@@ -2190,79 +1575,36 @@ function openReservations(id) {
       setTimeout(() => nameField.classList.remove('shake'), 300);
       return;
     }
-    const showConflict = (msg) => { statusEl.style.color = '#A8483A'; statusEl.textContent = '⚠ ' + msg; };
-    const saveBtn = document.getElementById('f-res-save');
-
-    if (mode === 'borrow') {
-      const due = document.getElementById('f-res-to').value; // puste = bez terminu zwrotu
-      if (due && due < todayStr()) return showConflict('Termin zwrotu nie może być w przeszłości.');
-      const lc = reservationBlockingBorrow(g, person, due);
-      if (lc) return showConflict(due
-        ? `Termin koliduje z rezerwacją: ${lc.person} (${fmtDate(lc.dateFrom)} → ${fmtDate(lc.dateTo)}).`
-        : `Podaj termin zwrotu przed rezerwacją: ${lc.person} od ${fmtDate(lc.dateFrom)}.`);
-      saveBtn.disabled = true;
-      commitGame(g.id, cur => {
-        if (cur.status === 'borrowed') return `Gra została właśnie wypożyczona przez: ${cur.borrower || 'inną osobę'}.`;
-        const c = reservationBlockingBorrow(cur, person, due);
-        if (c) return `Termin koliduje z rezerwacją: ${c.person} (${fmtDate(c.dateFrom)} → ${fmtDate(c.dateTo)}).`;
-        const today = todayStr();
-        cur.reservations = (cur.reservations || []).filter(r => !(sameName(r.person, person) && r.dateFrom <= today && r.dateTo >= today));
-        cur.status = 'borrowed'; cur.borrower = person; cur.borrowedDate = today; cur.dueDate = due;
-      }).then(() => {
-        closeModal();
-        toast(`Wypożyczono: ${person}${due ? ' (do ' + fmtDate(due) + ')' : ''}`);
-      }).catch(err => { showConflict(err.message); })
-        .finally(() => { saveBtn.disabled = false; });
-      return;
-    }
-
     if (!from || to < from) {
       fromField.classList.add('invalid', 'shake');
       setTimeout(() => fromField.classList.remove('shake'), 300);
       return;
     }
     const conflict = findReservationConflict(g, from, to);
-    if (conflict) return showConflict(`Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)})`);
-    if (borrowBlocksRange(g, from, to) && !sameName(g.borrower, person)) {
-      return showConflict(g.dueDate
-        ? `Gra jest wypożyczona przez ${g.borrower} do ${fmtDate(g.dueDate)} – wybierz termin od ${fmtDate(nextDayStr(g.dueDate))}.`
-        : `Gra jest obecnie wypożyczona przez ${g.borrower} bez określonego terminu zwrotu.`);
+    if (conflict) {
+      statusEl.style.color = '#A8483A';
+      statusEl.textContent = `⚠ Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)})`;
+      return;
     }
-    saveBtn.disabled = true;
-    const startsToday = from <= todayStr();
-    commitGame(g.id, cur => {
-      const c = findReservationConflict(cur, from, to);
-      if (c) return `Ktoś właśnie zarezerwował ten termin: ${c.person} (${fmtDate(c.dateFrom)} → ${fmtDate(c.dateTo)}).`;
-      if (borrowBlocksRange(cur, from, to) && !sameName(cur.borrower, person)) return `Gra została właśnie wypożyczona${cur.dueDate ? ' do ' + fmtDate(cur.dueDate) : ''}.`;
-      const r = { id: uid(), person, dateFrom: from, dateTo: to };
-      if (startsToday && cur.status !== 'borrowed') {
-        activateReservation(cur, r); // termin zaczyna się dziś -> od razu wypożyczenie
-      } else {
-        cur.reservations.push(r);
-      }
-    }).then(updated => {
-      Object.assign(g, updated, { reservations: updated.reservations || [], history: updated.history || [] });
-      renderResList();
-      document.getElementById('f-res-name').value = '';
-      document.getElementById('f-res-from').value = '';
-      document.getElementById('f-res-to').value = '';
-      renderCalendar();
-      toast(startsToday && g.status === 'borrowed' ? `Wypożyczono od dziś: ${person} (do ${fmtDate(to)})` : 'Zarezerwowano termin dla ' + person);
-    }).catch(err => {
-      showConflict(err.message);
-      // odśwież kalendarz o stan z serwera
-      const fresh = games.find(x => x.id === g.id); if (fresh) { g.reservations = fresh.reservations || []; renderCalendar(); renderResList(); }
-    }).finally(() => { saveBtn.disabled = false; });
+    g.reservations.push({ id: uid(), person, dateFrom: from, dateTo: to });
+    saveGameMeta(g);
+    renderCalendar();
+    renderResList();
+    document.getElementById('f-res-name').value = '';
+    document.getElementById('f-res-from').value = '';
+    document.getElementById('f-res-to').value = '';
+    toast('Zarezerwowano termin dla ' + person);
+    render();
   };
 }
 
 function removeReservation(gameId, resId) {
-  commitGame(gameId, cur => {
-    cur.reservations = (cur.reservations || []).filter(r => r.id !== resId);
-  }).then(() => {
-    closeModal();
-    openReservations(gameId);
-  }).catch(() => {});
+  const g = games.find(x => x.id === gameId);
+  g.reservations = (g.reservations || []).filter(r => r.id !== resId);
+  saveGameMeta(g);
+  closeModal();
+  openReservations(gameId);
+  render();
 }
 
 function openQuickActions(id) {
@@ -2289,7 +1631,7 @@ function openQuickActions(id) {
           : `<div class="borrow-info" style="display:flex; align-items:center; gap:8px">${avatarHtml(g.borrower)}<span><span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span><br>Kto: <b>${escapeHtml(g.borrower)}</b><br>Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}${(g.extensions || []).length ? ' · przedłużono ' + g.extensions.length + 'x' : ''}</span></div>`}
         </div>
         ${loanCount ? `<div class="loan-count" style="margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:11px">Wypożyczano łącznie ${loanCount}x</div>` : ''}
-        ${reservationBadgeHtml(g, 'margin-top:8px')}
+        ${(() => { const nr = nextReservation(g); return nr ? `<div class="reservation-badge" onclick="openReservations('${g.id}')" style="margin-top:8px">📅 ${daysUntil(nr.dateFrom) === 0 ? 'dziś' : fmtDate(nr.dateFrom)} → ${escapeHtml(nr.person)}</div>` : ''; })()}
         <div class="icon-toolbar">
           <button class="icon-toolbar-btn" onclick="openReservations('${id}')" title="Rezerwuj termin">📅</button>
           <button class="icon-toolbar-btn" onclick="openHistory('${id}')" title="Historia wypożyczeń">🕑</button>
@@ -2449,6 +1791,390 @@ Brzdęk: Katakumby
 document.getElementById('addBtn').onclick = openAdd;
 document.getElementById('importBtn').onclick = openImport;
 document.getElementById('rankingBtn').onclick = openStats;
+document.getElementById('arcadeBtn').onclick = openArcade;
+
+// ================== MINIGRA: "Lot nad miastem" (styl Flappy Bird, pixel-art) ==================
+const ARC_W = 288, ARC_H = 162, ARC_GROUND = ARC_H - 12;
+const ARC_HI_KEY = 'biblioteczka-gier-arcade-hi';
+const ARC_NAME_KEY = 'biblioteczka-gier-arcade-name';
+const arcadeRef = db.ref('arcade/flappy');
+let arcadeSession = null;
+
+// Sprite odrzutowca (26x12). d=kontur, w=biel, g=szary, b=niebieski pas, r=czerwony akcent, c=okna/kokpit
+const ARC_PLANE_ROWS = [
+  'dd',
+  'drd',
+  'dwrd',
+  'dwwrd',
+  'dwwwddddddd',
+  'dwwwdgggggwdddddddddd',
+  '.dwwwdddddddwwwwwwwwwwddd',
+  'dgwwwwwcwcwcwcwcwwwwwwccdd',
+  'dgbbbbbbbbbbbbbbbbbbwwwwwd',
+  '.ddgggwwwwwwwwwwwwwwwwwdd',
+  '...dddddggggwwwddddddd',
+  '.......ddwwwwwd',
+  '........dddddd'
+];
+const ARC_PLANE_COLORS = { d: '#1E2B38', w: '#F4F1E8', g: '#AEB8C1', b: '#2F6FA8', r: '#C0473A', c: '#22405E' };
+const ARC_FONT = {
+  '0':'111101101101111','1':'010110010010111','2':'111001111100111','3':'111001111001111','4':'101101111001001',
+  '5':'111100111001111','6':'111100111101111','7':'111001010010010','8':'111101111101111','9':'111101111001111',
+  'H':'101101111101101','I':'111010010010111',' ':'000000000000000'
+};
+const ARC_BUILD_COLORS = ['#CDBB94', '#9FB3C4', '#B3AA92', '#7F9BB3', '#C4B08A'];
+
+function arcMakeSprite(rows, colors) {
+  const w = Math.max(...rows.map(r => r.length));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = rows.length;
+  const x = c.getContext('2d');
+  rows.forEach((row, y) => [...row].forEach((ch, i) => {
+    if (colors[ch]) { x.fillStyle = colors[ch]; x.fillRect(i, y, 1, 1); }
+  }));
+  return c;
+}
+function arcText(ctx, text, x, y, color, scale) {
+  scale = scale || 1;
+  [...text].forEach((ch, i) => {
+    const bits = ARC_FONT[ch] || ARC_FONT[' '];
+    for (let p = 0; p < 15; p++) {
+      if (bits[p] === '1') {
+        const px = x + i * 4 * scale + (p % 3) * scale, py = y + Math.floor(p / 3) * scale;
+        ctx.fillStyle = '#1E2B38'; ctx.fillRect(px + scale, py + scale, scale, scale);
+        ctx.fillStyle = color; ctx.fillRect(px, py, scale, scale);
+      }
+    }
+  });
+}
+function arcTextWidth(text, scale) { return text.length * 4 * (scale || 1) - (scale || 1); }
+function arcPad(n) { return String(Math.min(n, 99999)).padStart(5, '0'); }
+function arcRectsHit(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
+function arcGetHi() { try { return Number(localStorage.getItem(ARC_HI_KEY)) || 0; } catch (e) { return 0; } }
+function arcSetHi(v) { try { localStorage.setItem(ARC_HI_KEY, String(v)); } catch (e) {} }
+function arcGetName() { try { return localStorage.getItem(ARC_NAME_KEY) || ''; } catch (e) { return ''; } }
+function arcSetName(v) { try { localStorage.setItem(ARC_NAME_KEY, v); } catch (e) {} }
+
+function stopArcade() {
+  if (!arcadeSession) return;
+  cancelAnimationFrame(arcadeSession.raf);
+  document.removeEventListener('keydown', arcadeSession.onKey);
+  try { arcadeSession.boardQuery.off(); } catch (e) {}
+  arcadeSession = null;
+}
+
+function openArcade() {
+  stopArcade();
+  openModal(`
+    <div class="modal modal-game">
+      <div class="modal-head"><h2 class="display">🎮 Lot nad miastem</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="arcade-wrap" id="arcade-wrap">
+          <canvas id="arcade-canvas" width="${ARC_W}" height="${ARC_H}"></canvas>
+          <div class="arcade-overlay ready" id="arcade-ready">
+            <div class="arcade-title">✈️ Lot nad miastem</div>
+            <div class="arcade-hint">Kliknij, dotknij lub naciśnij Spację, aby wystartować</div>
+          </div>
+          <div class="arcade-overlay over hidden" id="arcade-over"></div>
+        </div>
+        <div class="arcade-controls">Sterowanie: klik / dotyk / Spacja / ↑ — omijaj wieżowce i burzowe chmury</div>
+        <div>
+          <div class="rank-section-title">🏆 Najlepsi piloci</div>
+          <div id="arcade-board"><div class="rank-empty">Ładowanie rankingu…</div></div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  const canvas = document.getElementById('arcade-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  const plane = arcMakeSprite(ARC_PLANE_ROWS, ARC_PLANE_COLORS);
+  const sky = ctx.createLinearGradient(0, 0, 0, ARC_GROUND);
+  sky.addColorStop(0, '#2C6597'); sky.addColorStop(1, '#5C97C6');
+
+  const G = 430, FLAP = -138, MAX_FALL = 260, SPACING = 124, PLANE_X = 64;
+  const far = [];
+  for (let x = 0; x < ARC_W * 2; ) {
+    const w = 10 + Math.floor(Math.random() * 16);
+    far.push({ x, w, h: 22 + Math.floor(Math.random() * 40), spire: Math.random() < 0.25 });
+    x += w + Math.floor(Math.random() * 4);
+  }
+  const clouds = Array.from({ length: 6 }, (_, i) => ({ x: i * 56 + Math.random() * 30, y: 8 + Math.random() * 50, s: Math.random() < 0.35 ? 2 : 1 }));
+
+  const S = {
+    state: 'ready', py: 70, vy: 0, angle: 0, t: 0, score: 0, obstacles: [], dist: 70,
+    groundOff: 0, farOff: 0, particles: [], shake: 0, flash: 0, overAt: 0, hi: arcGetHi(), last: performance.now()
+  };
+
+  function reset() {
+    Object.assign(S, { state: 'ready', py: 70, vy: 0, angle: 0, score: 0, obstacles: [], dist: 70, particles: [], shake: 0, flash: 0 });
+    document.getElementById('arcade-ready').classList.remove('hidden');
+    document.getElementById('arcade-over').classList.add('hidden');
+  }
+  function flap() {
+    if (S.state === 'ready') {
+      S.state = 'playing';
+      document.getElementById('arcade-ready').classList.add('hidden');
+    }
+    if (S.state === 'playing') S.vy = FLAP;
+    else if (S.state === 'over' && performance.now() - S.overAt > 700) { reset(); flap(); }
+  }
+  function spawn() {
+    const gap = Math.max(44, 58 - S.score * 0.5);
+    const minC = 16 + gap / 2, maxC = ARC_GROUND - 16 - gap / 2;
+    const c = minC + Math.random() * (maxC - minC);
+    const w = 22 + Math.floor(Math.random() * 3) * 3;
+    S.obstacles.push({
+      x: ARC_W + 4, w, gapTop: Math.round(c - gap / 2), gapBot: Math.round(c + gap / 2),
+      style: Math.floor(Math.random() * 3), color: ARC_BUILD_COLORS[Math.floor(Math.random() * ARC_BUILD_COLORS.length)],
+      seed: Math.floor(Math.random() * 1000), passed: false, bolt: Math.random() < 0.4
+    });
+  }
+  function obstacleRects(o) {
+    const x = Math.round(o.x);
+    const roofH = o.style === 1 ? 8 : o.style === 2 ? 6 : 3;
+    const rects = [
+      { x, y: 0, w: o.w, h: o.gapTop - 2 },
+      { x, y: o.gapBot + roofH, w: o.w, h: ARC_GROUND - o.gapBot - roofH }
+    ];
+    if (o.style !== 1) rects.push({ x: x + 4, y: o.gapBot, w: o.w - 8, h: roofH });
+    return rects;
+  }
+  function crash() {
+    S.state = 'over'; S.overAt = performance.now(); S.shake = 10; S.flash = 1;
+    for (let i = 0; i < 14; i++) {
+      S.particles.push({ x: PLANE_X + 8, y: S.py, vx: (Math.random() - 0.3) * 90, vy: (Math.random() - 0.7) * 90, life: 0.6 + Math.random() * 0.5, c: Math.random() < 0.5 ? '#F2A33A' : '#F2D27A' });
+    }
+    const newRecord = S.score > S.hi && S.score > 0;
+    if (newRecord) { S.hi = S.score; arcSetHi(S.score); }
+    setTimeout(() => showOver(newRecord), 550);
+  }
+
+  function update(dt) {
+    S.t += dt;
+    const speed = S.state === 'over' ? 0 : (S.state === 'ready' ? 40 : 68 + Math.min(S.score, 40) * 0.8);
+    S.groundOff = (S.groundOff + speed * dt) % ARC_W;
+    S.farOff = (S.farOff + speed * 0.25 * dt) % (ARC_W * 2);
+    clouds.forEach(c => { c.x -= (speed * 0.12 + 3) * dt; if (c.x < -50) { c.x = ARC_W + Math.random() * 30; c.y = 8 + Math.random() * 50; } });
+
+    if (S.state === 'ready') {
+      S.py = 70 + Math.sin(S.t * 3) * 4;
+      S.angle = Math.sin(S.t * 3) * 0.05;
+    } else if (S.state === 'playing') {
+      S.vy = Math.min(S.vy + G * dt, MAX_FALL);
+      S.py += S.vy * dt;
+      S.angle = Math.max(-0.4, Math.min(0.7, S.vy / 320));
+      if (S.py < 4) { S.py = 4; S.vy = 0; }
+
+      S.dist += speed * dt;
+      if (S.dist >= SPACING) { S.dist = 0; spawn(); }
+      S.obstacles.forEach(o => { o.x -= speed * dt; });
+      S.obstacles = S.obstacles.filter(o => o.x + o.w > -10);
+
+      const hit = { x: PLANE_X - 10, y: S.py - 3, w: 20, h: 7 };
+      for (const o of S.obstacles) {
+        if (!o.passed && o.x + o.w < PLANE_X - 10) { o.passed = true; S.score++; }
+        if (obstacleRects(o).some(r => arcRectsHit(hit, r))) { crash(); break; }
+      }
+      if (S.state === 'playing' && S.py + 4 >= ARC_GROUND) { S.py = ARC_GROUND - 4; crash(); }
+    } else {
+      if (S.py + 4 < ARC_GROUND) {
+        S.vy = Math.min(S.vy + G * dt, MAX_FALL);
+        S.py = Math.min(S.py + S.vy * dt, ARC_GROUND - 4);
+        S.angle = Math.min(S.angle + dt * 3, 1.0);
+      }
+    }
+    S.particles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 120 * dt; p.life -= dt; });
+    S.particles = S.particles.filter(p => p.life > 0);
+    S.shake = Math.max(0, S.shake - dt * 30);
+    S.flash = Math.max(0, S.flash - dt * 4);
+  }
+
+  function drawCloud(x, y, s) {
+    x = Math.round(x); y = Math.round(y);
+    ctx.fillStyle = '#C9D8E4'; ctx.fillRect(x, y + 4 * s, 24 * s, 2 * s);
+    ctx.fillStyle = '#F4F8FB';
+    ctx.fillRect(x + 1 * s, y + 2 * s, 22 * s, 2 * s);
+    ctx.fillRect(x + 5 * s, y, 8 * s, 2 * s);
+    ctx.fillRect(x + 14 * s, y + 1 * s, 6 * s, 1 * s);
+    ctx.fillRect(x + 3 * s, y + 4 * s, 17 * s, 1 * s);
+  }
+  function drawStormCloud(o) {
+    const x = Math.round(o.x), h = o.gapTop;
+    ctx.fillStyle = '#26343F'; ctx.fillRect(x - 1, 0, o.w + 2, h - 1);
+    ctx.fillStyle = '#4A5A69'; ctx.fillRect(x, 0, o.w, h - 3);
+    ctx.fillStyle = '#5D6F80';
+    for (let yy = 6; yy < h - 6; yy += 9) ctx.fillRect(x + 2 + (yy % 4), yy, o.w - 7, 2);
+    // nieregularny dół chmury
+    for (let i = 0; i < o.w; i += 4) {
+      const bump = ((i * 7 + o.seed) % 3);
+      ctx.fillStyle = '#26343F'; ctx.fillRect(x + i - 1, h - 3, 6, bump + 2);
+      ctx.fillStyle = '#4A5A69'; ctx.fillRect(x + i, h - 3, 4, bump + 1);
+    }
+    if (o.bolt && Math.floor(S.t * 6 + o.seed) % 9 === 0) {
+      ctx.fillStyle = '#F2D27A';
+      const bx = x + Math.floor(o.w / 2) - 2, by = Math.max(4, h - 18);
+      ctx.fillRect(bx + 2, by, 2, 4); ctx.fillRect(bx, by + 4, 4, 2); ctx.fillRect(bx + 1, by + 6, 2, 5);
+    }
+  }
+  function drawBuilding(o) {
+    const x = Math.round(o.x), w = o.w;
+    const roofH = o.style === 1 ? 8 : o.style === 2 ? 6 : 3;
+    const top = o.gapBot + roofH;
+    ctx.fillStyle = '#26343F';
+    if (o.style === 1) {
+      ctx.fillRect(x + Math.floor(w / 2) - 1, o.gapBot, 2, roofH + 1);
+      ctx.fillRect(x + Math.floor(w / 2) - 3, top - 3, 6, 4);
+    } else {
+      ctx.fillRect(x + 3, o.gapBot - 1, w - 6, roofH + 2);
+    }
+    ctx.fillRect(x - 1, top - 1, w + 2, ARC_GROUND - top + 1);
+    ctx.fillStyle = o.color;
+    if (o.style === 1) ctx.fillRect(x + Math.floor(w / 2) - 2, top - 2, 4, 2);
+    else ctx.fillRect(x + 4, o.gapBot, w - 8, roofH);
+    ctx.fillRect(x, top, w, ARC_GROUND - top);
+    ctx.fillStyle = 'rgba(0,0,0,0.14)'; ctx.fillRect(x + w - 3, top, 3, ARC_GROUND - top);
+    for (let wy = top + 3; wy < ARC_GROUND - 3; wy += 4) {
+      for (let wx = x + 2; wx < x + w - 4; wx += 3) {
+        const lit = (wx * 7 + wy * 13 + o.seed) % 13 === 0;
+        ctx.fillStyle = lit ? '#F2D27A' : '#3D5468';
+        ctx.fillRect(wx, wy, 1, 2);
+      }
+    }
+    // krzaczki przy podstawie
+    ctx.fillStyle = '#3F7A44'; ctx.fillRect(x - 3, ARC_GROUND - 3, 5, 3); ctx.fillRect(x + w - 1, ARC_GROUND - 2, 4, 2);
+    ctx.fillStyle = '#62A85A'; ctx.fillRect(x - 2, ARC_GROUND - 4, 3, 2); ctx.fillRect(x + w, ARC_GROUND - 3, 2, 1);
+  }
+  function draw() {
+    ctx.save();
+    if (S.shake > 0) ctx.translate(Math.round((Math.random() - 0.5) * S.shake * 0.4), Math.round((Math.random() - 0.5) * S.shake * 0.4));
+    ctx.fillStyle = sky; ctx.fillRect(-4, -4, ARC_W + 8, ARC_GROUND + 4);
+    clouds.forEach(c => drawCloud(c.x, c.y, c.s));
+    // odległa panorama (paralaksa)
+    ctx.fillStyle = '#4C80AD';
+    far.forEach(b => {
+      let bx = Math.round(b.x - S.farOff);
+      if (bx + b.w < 0) bx += ARC_W * 2;
+      if (bx > ARC_W) return;
+      ctx.fillRect(bx, ARC_GROUND - b.h, b.w, b.h);
+      if (b.spire) ctx.fillRect(bx + Math.floor(b.w / 2), ARC_GROUND - b.h - 6, 1, 6);
+    });
+    S.obstacles.forEach(o => { drawStormCloud(o); drawBuilding(o); });
+    // ziemia
+    ctx.fillStyle = '#26343F'; ctx.fillRect(-4, ARC_GROUND, ARC_W + 8, 1);
+    ctx.fillStyle = '#EEF0EA'; ctx.fillRect(-4, ARC_GROUND + 1, ARC_W + 8, ARC_H - ARC_GROUND);
+    ctx.fillStyle = '#6B6B66';
+    for (let i = 0; i < 40; i++) {
+      const gx = ((i * 23 - S.groundOff) % ARC_W + ARC_W) % ARC_W;
+      ctx.fillRect(Math.round(gx), ARC_GROUND + 3 + (i * 7) % 6, 2, 1);
+    }
+    // samolot
+    ctx.save();
+    ctx.translate(PLANE_X, Math.round(S.py));
+    ctx.rotate(S.angle);
+    ctx.drawImage(plane, -13, -7);
+    ctx.restore();
+    S.particles.forEach(p => { ctx.fillStyle = p.c; ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 2); });
+    ctx.restore();
+    // HUD
+    const hiTxt = 'HI ' + arcPad(S.hi);
+    arcText(ctx, hiTxt, ARC_W - 6 - arcTextWidth(hiTxt, 1), 6, '#F2D27A', 1);
+    const sc = arcPad(S.score);
+    arcText(ctx, sc, ARC_W - 6 - arcTextWidth(sc, 2), 14, '#FFFFFF', 2);
+    if (S.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${S.flash * 0.6})`; ctx.fillRect(0, 0, ARC_W, ARC_H); }
+  }
+
+  function showOver(newRecord) {
+    if (!document.getElementById('arcade-over')) return;
+    const el = document.getElementById('arcade-over');
+    el.innerHTML = `
+      <div class="arcade-card">
+        <div class="arcade-title">Koniec lotu!</div>
+        <div class="arcade-score-big">${S.score}</div>
+        <div class="arcade-sub">Twój rekord: ${S.hi}</div>
+        ${newRecord ? '<div class="arcade-record">★ NOWY REKORD ★</div>' : ''}
+        ${S.score > 0 ? `
+        <div class="arcade-save-row">
+          <input id="arcade-name" maxlength="20" placeholder="Twoje imię" value="${escapeHtml(arcGetName())}">
+          <button class="btn btn-green" id="arcade-save">Zapisz</button>
+        </div>` : ''}
+        <button class="btn btn-gold" id="arcade-again">↺ Leć ponownie</button>
+        <div class="arcade-sub">lub naciśnij Spację</div>
+      </div>`;
+    el.classList.remove('hidden');
+    el.onpointerdown = (e) => e.stopPropagation();
+    document.getElementById('arcade-again').onclick = (e) => { e.currentTarget.blur(); reset(); };
+    const saveBtn = document.getElementById('arcade-save');
+    if (saveBtn) {
+      const input = document.getElementById('arcade-name');
+      const save = () => saveScore(input.value.trim(), S.score, saveBtn);
+      saveBtn.onclick = save;
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); save(); } });
+    }
+    if (newRecord && typeof spawnConfetti === 'function') spawnConfetti();
+  }
+
+  function saveScore(name, score, btn) {
+    if (!name) { toast('Wpisz imię, aby zapisać wynik.', 'error'); return; }
+    arcSetName(name);
+    btn.disabled = true;
+    const key = name.toLowerCase().replace(/[.#$\[\]\/\s]+/g, '_').slice(0, 40) || 'anon';
+    arcadeRef.child(key).once('value')
+      .then(snap => {
+        const cur = snap.val();
+        if (cur && cur.score >= score) { toast(`Twój najlepszy wynik w rankingu to nadal ${cur.score}.`); return; }
+        return arcadeRef.child(key).set({ name, score, date: todayStr() }).then(() => toast('Wynik zapisany w rankingu!'));
+      })
+      .catch(() => { btn.disabled = false; toast('Nie udało się zapisać wyniku (sprawdź reguły Firebase dla „arcade”).', 'error'); });
+  }
+
+  function renderBoard(list) {
+    const box = document.getElementById('arcade-board');
+    if (!box) return;
+    if (!list.length) { box.innerHTML = '<div class="rank-empty">Brak wyników — bądź pierwszym pilotem!</div>'; return; }
+    const medals = ['🥇', '🥈', '🥉'];
+    box.innerHTML = list.map((r, i) => `
+      <div class="arcade-board-row">
+        <span class="pos">${medals[i] || (i + 1)}</span>
+        <span class="who">${avatarHtml(r.name)}${escapeHtml(r.name)}</span>
+        <span class="pts">${r.score}</span>
+      </div>`).join('');
+  }
+
+  const boardQuery = arcadeRef.orderByChild('score').limitToLast(10);
+  boardQuery.on('value', (snap) => {
+    const val = snap.val() || {};
+    const list = Object.values(val).filter(r => r && r.name && typeof r.score === 'number').sort((a, b) => b.score - a.score).slice(0, 10);
+    renderBoard(list);
+  }, () => {
+    const box = document.getElementById('arcade-board');
+    if (box) box.innerHTML = '<div class="rank-empty">Ranking niedostępny (brak dostępu do bazy). Twój rekord zapisuje się lokalnie.</div>';
+  });
+
+  const onKey = (e) => {
+    if (!document.getElementById('arcade-canvas')) { stopArcade(); return; }
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    if (e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { e.preventDefault(); flap(); }
+  };
+  document.addEventListener('keydown', onKey);
+  document.getElementById('arcade-wrap').addEventListener('pointerdown', (e) => {
+    if (S.state === 'over') return;
+    e.preventDefault();
+    flap();
+  });
+
+  function loop(now) {
+    if (!document.getElementById('arcade-canvas')) { stopArcade(); return; }
+    const dt = Math.min(0.033, (now - S.last) / 1000);
+    S.last = now;
+    update(dt);
+    draw();
+    arcadeSession.raf = requestAnimationFrame(loop);
+  }
+  arcadeSession = { raf: 0, onKey, boardQuery };
+  arcadeSession.raf = requestAnimationFrame(loop);
+}
 document.getElementById('searchInput').oninput = (e) => { query = e.target.value; render(); };
 function filterBy(value) {
   query = value;
@@ -2589,7 +2315,10 @@ presenceListRef.on('value', (snap) => {
   const badge = document.getElementById('viewerBadge');
   const countEl = document.getElementById('viewerCount');
   if (count > 0) {
-    countEl.textContent = count === 1 ? '1 osoba przegląda' : count + ' osób przegląda';
+    const mod10 = count % 10, mod100 = count % 100;
+    countEl.textContent = count === 1 ? '1 osoba online'
+      : (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) ? count + ' osoby online'
+      : count + ' osób online';
     badge.style.display = 'inline-flex';
   } else {
     badge.style.display = 'none';
@@ -2639,7 +2368,6 @@ gamesRef.on('value', (snapshot) => {
   firstLoad = false;
   document.getElementById('saveErrorBox').style.display = 'none';
   render();
-  activateDueReservations();
   if (wasFirstLoad) {
     handleQrDeepLink();
     document.body.classList.remove('pre-intro');
@@ -2675,400 +2403,5 @@ function handleQrDeepLink() {
 } // koniec bloku CONFIGURED
 </script>
 
-<script>
-// ===================== MINIGRA: "Lot nad miastem" (styl Flappy Bird, pixel-art) =====================
-(function () {
-  const W = 320, H = 180, GY = 160;          // rozdzielczość logiczna i poziom ziemi
-  const STEP = 1000 / 60;                     // stały krok fizyki (niezależny od odświeżania ekranu)
-  const GRAV = 0.16, FLAP = -3.0, MAXV = 4.2, PX = 62;
-  const HI_KEY = 'biblioteczka-gier-minigra-hi';
-  const FONT = '"Press Start 2P", "JetBrains Mono", monospace';
-  const SKY_TOP = '#3f7cc0', SKY_BOT = '#5a95d0';
-
-  const rnd = (a, b) => a + Math.random() * (b - a);
-  const ri = (a, b) => Math.floor(rnd(a, b + 1));
-  const pick = (a) => a[Math.floor(Math.random() * a.length)];
-  const pad = (n) => String(Math.min(99999, n)).padStart(5, '0');
-  function loadHi() { try { return parseInt(localStorage.getItem(HI_KEY) || '0', 10) || 0; } catch (e) { return 0; } }
-  function saveHi(v) { try { localStorage.setItem(HI_KEY, String(v)); } catch (e) {} }
-  function cnv(w, h) {
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const x = c.getContext('2d'); x.imageSmoothingEnabled = false; return [c, x];
-  }
-  function disc(x, cx, cy, r, color) {
-    x.fillStyle = color;
-    for (let dy = -r; dy <= r; dy++) {
-      const half = Math.floor(Math.sqrt(r * r - dy * dy));
-      x.fillRect(cx - half, cy + dy, half * 2 + 1, 1);
-    }
-  }
-  function sprite(rows, pal) {
-    const [c, x] = cnv(rows[0].length, rows.length);
-    rows.forEach((r, y) => { for (let i = 0; i < r.length; i++) { const p = pal[r[i]]; if (p) { x.fillStyle = p; x.fillRect(i, y, 1, 1); } } });
-    return c;
-  }
-
-  // ---- Samolot (odrzutowiec, widok z boku, przodem w prawo) ----
-  const PLANE = sprite([
-    "..oo..........................",
-    "..owo.........................",
-    "..owwo........................",
-    "..obwwo.......................",
-    "..obbwwo......................",
-    "..owwwwwooooooooooooooo.......",
-    ".oggwwwwwwwwwwwwwwwwwwwwoo....",
-    "oggowwwwwwwwwwwwwwwwwwwwwkko..",
-    "owwbbbbbbbbbbbbbbbbbbbbwwkkko.",
-    ".owwwkwwkwwkwwkwwkwwkwwwwwwwwo",
-    "..oggggggggggggggggggggggggoo.",
-    "...oooooooggggggggggooooooo...",
-    "...........oggggggggo.........",
-    "............oggggggo..........",
-    ".............oooooo...........",
-  ], { o: '#25323d', w: '#f6f5f0', g: '#bfc6cc', b: '#3d6fb8', k: '#1b2833' });
-  const PW = PLANE.width, PH = PLANE.height;
-
-  // ---- Chmury tła ----
-  function makeCloud(w) {
-    const h = Math.round(w * 0.42);
-    const [c, x] = cnv(w, h + 2);
-    const blobs = [
-      [Math.round(w * 0.30), Math.round(h * 0.62), Math.round(h * 0.36)],
-      [Math.round(w * 0.52), Math.round(h * 0.48), Math.round(h * 0.48)],
-      [Math.round(w * 0.73), Math.round(h * 0.64), Math.round(h * 0.32)],
-    ];
-    blobs.forEach(([cx, cy, r]) => disc(x, cx, cy + 1, r, '#c9dcef'));
-    x.fillStyle = '#c9dcef'; x.fillRect(Math.round(w * 0.14), Math.round(h * 0.7), Math.round(w * 0.72), Math.round(h * 0.3) + 1);
-    blobs.forEach(([cx, cy, r]) => disc(x, cx, cy, r, '#ffffff'));
-    x.fillStyle = '#ffffff'; x.fillRect(Math.round(w * 0.14), Math.round(h * 0.7), Math.round(w * 0.72), Math.round(h * 0.3) - 1);
-    return c;
-  }
-  const CLOUD_SPRITES = [makeCloud(46), makeCloud(34), makeCloud(58), makeCloud(28)];
-
-  // ---- Dalekie miasto (paralaksa) ----
-  function makeSkyline(w, h) {
-    const [c, x] = cnv(w, h);
-    let px = 0;
-    while (px < w) {
-      const bw = ri(10, 22), bh = ri(18, h - 6);
-      x.fillStyle = '#6fa1d4'; x.fillRect(px, h - bh, bw, bh);
-      if (Math.random() < 0.3) x.fillRect(px + Math.floor(bw / 2), h - bh - ri(4, 9), 1, 9);
-      x.fillStyle = '#7fb0de';
-      for (let yy = h - bh + 3; yy < h - 2; yy += 4) for (let xx = px + 2; xx < px + bw - 2; xx += 3) if (Math.random() < 0.5) x.fillRect(xx, yy, 1, 2);
-      px += bw + ri(0, 3);
-    }
-    return c;
-  }
-  const SKYLINE = makeSkyline(480, 64);
-
-  // ---- Ziemia ----
-  const GROUND = (() => {
-    const [c, x] = cnv(64, H - GY);
-    x.fillStyle = '#ebe8e0'; x.fillRect(0, 0, 64, H - GY);
-    x.fillStyle = '#cfcabd'; x.fillRect(0, 0, 64, 1);
-    x.fillStyle = '#4c4943';
-    for (let i = 0; i < 26; i++) x.fillRect(ri(0, 63), ri(3, H - GY - 1), Math.random() < 0.3 ? 2 : 1, 1);
-    return c;
-  })();
-
-  // ---- Dekoracje przy ziemi (krzaki, kamienie, trawa) ----
-  const DECOR = [
-    (() => { const [c, x] = cnv(14, 9); disc(x, 7, 6, 5, '#3f7a35'); disc(x, 5, 5, 3, '#5f9e4a'); disc(x, 9, 4, 3, '#6cad55'); return c; })(),
-    (() => { const [c, x] = cnv(16, 9); disc(x, 8, 7, 6, '#77746f'); disc(x, 7, 6, 5, '#9a9893'); x.fillStyle = '#b7b5ae'; x.fillRect(5, 3, 3, 1); return c; })(),
-    sprite(["..g...g..", ".gg.g.gg.", "ggg.gggg.", "gGgggGggg"], { g: '#5f9e4a', G: '#3f7a35' }),
-    (() => { const [c, x] = cnv(9, 6); disc(x, 4, 4, 3, '#d9a640'); disc(x, 4, 3, 2, '#e9c25a'); return c; })(),
-  ];
-
-  // ---- Wieżowiec (przeszkoda od dołu) ----
-  const BUILD_PAL = [
-    { b: '#c9c2af', s: '#a49c88' }, { b: '#adb8c0', s: '#8995a0' },
-    { b: '#bfb398', s: '#9a8e72' }, { b: '#a2b4c4', s: '#8094a6' },
-  ];
-  function makeBuilding(w, h) {
-    const p = pick(BUILD_PAL), OUT = '#33414c';
-    const [c, x] = cnv(w, h);
-    const hits = [];
-    function block(bx, by, bw, bh, windows) {
-      x.fillStyle = OUT; x.fillRect(bx, by, bw, bh);
-      x.fillStyle = p.b; x.fillRect(bx + 1, by + 1, bw - 2, bh - 1);
-      x.fillStyle = p.s; x.fillRect(bx + bw - 4, by + 1, 3, bh - 1);
-      if (windows) {
-        for (let yy = by + 4; yy < by + bh - 7; yy += 5)
-          for (let xx = bx + 3; xx < bx + bw - 4; xx += 4) {
-            x.fillStyle = '#5c809f'; x.fillRect(xx, yy, 2, 3);
-            if (Math.random() < 0.35) { x.fillStyle = '#a5c7e0'; x.fillRect(xx, yy, 2, 1); }
-          }
-      }
-      hits.push({ x: bx, y: by, w: bw, h: bh });
-    }
-    const type = h > 40 ? ri(0, 2) : 0;
-    let top = 0;
-    if (type === 1) {                                   // schodkowa korona z iglicą
-      const spH = 9, t2w = Math.max(6, Math.round(w * 0.36)), t1w = Math.round(w * 0.66);
-      x.fillStyle = OUT; x.fillRect(Math.floor(w / 2) - 1, 0, 2, spH);
-      hits.push({ x: Math.floor(w / 2) - 1, y: 0, w: 2, h: spH });
-      block(Math.floor((w - t2w) / 2), spH, t2w, 7, false);
-      block(Math.floor((w - t1w) / 2), spH + 7, t1w, 7, false);
-      top = spH + 14;
-    } else if (type === 2) {                            // płaski dach z anteną
-      const ax = Math.round(w * 0.3);
-      x.fillStyle = OUT; x.fillRect(ax, 0, 1, 8); x.fillRect(ax - 1, 2, 3, 1);
-      hits.push({ x: ax - 1, y: 0, w: 3, h: 8 });
-      top = 8;
-    } else {                                            // płaski dach z nadbudówką
-      block(3, 0, 8, 4, false);
-      top = 4;
-    }
-    block(0, top, w, h - top, true);
-    x.fillStyle = OUT; x.fillRect(Math.floor(w / 2) - 2, h - 6, 4, 6);  // drzwi
-    return { canvas: c, hits };
-  }
-
-  // ---- Burzowa chmura (przeszkoda od góry) ----
-  function makeStorm(w, h) {
-    const cw = w + 8;
-    const [c, x] = cnv(cw, h);
-    const body = '#5d6879', dark = '#4a5464', light = '#717d8f';
-    const base = h - 6;
-    x.fillStyle = body; x.fillRect(2, 0, cw - 4, Math.max(0, base));
-    for (let bx = 5; bx < cw - 3; bx += 7) { disc(x, bx, base, 5, dark); }
-    for (let bx = 5; bx < cw - 3; bx += 7) { disc(x, bx, base - 1, 5, body); }
-    x.fillStyle = light;
-    for (let yy = 6; yy < base - 4; yy += 9) x.fillRect(4 + (yy % 5), yy, Math.round(cw * 0.4), 1);
-    return { canvas: c, hit: { x: 2, y: 0, w: cw - 4, h: h - 2 }, offsetX: -4 };
-  }
-
-  // ---- Kostka do zebrania (+3) ----
-  const DICE = sprite([
-    ".ooooooo.",
-    "oyyyyyyyo",
-    "oykyyykyo",
-    "oyyyyyyyo",
-    "oyyykyyyo",
-    "oyyyyyyyo",
-    "oykyyykyo",
-    "oyyyyyyyo",
-    ".ooooooo.",
-  ], { o: '#6b4b1c', y: '#e8c066', k: '#3a2a10' });
-
-  // ======================================================================
-  function createGame(canvas, hintEl) {
-    const ctx = canvas.getContext('2d');
-    canvas.width = W; canvas.height = H;
-    ctx.imageSmoothingEnabled = false;
-
-    let state, py, vy, angle, speed, score, hi = loadHi(), obstacles, clouds, decor, pops,
-        groundX, skyX, frame, overAt, flash, newRecord, nextDecorX;
-
-    function reset() {
-      state = 'ready'; py = 76; vy = 0; angle = 0; speed = 1.3; score = 0; frame = 0;
-      obstacles = []; pops = []; groundX = 0; skyX = 0; flash = 0; newRecord = false;
-      clouds = Array.from({ length: 5 }, (_, i) => ({ x: i * 72 + rnd(0, 30), y: rnd(10, 70), s: pick(CLOUD_SPRITES), f: rnd(0.15, 0.3) }));
-      decor = []; nextDecorX = 0;
-      for (let dx = 10; dx < W; dx += ri(30, 80)) decor.push({ x: dx, s: pick(DECOR) });
-    }
-    reset();
-
-    function lastGapCenter() { return obstacles.length ? obstacles[obstacles.length - 1].center : 80; }
-    function spawnObstacle() {
-      const gap = Math.max(50, 66 - score * 0.6);
-      const prev = lastGapCenter();
-      const minC = 14 + gap / 2, maxC = GY - 42 - gap / 2;   // wieżowce zawsze co najmniej ~40 px wysokości
-      let center = prev + rnd(-40, 40);
-      center += ((minC + maxC) / 2 - center) * 0.3;   // lekki dryf w górę = wyższe wieżowce
-      center = Math.max(minC, Math.min(maxC, center));
-      const w = ri(28, 36);
-      const gapTop = Math.round(center - gap / 2), gapBot = Math.round(center + gap / 2);
-      const b = makeBuilding(w, GY - gapBot + 2);
-      const s = makeStorm(w, gapTop);
-      obstacles.push({
-        x: W + 4, w, center, gapTop, gapBot, b, s, passed: false,
-        dice: Math.random() < 0.4 ? { y: Math.round(center - 4), got: false } : null,
-      });
-    }
-
-    function hitPlane(rx, ry, rw, rh) {
-      const hx = PX + 4, hy = py + 4, hw = PW - 8, hh = PH - 7;
-      return hx < rx + rw && hx + hw > rx && hy < ry + rh && hy + hh > ry;
-    }
-
-    function crash() {
-      if (state !== 'playing') return;
-      state = 'dying'; flash = 1; vy = Math.min(vy, -1.2);
-    }
-    function finish() {
-      state = 'over'; overAt = performance.now();
-      if (score > hi) { hi = score; saveHi(hi); newRecord = true; }
-    }
-
-    function flap() {
-      if (state === 'ready') { state = 'playing'; vy = FLAP; spawnObstacle(); return; }
-      if (state === 'playing') { vy = FLAP; return; }
-      if (state === 'over' && performance.now() - overAt > 450) { reset(); state = 'playing'; vy = FLAP; spawnObstacle(); }
-    }
-
-    function update() {
-      frame++;
-      if (flash > 0) flash = Math.max(0, flash - 0.06);
-      const moving = state === 'ready' || state === 'playing';
-      const sp = moving ? speed : 0;
-
-      skyX = (skyX + sp * 0.3) % SKYLINE.width;
-      groundX = (groundX + sp) % GROUND.width;
-      clouds.forEach(c => { c.x -= (moving ? speed : 0.3) * c.f; if (c.x < -c.s.width) { c.x = W + rnd(0, 40); c.y = rnd(8, 70); c.s = pick(CLOUD_SPRITES); } });
-      decor.forEach(d => { d.x -= sp; });
-      decor = decor.filter(d => d.x > -20);
-      const lastDecor = decor.length ? decor[decor.length - 1].x : 0;
-      if (lastDecor < W) decor.push({ x: W + ri(10, 70), s: pick(DECOR) });
-      pops.forEach(p => { p.y -= 0.4; p.t--; }); pops = pops.filter(p => p.t > 0);
-
-      if (state === 'ready') { py = 76 + Math.sin(frame / 18) * 4; angle = Math.sin(frame / 18) * 0.06; return; }
-
-      if (state === 'playing') {
-        speed = Math.min(2.5, 1.3 + score * 0.035);
-        obstacles.forEach(o => { o.x -= speed; });
-        obstacles = obstacles.filter(o => o.x > -o.w - 12);
-        const last = obstacles[obstacles.length - 1];
-        if (!last || last.x < W - 118) spawnObstacle();
-      }
-
-      vy = Math.min(MAXV, vy + GRAV);
-      py += vy;
-      const target = state === 'dying' ? 1.25 : Math.max(-0.42, Math.min(0.8, vy * 0.13));
-      angle += (target - angle) * (state === 'dying' ? 0.08 : 0.25);
-      if (py < -2) { py = -2; vy = 0; }
-
-      if (py + PH - 2 >= GY) {
-        py = GY - PH + 2;
-        if (state === 'playing') { state = 'dying'; flash = 1; }
-        finish();
-        return;
-      }
-      if (state !== 'playing') return;
-
-      for (const o of obstacles) {
-        const bx = o.x, by = o.gapBot;
-        for (const h of o.b.hits) if (hitPlane(bx + h.x, by + h.y, h.w, h.h)) { crash(); return; }
-        const sh = o.s.hit;
-        if (hitPlane(o.x + o.s.offsetX + sh.x, sh.y, sh.w, sh.h)) { crash(); return; }
-        if (o.dice && !o.dice.got) {
-          const dx = o.x + o.w / 2 - 4, dy = o.dice.y + Math.sin(frame / 10) * 2;
-          if (hitPlane(dx, dy, 9, 9)) { o.dice.got = true; score += 3; pops.push({ x: dx, y: dy, t: 40, txt: '+3' }); }
-        }
-        if (!o.passed && o.x + o.w < PX + 4) { o.passed = true; score++; }
-      }
-    }
-
-    function text(s, x, y, align, color, size) {
-      ctx.font = `${size || 8}px ${FONT}`;
-      ctx.textAlign = align || 'left'; ctx.textBaseline = 'top';
-      ctx.fillStyle = 'rgba(16,34,56,0.55)'; ctx.fillText(s, x + 1, y + 1);
-      ctx.fillStyle = color || '#ffffff'; ctx.fillText(s, x, y);
-    }
-    function panel(x, y, w, h) {
-      ctx.fillStyle = 'rgba(18,40,64,0.86)'; ctx.fillRect(x, y, w, h);
-      ctx.fillStyle = '#e8c066'; ctx.fillRect(x, y, w, 1); ctx.fillRect(x, y + h - 1, w, 1);
-    }
-
-    function draw() {
-      const g = ctx.createLinearGradient(0, 0, 0, GY);
-      g.addColorStop(0, SKY_TOP); g.addColorStop(1, SKY_BOT);
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, GY);
-
-      clouds.forEach(c => ctx.drawImage(c.s, Math.round(c.x), Math.round(c.y)));
-      for (let x = -Math.floor(skyX); x < W; x += SKYLINE.width) ctx.drawImage(SKYLINE, x, GY - SKYLINE.height + 2);
-
-      obstacles.forEach(o => {
-        ctx.drawImage(o.s.canvas, Math.round(o.x + o.s.offsetX), 0);
-        ctx.drawImage(o.b.canvas, Math.round(o.x), o.gapBot);
-        if (o.dice && !o.dice.got) ctx.drawImage(DICE, Math.round(o.x + o.w / 2 - 4), Math.round(o.dice.y + Math.sin(frame / 10) * 2));
-      });
-
-      for (let x = -Math.floor(groundX); x < W; x += GROUND.width) ctx.drawImage(GROUND, x, GY);
-      decor.forEach(d => ctx.drawImage(d.s, Math.round(d.x), GY - d.s.height + 2));
-
-      ctx.save();
-      ctx.translate(Math.round(PX + PW / 2), Math.round(py + PH / 2));
-      ctx.rotate(angle);
-      ctx.drawImage(PLANE, -Math.round(PW / 2), -Math.round(PH / 2));
-      ctx.restore();
-
-      pops.forEach(p => text(p.txt, p.x, p.y, 'left', '#e8c066'));
-
-      text(`HI ${pad(hi)}  ${pad(score)}`, W - 6, 6, 'right');
-
-      if (flash > 0) { ctx.fillStyle = `rgba(255,255,255,${flash * 0.6})`; ctx.fillRect(0, 0, W, H); }
-
-      if (state === 'ready') {
-        panel(70, 108, 180, 42);
-        text('LOT NAD MIASTEM', W / 2, 116, 'center', '#e8c066');
-        if (Math.floor(frame / 30) % 2 === 0) text('SPACJA / KLIK = START', W / 2, 134, 'center', '#ffffff', 6);
-      }
-      if (state === 'over') {
-        panel(56, 44, 208, 76);
-        text('KONIEC LOTU', W / 2, 52, 'center', '#e8c066');
-        text(`WYNIK  ${score}`, W / 2, 70, 'center');
-        text(newRecord ? 'NOWY REKORD!' : `REKORD ${hi}`, W / 2, 84, 'center', newRecord ? '#9fe07a' : '#cfe0ef', 7);
-        if (performance.now() - overAt > 450 && Math.floor(frame / 30) % 2 === 0) text('SPACJA = JESZCZE RAZ', W / 2, 102, 'center', '#ffffff', 6);
-      }
-    }
-
-    // ---- Pętla gry ----
-    let raf = 0, last = performance.now(), acc = 0, alive = true;
-    function loop(t) {
-      if (!alive) return;
-      if (!canvas.isConnected) { destroy(); return; }
-      acc += Math.min(100, t - last); last = t;
-      while (acc >= STEP) { update(); acc -= STEP; }
-      draw();
-      raf = requestAnimationFrame(loop);
-    }
-
-    // ---- Sterowanie ----
-    const KEYS = ['Space', 'ArrowUp', 'KeyW'];
-    function onKeyDown(e) {
-      if (!canvas.isConnected) return;
-      if (KEYS.includes(e.code)) { e.preventDefault(); if (!e.repeat) flap(); }
-    }
-    function onKeyUp(e) { if (KEYS.includes(e.code)) e.preventDefault(); }
-    function onPointer(e) { e.preventDefault(); flap(); }
-    function onVisibility() { last = performance.now(); acc = 0; }
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('visibilitychange', onVisibility);
-    canvas.addEventListener('pointerdown', onPointer);
-
-    function destroy() {
-      alive = false; cancelAnimationFrame(raf);
-      document.removeEventListener('keydown', onKeyDown);
-      document.removeEventListener('keyup', onKeyUp);
-      document.removeEventListener('visibilitychange', onVisibility);
-    }
-
-    const start = () => { last = performance.now(); raf = requestAnimationFrame(loop); };
-    if (document.fonts && document.fonts.load) document.fonts.load(`8px ${FONT}`).then(start, start); else start();
-    return { destroy };
-  }
-
-  function openMinigame() {
-    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-    openModal(`
-      <div class="modal modal-game">
-        <div class="modal-head"><h2 class="display">✈️ Lot nad miastem</h2><button onclick="closeModal()">✕</button></div>
-        <div class="modal-body">
-          <canvas class="game-canvas" id="gameCanvas" width="320" height="180" aria-label="Minigra: lot samolotem nad miastem"></canvas>
-          <div class="game-hint">Spacja / ↑ / klik / dotyk — wznoszenie · Omijaj wieżowce i burzowe chmury · 🎲 = +3 pkt</div>
-        </div>
-      </div>
-    `);
-    createGame(document.getElementById('gameCanvas'));
-  }
-
-  window.openMinigame = openMinigame;
-  const btn = document.getElementById('gameBtn');
-  if (btn) btn.onclick = openMinigame;
-})();
-
-</script>
 </body>
 </html>
