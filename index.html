@@ -43,6 +43,7 @@
   .btn-icon { width: 40px; height: 40px; padding: 0; justify-content: center; font-size: 15px; }
   .sub-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: 8px; }
   .sub-row .sub { margin: 0; }
+  .author-tag { white-space: nowrap; }
   .eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:4px; color: var(--gold); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
   h1 { color: var(--card); font-weight: 600; font-size: 40px; margin: 0; }
   .author-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 4px; vertical-align: middle; }
@@ -67,7 +68,6 @@
     .header-actions #addBtn { grid-column: 1 / -1; order: -1; }
     .author-tag { display: block; margin-left: 0; margin-top: 3px; }
   }
-  .author-tag { white-space: nowrap; }
 
   .search-wrap { position: relative; margin-bottom: 24px; }
   .search-wrap input {
@@ -409,6 +409,47 @@
   .cal-day.today { border-color: var(--gold); font-weight:700; }
   .cal-day.reserved { background: rgba(168,72,58,0.16); color: var(--red); font-weight:600; }
   .cal-day.selected { background: var(--green); color: #fff; }
+  .cal-day.clickable { cursor: pointer; transition: background 0.12s, transform 0.12s; }
+  .cal-day.clickable:hover { background: rgba(79,122,87,0.14); transform: scale(1.06); }
+  .cal-day.borrowed { background: rgba(184,147,95,0.2); color: #8a6a3a; font-weight:600; }
+  .cal-day.reserved.clickable, .cal-day.borrowed.clickable { cursor: not-allowed; }
+  .cal-day.borrowed.clickable:hover { background: rgba(184,147,95,0.2); transform: none; }
+  .cal-day.reserved.clickable:hover { background: rgba(168,72,58,0.16); transform: none; }
+  /* pasek wybranego terminu (Od → Do) */
+  .cal-day.sel-mid, .cal-day.sel-start, .cal-day.sel-end { color: #fff; font-weight: 600; z-index: 1; }
+  .cal-day.sel-mid::before, .cal-day.sel-start::before, .cal-day.sel-end::before {
+    content: ''; position: absolute; top: 4px; bottom: 4px; left: -3px; right: -3px;
+    background: var(--green); z-index: -1;
+  }
+  .cal-day.sel-start::before { left: 2px; border-radius: 8px 0 0 8px; }
+  .cal-day.sel-end::before { right: 2px; border-radius: 0 8px 8px 0; }
+  .cal-day.sel-start.sel-end::before { border-radius: 8px; }
+  .cal-day.sel-start, .cal-day.sel-end { background: var(--green); border-radius: 8px; }
+  .cal-day.sel-start.clickable:hover, .cal-day.sel-end.clickable:hover { background: var(--green); }
+  .cal-day.sel-mid.clickable:hover { background: transparent; }
+  .cal-day.sel-preview::before {
+    content: ''; position: absolute; top: 4px; bottom: 4px; left: -3px; right: -3px;
+    background: rgba(79,122,87,0.22); z-index: -1;
+  }
+  .cal-day.sel-preview.preview-end::before { right: 2px; border-radius: 0 8px 8px 0; }
+  .cal-hint { font-size: 11px; color: var(--label); margin-top: 6px; font-family:'JetBrains Mono', monospace; }
+  /* kolor paska zależny od trybu: wypożyczenie = złoty, rezerwacja = czerwony (jak w legendzie) */
+  .cal-grid.mode-borrow .cal-day.sel-mid::before, .cal-grid.mode-borrow .cal-day.sel-start::before, .cal-grid.mode-borrow .cal-day.sel-end::before,
+  .cal-grid.mode-borrow .cal-day.sel-start, .cal-grid.mode-borrow .cal-day.sel-end,
+  .cal-grid.mode-borrow .cal-day.sel-start.clickable:hover, .cal-grid.mode-borrow .cal-day.sel-end.clickable:hover { background: var(--gold); }
+  .cal-grid.mode-borrow .cal-day.sel-mid, .cal-grid.mode-borrow .cal-day.sel-start, .cal-grid.mode-borrow .cal-day.sel-end { color: #1f1a12; }
+  .cal-grid.mode-borrow .cal-day.sel-preview::before { background: rgba(184,147,95,0.3); }
+  .cal-grid.mode-reserve .cal-day.sel-mid::before, .cal-grid.mode-reserve .cal-day.sel-start::before, .cal-grid.mode-reserve .cal-day.sel-end::before,
+  .cal-grid.mode-reserve .cal-day.sel-start, .cal-grid.mode-reserve .cal-day.sel-end,
+  .cal-grid.mode-reserve .cal-day.sel-start.clickable:hover, .cal-grid.mode-reserve .cal-day.sel-end.clickable:hover { background: var(--red); }
+  .cal-grid.mode-reserve .cal-day.sel-preview::before { background: rgba(168,72,58,0.28); }
+  /* przełącznik trybu */
+  .cal-mode { display:flex; gap:6px; padding:4px; border:1px solid var(--border-card); border-radius:10px; background: rgba(0,0,0,0.03); }
+  .cal-mode-btn { flex:1; border:none; background:transparent; color: var(--ink-muted); border-radius:7px; padding:8px 10px; font-family:'JetBrains Mono', monospace; font-size:12px; cursor:pointer; transition: background .15s, color .15s; }
+  .cal-mode-btn:hover:not(:disabled) { background: rgba(0,0,0,0.05); color: var(--ink); }
+  .cal-mode-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .cal-mode-btn.active[data-mode="borrow"] { background: var(--gold); color: #1f1a12; font-weight:600; }
+  .cal-mode-btn.active[data-mode="reserve"] { background: var(--red); color: #fff; font-weight:600; }
   .cal-legend { display:flex; gap:14px; margin-top:8px; font-size:11px; color: var(--ink-muted); font-family:'JetBrains Mono', monospace; }
   .cal-legend span { display:flex; align-items:center; gap:5px; }
   .cal-dot { width:9px; height:9px; border-radius:3px; display:inline-block; }
@@ -427,46 +468,165 @@
   .rank-count { font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); width: 38px; text-align:right; flex-shrink:0; }
   .rank-empty { font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--label); }
 
-  /* ---- Dekoracyjne ilustracje po bokach (smok, zamek, pionki, wędrowiec) ---- */
+  /* ---- Dekoracyjne ilustracje po bokach (smok, zamek, pionki i kości, skrzynia z grami, stos pudełek, rycerz z magiem) ---- */
   .deco-layer {
     position: fixed; z-index: -1; pointer-events: none;
-    color: rgba(255,255,255,0.15);
+    opacity: 0.62;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
   }
-  body.light .deco-layer { color: rgba(22,35,43,0.13); }
+  body.light .deco-layer { opacity: 0.5; filter: drop-shadow(0 6px 14px rgba(22,35,43,0.2)); }
   .deco-layer svg { display:block; width:100%; height:100%; overflow:visible; }
-  .deco-layer, .deco-layer * { fill:none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .deco-flame { stroke: none; fill: var(--gold); opacity: 0.55; }
+  .deco-layer svg * { stroke-linecap: round; stroke-linejoin: round; }
 
-  .deco-dragon { top: 7%; right: 2.5vw; width: 190px; height: 142px; animation: deco-fly 9s ease-in-out infinite; }
-  .deco-castle { bottom: 5%; left: 2vw; width: 120px; height: 150px; }
-  .deco-meeples { top: 20%; left: 2.5vw; width: 66px; height: 96px; animation: deco-bob 6s ease-in-out infinite; }
-  .deco-wanderer { bottom: 9%; right: 3vw; width: 92px; height: 132px; animation: deco-bob 7s ease-in-out infinite 0.4s; }
-  .deco-flag { transform-origin: 62px 18px; animation: deco-flag 2.6s ease-in-out infinite; }
-  .deco-flame-a { animation: deco-flicker 1.6s ease-in-out infinite; }
-  .deco-flame-b { animation: deco-flicker 1.6s ease-in-out infinite 0.3s; }
-  .deco-flame-c { animation: deco-flicker 1.6s ease-in-out infinite 0.6s; }
+  /* kolory dopasowane do dominującej palety strony (granat/teal + złoto + krem) */
+  .dc-gold   { fill: var(--gold); }
+  .dc-green  { fill: #2e7f9b; }        /* teal – główny kolor obiektów */
+  .dc-red    { fill: #3a6579; }        /* głębszy granatowo-teal (dachy, tunika, skrzynia) */
+  .dc-cream  { fill: var(--card); }
+  .dc-cream2 { fill: var(--card-alt); }
+  .dc-ink    { fill: var(--ink); }
+  .dc-muted  { fill: var(--muted); }
+  .dc-navy   { fill: #1d4b5e; }
+  .dc-line   { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+  .dc-line-gold { fill: none; stroke: var(--gold); stroke-width: 1.4; }
+  .dc-outline { stroke: rgba(8,24,36,0.6); stroke-width: 1.4; }
+
+  .deco-dragon   { top: 5%;  right: 1.5vw; width: 270px; height: 210px; animation: deco-fly 9s ease-in-out infinite; }
+  .deco-castle   { bottom: 3%; left: 1.5vw; width: 220px; height: 240px; }
+  .deco-meeples  { top: 17%; left: 2vw; width: 130px; height: 160px; }
+  .deco-wanderer { bottom: 6%; right: 2vw; width: 190px; height: 170px; animation: deco-bob 7s ease-in-out infinite 0.4s; }
+  .deco-chest    { top: 47%; left: 2vw; width: 190px; height: 160px; transform: translateY(-50%); }
+  .deco-boxes    { top: 47%; right: 2.5vw; width: 180px; height: 170px; transform: translateY(-50%); }
+
+  /* skrzynia z grami */
+  .dc-chest-glow { animation: dc-glow 2.6s ease-in-out infinite; transform-origin: 100px 74px; }
+  .dc-coin-a { animation: dc-coin 2.8s ease-in-out infinite; }
+  .dc-coin-b { animation: dc-coin 2.8s ease-in-out infinite 0.9s; }
+  .dc-coin-c { animation: dc-coin 2.8s ease-in-out infinite 1.8s; }
+  .dc-chest-lid { transform-origin: 30px 78px; animation: dc-lid 6s ease-in-out infinite; }
+
+  /* stos pudełek z klepsydrą */
+  .dc-sand-top    { transform-origin: 90px 62px; animation: dc-sand-top 6s linear infinite; }
+  .dc-sand-bottom { transform-origin: 90px 106px; animation: dc-sand-bottom 6s linear infinite; }
+  .dc-sand-stream { animation: deco-flicker 0.5s ease-in-out infinite; }
+  .dc-card-fan    { transform-origin: 40px 150px; animation: dc-fan 5s ease-in-out infinite; }
+
+  /* smok */
+  .dg-wing-front { transform-origin: 138px 104px; animation: dg-flap 1.7s ease-in-out infinite; }
+  .dg-wing-back  { transform-origin: 126px 108px; animation: dg-flap 1.7s ease-in-out infinite -0.85s; opacity: 0.8; }
+  .dg-tail       { transform-origin: 84px 128px;  animation: dg-tail 3.2s ease-in-out infinite; }
+  .dg-flame-a    { transform-origin: 226px 56px;  animation: dg-fire 0.9s ease-in-out infinite; }
+  .dg-flame-b    { transform-origin: 226px 56px;  animation: dg-fire 0.9s ease-in-out infinite 0.45s; }
+  .dg-smoke      { animation: dg-smoke 3s ease-out infinite; }
+  .dg-smoke-b    { animation-delay: 1.5s; }
+  .dg-eye        { animation: dg-blink 4.5s ease-in-out infinite; transform-origin: 190px 50px; }
+
+  /* zamek */
+  .deco-flag  { transform-origin: 110px 40px; animation: deco-flag 2.6s ease-in-out infinite; }
+  .dc-window  { animation: deco-flicker 1.8s ease-in-out infinite; }
+  .dc-window:nth-child(2) { animation-delay: 0.4s; }
+  .dc-window:nth-child(3) { animation-delay: 0.9s; }
+  .dc-window:nth-child(4) { animation-delay: 1.3s; }
+  .dc-star    { animation: dc-twinkle 2.4s ease-in-out infinite; }
+  .dc-star-b  { animation-delay: 0.8s; }
+  .dc-star-c  { animation-delay: 1.6s; }
+
+  /* pionki i kości */
+  .mp-a { animation: deco-bob 3.4s ease-in-out infinite; }
+  .mp-b { animation: deco-bob 3.4s ease-in-out infinite 0.5s; }
+  .mp-c { animation: deco-bob 3.4s ease-in-out infinite 1s; }
+  .dc-die-a { transform-origin: 34px 128px; animation: dc-roll 6s ease-in-out infinite; }
+  .dc-die-b { transform-origin: 88px 132px; animation: dc-roll 6s ease-in-out infinite -3s; }
+
+  /* rycerz i mag */
+  .dc-sword  { transform-origin: 62px 84px; animation: dc-swing 3s ease-in-out infinite; }
+  .dc-orb    { animation: dc-glow 2s ease-in-out infinite; transform-origin: 150px 34px; }
+  .dc-plume  { transform-origin: 56px 22px; animation: deco-flag 2.6s ease-in-out infinite 0.6s; }
 
   @keyframes deco-fly {
     0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(-14px, -16px) rotate(-3deg); }
+    50% { transform: translate(-16px, -18px) rotate(-3deg); }
   }
   @keyframes deco-bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
   @keyframes deco-flag {
-    0%, 100% { transform: rotate(-4deg); }
-    50% { transform: rotate(10deg); }
+    0%, 100% { transform: rotate(-4deg) skewY(0deg); }
+    50% { transform: rotate(8deg) skewY(-6deg); }
   }
   @keyframes deco-flicker {
-    0%, 100% { opacity: 0.35; transform: scale(0.92); }
-    50% { opacity: 0.65; transform: scale(1.08); }
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+  @keyframes dg-flap {
+    0%, 100% { transform: rotate(-14deg) scaleY(1); }
+    50% { transform: rotate(12deg) scaleY(0.85); }
+  }
+  @keyframes dg-tail {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(6deg); }
+  }
+  @keyframes dg-fire {
+    0%, 100% { transform: scale(0.85, 0.9); opacity: 0.6; }
+    50% { transform: scale(1.12, 1.08); opacity: 0.95; }
+  }
+  @keyframes dg-smoke {
+    0% { transform: translate(0,0) scale(0.6); opacity: 0; }
+    30% { opacity: 0.5; }
+    100% { transform: translate(14px,-40px) scale(1.4); opacity: 0; }
+  }
+  @keyframes dg-blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+  @keyframes dc-twinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+  @keyframes dc-roll {
+    0%, 40%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-18deg) translateY(-6px); }
+    60% { transform: rotate(12deg) translateY(0); }
+    70% { transform: rotate(-4deg); }
+    80% { transform: rotate(0deg); }
+  }
+  @keyframes dc-swing {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-14deg); }
+  }
+  @keyframes dc-coin {
+    0%, 100% { transform: translateY(0); opacity: 0.9; }
+    50% { transform: translateY(-5px); opacity: 1; }
+  }
+  @keyframes dc-lid {
+    0%, 100% { transform: rotate(-22deg); }
+    50% { transform: rotate(-30deg); }
+  }
+  @keyframes dc-sand-top {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(0.05); }
+  }
+  @keyframes dc-sand-bottom {
+    0% { transform: scaleY(0.05); }
+    100% { transform: scaleY(1); }
+  }
+  @keyframes dc-fan {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-4deg); }
+  }
+  @keyframes dc-glow {
+    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.15); }
   }
   @media (max-width: 1280px) {
     .deco-layer { display: none; }
   }
+  @media (max-height: 820px) {
+    .deco-chest, .deco-boxes { display: none; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .deco-dragon, .deco-meeples, .deco-wanderer, .deco-flag, .deco-flame-a, .deco-flame-b, .deco-flame-c { animation: none; }
+    .deco-layer, .deco-layer * { animation: none !important; }
   }
 
   /* ---- Minigra "Lot nad miastem" ---- */
@@ -537,50 +697,265 @@
 <body class="pre-intro">
 
 <div class="deco-layer deco-dragon" aria-hidden="true">
-  <svg viewBox="0 0 200 150">
-    <path d="M12 140 C 6 143, 5 150, 11 152 C 15 153, 18 149, 16 144"/>
-    <path d="M16 144 C 30 132, 40 118, 52 106 C 60 98, 66 90, 78 80 C 86 74, 92 70, 102 60 C 112 52, 118 47, 128 42 C 133 39, 137 38, 140 38"/>
-    <path d="M50 108 L44 98"/>
-    <path d="M100 62 L96 51"/>
-    <path d="M122 44 L112 30"/>
-    <path d="M140 38 L174 27"/>
-    <path d="M140 38 L166 48"/>
-    <path d="M84 76 L46 27 C 55 46, 60 58, 68 67 C 73 71, 78 74, 84 76 Z"/>
-    <path d="M84 76 L64 49"/>
-    <g class="deco-flame">
-      <path class="deco-flame-a" d="M180 22 C 189 17, 195 8, 190 2 C 199 6, 203 16, 195 23 C 191 26, 184 25, 180 22 Z"/>
-      <path class="deco-flame-b" d="M178 42 C 186 40, 191 33, 187 27 C 195 30, 198 38, 192 44 C 188 47, 181 46, 178 42 Z"/>
+  <svg viewBox="0 0 270 200">
+    <!-- dym -->
+    <g class="dc-cream">
+      <circle class="dg-smoke" cx="240" cy="40" r="6" />
+      <circle class="dg-smoke dg-smoke-b" cx="250" cy="34" r="4" />
     </g>
+    <!-- tylne skrzydło -->
+    <g class="dg-wing-back">
+      <path class="dc-green dc-outline" d="M126 108 C 108 70, 84 54, 56 60 L 70 72 C 56 76, 48 88, 44 102 L 68 92 C 60 104, 60 112, 66 120 L 96 104 C 92 112, 98 116, 108 116 Z"/>
+      <path class="dc-line-gold" d="M126 108 L 70 72 M126 108 L 68 92 M126 108 L 96 104"/>
+    </g>
+    <!-- ogon -->
+    <g class="dg-tail">
+      <path class="dc-green dc-outline" d="M88 126 C 58 122, 38 140, 22 166 L 32 174 C 48 152, 62 142, 86 142 Z"/>
+      <path class="dc-gold dc-outline" d="M28 168 L 10 160 L 18 182 L 34 178 Z"/>
+      <path class="dc-gold" d="M64 130 l3 -8 l3 8 z M50 136 l3 -8 l3 8 z"/>
+    </g>
+    <!-- nogi -->
+    <path class="dc-green dc-outline" d="M112 146 L 106 166 L 120 166 L 122 150 Z M150 146 L 146 166 L 160 166 L 162 150 Z"/>
+    <path class="dc-gold" d="M104 166 l-6 4 l8 0 z M112 166 l-4 5 l8 0 z M144 166 l-6 4 l8 0 z M152 166 l-4 5 l8 0 z"/>
+    <!-- tułów i brzuch -->
+    <ellipse class="dc-green dc-outline" cx="130" cy="125" rx="50" ry="28"/>
+    <ellipse class="dc-gold" cx="132" cy="136" rx="36" ry="13" opacity="0.85"/>
+    <path class="dc-line-gold" d="M104 134 h56 M100 140 h64 M106 146 h52"/>
+    <!-- kolce na grzbiecie -->
+    <path class="dc-gold dc-outline" d="M96 106 l5 -12 l5 12 z M112 100 l5 -13 l5 13 z M130 98 l5 -14 l5 14 z M148 100 l5 -13 l5 13 z"/>
+    <!-- szyja -->
+    <path class="dc-green dc-outline" d="M164 106 C 178 94, 184 78, 178 60 L 196 58 C 202 82, 194 106, 178 120 Z"/>
+    <path class="dc-gold" d="M178 84 h14 M176 94 h14 M174 104 h12" style="stroke: var(--gold); stroke-width: 3; fill:none"/>
+    <!-- głowa -->
+    <path class="dc-green dc-outline" d="M170 46 C 172 38, 186 34, 200 40 L 226 46 L 218 54 L 228 60 L 202 66 C 188 70, 174 68, 170 60 Z"/>
+    <path class="dc-gold dc-outline" d="M182 42 L 172 24 L 190 38 Z M196 40 L 194 24 L 204 40 Z"/>
+    <g class="dg-eye">
+      <ellipse class="dc-gold" cx="190" cy="50" rx="4" ry="3.6"/>
+      <ellipse class="dc-ink" cx="191" cy="50" rx="1.3" ry="2.6"/>
+    </g>
+    <circle class="dc-ink" cx="220" cy="50" r="1.4"/>
+    <path class="dc-cream" d="M212 58 l3 5 l3 -5 z M204 62 l3 5 l3 -5 z"/>
+    <!-- przednie skrzydło -->
+    <g class="dg-wing-front">
+      <path class="dc-green dc-outline" d="M138 104 C 118 60, 90 40, 58 44 L 74 58 C 58 60, 48 72, 42 88 L 68 80 C 58 92, 56 102, 60 112 L 92 96 C 84 104, 86 110, 98 114 Z"/>
+      <path class="dc-line-gold" d="M138 104 L 74 58 M138 104 L 68 80 M138 104 L 92 96"/>
+    </g>
+    <!-- ogień -->
+    <path class="dc-gold dg-flame-a" d="M228 54 C 244 42, 258 44, 266 36 C 262 50, 256 60, 246 64 C 254 66, 260 72, 264 80 C 252 76, 240 68, 228 60 Z"/>
+    <path class="dc-cream dg-flame-b" d="M228 55 C 240 48, 250 48, 256 44 C 252 52, 248 58, 242 61 C 248 63, 252 66, 254 72 C 246 68, 236 62, 228 59 Z"/>
   </svg>
 </div>
 
 <div class="deco-layer deco-castle" aria-hidden="true">
-  <svg viewBox="0 0 120 150">
-    <path d="M20 148 L20 60 L14 60 L14 46 L26 46 L26 58 L38 58 L38 40 L32 40 L32 26 L44 26 L44 40 L38 40"/>
-    <path d="M38 58 L82 58 L82 40 L76 40 L76 26 L88 26 L88 40 L82 40"/>
-    <path d="M82 58 L108 58 L108 46 L100 46 L100 60 L108 60 L108 148 L20 148"/>
-    <rect x="52" y="90" width="16" height="26" rx="1"/>
-    <path d="M62 26 L62 4"/>
-    <path class="deco-flag" d="M62 6 L84 12 L62 18 Z"/>
+  <svg viewBox="0 0 220 240">
+    <defs>
+      <linearGradient id="dcSky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2a8bb0"/>
+        <stop offset="0.55" stop-color="#0f5268"/>
+        <stop offset="1" stop-color="#081824"/>
+      </linearGradient>
+      <linearGradient id="dcHill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2e7f9b"/>
+        <stop offset="1" stop-color="#2c4a58"/>
+      </linearGradient>
+      <clipPath id="dcClip"><circle cx="110" cy="122" r="104"/></clipPath>
+    </defs>
+    <!-- niebiesko-gradientowe tło (medalion) -->
+    <circle cx="110" cy="122" r="104" fill="url(#dcSky)"/>
+    <circle cx="110" cy="122" r="104" fill="none" stroke="var(--gold)" stroke-width="2" opacity="0.7"/>
+    <!-- księżyc i gwiazdy -->
+    <circle class="dc-cream" cx="160" cy="54" r="14"/>
+    <circle cx="154" cy="50" r="12" fill="#1c6d8a" opacity="0.7"/>
+    <circle class="dc-cream dc-star" cx="40" cy="60" r="2"/>
+    <circle class="dc-cream dc-star dc-star-b" cx="72" cy="36" r="1.6"/>
+    <circle class="dc-cream dc-star dc-star-c" cx="190" cy="96" r="1.8"/>
+    <circle class="dc-cream dc-star dc-star-b" cx="28" cy="110" r="1.4"/>
+    <!-- wzgórze -->
+    <g clip-path="url(#dcClip)">
+      <path fill="url(#dcHill)" d="M0 232 C 40 186, 90 178, 110 180 C 140 182, 180 190, 220 226 L 220 240 L 0 240 Z"/>
+    </g>
+    <!-- zamek: wieże boczne -->
+    <rect class="dc-cream2 dc-outline" x="34" y="98" width="30" height="94" rx="1"/>
+    <rect class="dc-cream2 dc-outline" x="156" y="98" width="30" height="94" rx="1"/>
+    <path class="dc-red dc-outline" d="M30 100 L 49 62 L 68 100 Z M152 100 L 171 62 L 190 100 Z"/>
+    <!-- mur -->
+    <rect class="dc-cream2 dc-outline" x="64" y="132" width="92" height="60"/>
+    <path class="dc-cream2 dc-outline" d="M64 132 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h10 v-10 h10 v10 h2"/>
+    <!-- donżon -->
+    <rect class="dc-cream dc-outline" x="88" y="90" width="44" height="46"/>
+    <path class="dc-cream dc-outline" d="M88 90 v-8 h8 v8 h8 v-8 h8 v8 h8 v-8 h8 v8"/>
+    <path class="dc-red dc-outline" d="M84 82 L 110 48 L 136 82 Z"/>
+    <!-- maszt i flaga -->
+    <path class="dc-line" d="M110 48 V 26" style="stroke: var(--gold); stroke-width: 2"/>
+    <path class="dc-gold deco-flag" d="M110 27 L 136 33 L 110 40 Z"/>
+    <!-- kamienie -->
+    <path class="dc-line" d="M70 150 h12 M90 150 h12 M124 150 h12 M144 150 h8 M80 164 h12 M110 164 h14 M140 164 h10 M70 178 h10 M94 178 h10 M128 178 h10" style="stroke: var(--border-card); stroke-width: 1.4"/>
+    <!-- okna (migoczą) -->
+    <g class="dc-gold">
+      <rect class="dc-window" x="45" y="116" width="8" height="12" rx="4"/>
+      <rect class="dc-window" x="167" y="116" width="8" height="12" rx="4"/>
+      <rect class="dc-window" x="98" y="104" width="7" height="10" rx="3.5"/>
+      <rect class="dc-window" x="115" y="104" width="7" height="10" rx="3.5"/>
+      <rect class="dc-window" x="45" y="152" width="8" height="12" rx="4"/>
+      <rect class="dc-window" x="167" y="152" width="8" height="12" rx="4"/>
+    </g>
+    <!-- brama -->
+    <path class="dc-ink" d="M98 192 v-24 a12 12 0 0 1 24 0 v24 Z"/>
+    <path class="dc-line-gold" d="M110 168 v24 M104 178 h12"/>
   </svg>
 </div>
 
 <div class="deco-layer deco-meeples" aria-hidden="true">
-  <svg viewBox="0 0 66 96">
-    <path d="M18 6c6 0 9 6 6.6 10.4L32 32c1.6 3-0.6 6.4-4 6.4h-4.4v14.6H12.4V38.4H8c-3.4 0-5.6-3.4-4-6.4l7.4-15.6C9 12 12 6 18 6z"/>
-    <path d="M46 46c7 0 10.5 7 7.7 12.1L62 76c1.9 3.5-0.7 7.5-4.7 7.5h-5.1v17H37.8v-17h-5.1c-4 0-6.6-4-4.7-7.5l8.3-17.9C33.5 53 39 46 46 46z"/>
+  <svg viewBox="0 0 130 160">
+    <defs>
+      <symbol id="dcMeeple" viewBox="0 0 36 54">
+        <path class="dc-outline" d="M18 2c6 0 9 6 6.6 10.4L32 28c1.6 3-0.6 6.4-4 6.4h-4.4V49H12.4V34.4H8c-3.4 0-5.6-3.4-4-6.4l7.4-15.6C9 8 12 2 18 2z"/>
+        <circle class="dc-ink" cx="15" cy="12" r="1.3"/>
+        <circle class="dc-ink" cx="21" cy="12" r="1.3"/>
+        <path class="dc-line" d="M15 16 q3 2.5 6 0" style="stroke-width:1.2"/>
+      </symbol>
+    </defs>
+    <!-- pionki (podskakują naprzemiennie) -->
+    <g class="mp-a dc-gold"><use href="#dcMeeple" x="4" y="14" width="40" height="60"/></g>
+    <g class="mp-b dc-cream"><use href="#dcMeeple" x="42" y="4" width="46" height="69"/></g>
+    <g class="mp-c dc-green"><use href="#dcMeeple" x="88" y="16" width="40" height="60"/></g>
+    <!-- kości -->
+    <g class="dc-die-a">
+      <rect class="dc-cream dc-outline" x="16" y="110" width="36" height="36" rx="6"/>
+      <circle class="dc-ink" cx="26" cy="120" r="3"/>
+      <circle class="dc-ink" cx="42" cy="120" r="3"/>
+      <circle class="dc-gold" cx="34" cy="128" r="3"/>
+      <circle class="dc-ink" cx="26" cy="136" r="3"/>
+      <circle class="dc-ink" cx="42" cy="136" r="3"/>
+    </g>
+    <g class="dc-die-b">
+      <rect class="dc-cream dc-outline" x="70" y="114" width="36" height="36" rx="6"/>
+      <circle class="dc-ink" cx="80" cy="124" r="3"/>
+      <circle class="dc-ink" cx="96" cy="124" r="3"/>
+      <circle class="dc-ink" cx="80" cy="140" r="3"/>
+      <circle class="dc-ink" cx="96" cy="140" r="3"/>
+    </g>
+    <ellipse class="dc-ink" cx="62" cy="154" rx="52" ry="3" opacity="0.35"/>
   </svg>
 </div>
 
 <div class="deco-layer deco-wanderer" aria-hidden="true">
-  <svg viewBox="0 0 92 132">
-    <circle cx="46" cy="20" r="14"/>
-    <path d="M46 34 C 22 40, 14 62, 16 96 C 17 108, 20 118, 24 126 L68 126 C 72 118, 75 108, 76 96 C 78 62, 70 40, 46 34 Z"/>
-    <path d="M46 34 L46 90"/>
-    <path d="M30 60 C 36 66, 56 66, 62 60"/>
-    <path d="M78 40 L88 120"/>
-    <circle cx="88" cy="14" r="6"/>
-    <path d="M88 20 L78 40"/>
+  <svg viewBox="0 0 190 170">
+    <ellipse class="dc-ink" cx="96" cy="164" rx="80" ry="4" opacity="0.35"/>
+    <!-- RYCERZ -->
+    <!-- miecz (kołysze się) -->
+    <g class="dc-sword">
+      <path class="dc-cream dc-outline" d="M62 84 L 26 22 L 32 18 L 66 80 Z"/>
+      <path class="dc-gold dc-outline" d="M52 84 L 74 72 L 76 78 L 56 90 Z"/>
+      <path class="dc-ink" d="M62 88 L 70 100 L 66 102 L 58 90 Z"/>
+    </g>
+    <!-- tułów, tunika -->
+    <path class="dc-red dc-outline" d="M52 62 C 40 68, 36 84, 36 104 L 36 124 L 84 124 L 84 104 C 84 84, 80 68, 68 62 Z"/>
+    <path class="dc-gold" d="M60 76 l4 8 l-4 8 l-4 -8 z"/>
+    <path class="dc-line-gold" d="M40 96 h40"/>
+    <!-- nogi -->
+    <path class="dc-muted dc-outline" d="M42 124 v28 h14 v-28 Z M64 124 v28 h14 v-28 Z"/>
+    <path class="dc-ink" d="M40 152 h18 v8 h-22 Z M62 152 h18 v8 h-14 Z"/>
+    <!-- głowa i hełm -->
+    <circle class="dc-cream2 dc-outline" cx="60" cy="44" r="15"/>
+    <path class="dc-muted dc-outline" d="M45 44 a15 15 0 0 1 30 0 v4 h-30 Z"/>
+    <path class="dc-line" d="M50 46 h20"/>
+    <path class="dc-gold dc-plume" d="M56 22 C 66 6, 82 8, 90 18 C 78 14, 68 20, 62 30 Z"/>
+    <!-- tarcza -->
+    <path class="dc-green dc-outline" d="M76 84 L 106 84 L 106 106 C 106 118, 98 126, 91 130 C 84 126, 76 118, 76 106 Z"/>
+    <path class="dc-gold" d="M88 90 h6 v10 h10 v6 h-10 v14 h-6 v-14 h-10 v-6 h10 z"/>
+    <!-- MAG -->
+    <!-- laska z kulą -->
+    <path class="dc-line" d="M148 40 V 158" style="stroke: var(--gold); stroke-width: 3"/>
+    <g class="dc-orb">
+      <circle class="dc-muted" cx="150" cy="34" r="12" opacity="0.5"/>
+      <circle class="dc-cream" cx="150" cy="34" r="7"/>
+    </g>
+    <!-- szata -->
+    <path class="dc-muted dc-outline" d="M128 70 C 112 92, 106 124, 104 158 L 176 158 C 174 124, 168 92, 152 70 Z"/>
+    <path class="dc-gold" d="M136 100 l3 6 l-3 6 l-3 -6 z M146 118 l3 6 l-3 6 l-3 -6 z M158 96 l3 6 l-3 6 l-3 -6 z"/>
+    <!-- broda i twarz -->
+    <circle class="dc-cream2 dc-outline" cx="140" cy="58" r="12"/>
+    <path class="dc-cream dc-outline" d="M130 62 C 128 78, 134 90, 140 96 C 146 90, 152 78, 150 62 C 146 66, 134 66, 130 62 Z"/>
+    <circle class="dc-ink" cx="136" cy="56" r="1.4"/>
+    <circle class="dc-ink" cx="144" cy="56" r="1.4"/>
+    <!-- kapelusz -->
+    <path class="dc-green dc-outline" d="M122 52 L 158 52 L 140 6 Z"/>
+    <path class="dc-green dc-outline" d="M114 52 L 166 52 L 164 58 L 116 58 Z"/>
+    <path class="dc-gold" d="M138 28 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z"/>
+  </svg>
+</div>
+
+<div class="deco-layer deco-chest" aria-hidden="true">
+  <svg viewBox="0 0 190 160">
+    <defs>
+      <radialGradient id="dcChestGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="#B8935F" stop-opacity="0.55"/>
+        <stop offset="1" stop-color="#B8935F" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <ellipse class="dc-ink" cx="96" cy="154" rx="78" ry="4" opacity="0.35"/>
+    <!-- poświata ze skrzyni -->
+    <ellipse class="dc-chest-glow" cx="100" cy="74" rx="66" ry="40" fill="url(#dcChestGlow)"/>
+    <!-- otwarta pokrywa (z tyłu) -->
+    <g class="dc-chest-lid">
+      <path class="dc-red dc-outline" d="M30 78 C 30 52, 58 40, 100 40 C 142 40, 170 52, 170 78 Z"/>
+      <path class="dc-gold dc-outline" d="M56 78 C 56 58, 70 46, 72 46 L 84 46 C 84 46, 70 58, 70 78 Z M118 78 C 118 58, 106 46, 106 46 L 118 46 C 118 46, 132 58, 132 78 Z"/>
+      <rect class="dc-cream2" x="30" y="72" width="140" height="6" opacity="0.6"/>
+    </g>
+    <!-- zawartość: karty, kości, pionek, monety -->
+    <g transform="translate(0,0)">
+      <rect class="dc-cream dc-outline" x="52" y="58" width="26" height="36" rx="3" transform="rotate(-14 65 76)"/>
+      <rect class="dc-cream dc-outline" x="64" y="56" width="26" height="36" rx="3" transform="rotate(-4 77 74)"/>
+      <path class="dc-gold" d="M76 66 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z"/>
+      <rect class="dc-cream dc-outline" x="112" y="62" width="24" height="24" rx="5" transform="rotate(12 124 74)"/>
+      <circle class="dc-ink" cx="119" cy="70" r="2.2"/><circle class="dc-ink" cx="130" cy="79" r="2.2"/><circle class="dc-gold" cx="124.5" cy="74.5" r="2.2"/>
+      <path class="dc-green dc-outline" d="M98 52c4 0 6 4 4.4 7L107 68c1 2-0.4 4.2-2.7 4.2H101v10h-6v-10h-3.3c-2.3 0-3.7-2.2-2.7-4.2L93.6 59C92 56 94 52 98 52z"/>
+      <circle class="dc-gold dc-outline dc-coin-a" cx="46" cy="86" r="6"/>
+      <circle class="dc-gold dc-outline dc-coin-b" cx="150" cy="84" r="6"/>
+      <circle class="dc-gold dc-outline dc-coin-c" cx="138" cy="92" r="5"/>
+    </g>
+    <!-- korpus skrzyni -->
+    <rect class="dc-red dc-outline" x="30" y="86" width="140" height="62" rx="5"/>
+    <rect class="dc-gold dc-outline" x="56" y="86" width="14" height="62"/>
+    <rect class="dc-gold dc-outline" x="118" y="86" width="14" height="62"/>
+    <rect class="dc-cream2" x="30" y="86" width="140" height="5" opacity="0.5"/>
+    <path class="dc-line" d="M42 100 h8 M42 112 h8 M42 124 h8 M42 136 h8 M144 100 h10 M144 112 h10 M144 124 h10 M144 136 h10" style="stroke: rgba(8,24,36,0.45)"/>
+    <!-- zamek -->
+    <rect class="dc-gold dc-outline" x="84" y="88" width="22" height="24" rx="4"/>
+    <circle class="dc-ink" cx="95" cy="98" r="2.6"/>
+    <path class="dc-ink" d="M94 99 h2 v7 h-2 z"/>
+  </svg>
+</div>
+
+<div class="deco-layer deco-boxes" aria-hidden="true">
+  <svg viewBox="0 0 180 170">
+    <ellipse class="dc-ink" cx="94" cy="164" rx="76" ry="4" opacity="0.35"/>
+    <!-- stos pudełek z grami -->
+    <rect class="dc-red dc-outline" x="52" y="134" width="112" height="28" rx="3"/>
+    <rect class="dc-gold" x="60" y="146" width="44" height="4" rx="2"/>
+    <rect class="dc-cream2" x="112" y="146" width="20" height="4" rx="2"/>
+    <rect class="dc-green dc-outline" x="46" y="108" width="112" height="26" rx="3" transform="rotate(-2 102 121)"/>
+    <rect class="dc-cream" x="56" y="119" width="52" height="4" rx="2" transform="rotate(-2 102 121)"/>
+    <rect class="dc-gold" x="116" y="119" width="14" height="4" rx="2" transform="rotate(-2 102 121)"/>
+    <rect class="dc-navy dc-outline" x="58" y="84" width="104" height="24" rx="3" transform="rotate(1.5 110 96)"/>
+    <rect class="dc-gold" x="66" y="94" width="36" height="4" rx="2" transform="rotate(1.5 110 96)"/>
+    <rect class="dc-cream2" x="108" y="94" width="30" height="4" rx="2" transform="rotate(1.5 110 96)"/>
+    <!-- klepsydra na stosie -->
+    <rect class="dc-gold dc-outline" x="66" y="30" width="48" height="6" rx="2"/>
+    <rect class="dc-gold dc-outline" x="66" y="112" width="48" height="6" rx="2" transform="translate(0,-32)"/>
+    <path class="dc-line-gold" d="M70 36 V 80 M110 36 V 80" style="stroke-width:2.6"/>
+    <path fill="rgba(240,234,217,0.14)" class="dc-outline" d="M72 36 C 72 56, 88 58, 90 60 C 92 58, 108 56, 108 36 Z M72 80 C 72 60, 88 58, 90 56 C 92 58, 108 60, 108 80 Z"/>
+    <path class="dc-cream dc-sand-top" d="M76 44 C 76 56, 88 58, 90 60 C 92 58, 104 56, 104 44 Z"/>
+    <path class="dc-cream dc-sand-bottom" d="M74 80 C 74 70, 86 66, 90 62 C 94 66, 106 70, 106 80 Z"/>
+    <path class="dc-sand-stream" d="M90 60 V 78" style="stroke: var(--card); stroke-width: 1.4; fill:none"/>
+    <!-- wachlarz kart oparty o pudełka -->
+    <g class="dc-card-fan">
+      <rect class="dc-cream dc-outline" x="18" y="108" width="26" height="40" rx="3" transform="rotate(-24 31 148)"/>
+      <rect class="dc-cream dc-outline" x="24" y="106" width="26" height="40" rx="3" transform="rotate(-10 37 148)"/>
+      <rect class="dc-cream dc-outline" x="30" y="106" width="26" height="40" rx="3" transform="rotate(4 43 148)"/>
+      <path class="dc-gold" d="M41 118 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 z" transform="rotate(4 43 148)"/>
+    </g>
   </svg>
 </div>
 
@@ -719,12 +1094,46 @@ function fmtDate(d) {
   const dt = new Date(d + "T00:00:00");
   return dt.toLocaleDateString("pl-PL", { day: "2-digit", month: "short", year: "numeric" });
 }
+function nextDayStr(d) { const dt = new Date(d + 'T00:00:00'); dt.setDate(dt.getDate() + 1); return dt.toISOString().slice(0, 10); }
 function daysUntil(d) {
   if (!d) return null;
   const today = new Date(todayStr() + "T00:00:00");
   const target = new Date(d + "T00:00:00");
   return Math.round((target - today) / 86400000);
 }
+
+// ---- Automatyczna realizacja rezerwacji ----
+// Gdy nadejdzie dzień "Od" rezerwacji, gra staje się WYPOŻYCZONA (ten sam stan, kolor i miejsce
+// w sekcji "Wypożyczone" co przy zwykłym wypożyczeniu); rezerwacja znika z listy nadchodzących.
+const activatingIds = new Set();
+function activateReservation(cur, r) {
+  cur.status = 'borrowed';
+  cur.borrower = r.person;
+  cur.borrowedDate = r.dateFrom < todayStr() ? todayStr() : r.dateFrom;
+  cur.dueDate = r.dateTo;
+  cur.reservations = (cur.reservations || []).filter(x => x.id !== r.id);
+}
+function findActiveReservation(g) {
+  const today = todayStr();
+  return (g.reservations || []).find(r => r.dateFrom <= today && r.dateTo >= today) || null;
+}
+function activateDueReservations() {
+  const today = todayStr();
+  games.forEach(g => {
+    if (activatingIds.has(g.id)) return;
+    const active = g.status !== 'borrowed' ? findActiveReservation(g) : null;
+    const expired = (g.reservations || []).some(r => r.dateTo < today);
+    if (!active && !expired) return;
+    activatingIds.add(g.id);
+    commitGame(g.id, cur => {
+      cur.reservations = (cur.reservations || []).filter(r => r.dateTo >= today); // porządek: minione rezerwacje
+      if (cur.status === 'borrowed') return;
+      const r = findActiveReservation(cur);
+      if (r) activateReservation(cur, r);
+    }).catch(() => {}).finally(() => activatingIds.delete(g.id));
+  });
+}
+setInterval(activateDueReservations, 5 * 60 * 1000); // np. po przejściu przez północ przy otwartej stronie
 
 // ---- Pomocnicze funkcje do rezerwacji ----
 function rangesOverlap(aFrom, aTo, bFrom, bTo) {
@@ -741,6 +1150,49 @@ function nextReservation(g) {
 }
 function findReservationConflict(g, dateFrom, dateTo, excludeId) {
   return (g.reservations || []).find(r => r.id !== excludeId && rangesOverlap(r.dateFrom, r.dateTo, dateFrom, dateTo)) || null;
+}
+function sameName(a, b) { return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase(); }
+// Czy aktualne wypożyczenie blokuje zakres [from, to]? Brak terminu zwrotu = blokada bez końca.
+function borrowBlocksRange(g, from, to) {
+  if (g.status !== 'borrowed') return false;
+  if (!g.dueDate) return true;
+  return from <= g.dueDate;
+}
+// Rezerwacja (innej osoby), która koliduje z wypożyczeniem od dziś do dueDate (brak dueDate = bez końca).
+function reservationBlockingBorrow(g, borrower, dueDate) {
+  const today = todayStr();
+  return upcomingReservations(g).find(r => !sameName(r.person, borrower) && (!dueDate || rangesOverlap(r.dateFrom, r.dateTo, today, dueDate))) || null;
+}
+// Ostatni dopuszczalny dzień zwrotu przy wypożyczeniu dziś (dzień przed najbliższą obcą rezerwacją).
+function maxDueDateFor(g, borrower) {
+  const today = todayStr();
+  const r = upcomingReservations(g).find(r => !sameName(r.person, borrower) && r.dateTo >= today);
+  if (!r) return '';
+  if (r.dateFrom <= today) return null; // trwa już rezerwacja innej osoby
+  const d = new Date(r.dateFrom + 'T00:00:00'); d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+// Atomowy zapis zmian jednej gry. Funkcja mutate(g) dostaje AKTUALNY stan z serwera
+// (nie kopię lokalną), więc dwie osoby klikające w tym samym momencie nie nadpiszą się nawzajem.
+// mutate zwraca tekst błędu, aby przerwać zapis, lub nic, aby go zatwierdzić.
+function commitGame(id, mutate) {
+  let abortReason = '';
+  return db.ref('games/' + id).transaction(cur => {
+    if (cur === null) return cur;
+    if (!cur.reservations) cur.reservations = [];
+    if (!cur.history) cur.history = [];
+    abortReason = mutate(cur) || '';
+    if (abortReason) return; // undefined = przerwij transakcję
+    return cur;
+  }).then(res => {
+    if (!res.committed) throw new Error(abortReason || 'Ktoś w tym samym czasie zmienił tę grę. Odświeżono dane – spróbuj ponownie.');
+    if (res.snapshot.val() === null) throw new Error('Ta gra została w międzyczasie usunięta.');
+    return res.snapshot.val();
+  }).catch(err => {
+    toast(err.message || 'Nie udało się zapisać zmian.', 'error');
+    throw err;
+  });
 }
 
 let games = [];
@@ -927,11 +1379,20 @@ function matchesFilters(g) {
   return true;
 }
 
+function reservationBadgeHtml(g, extraStyle) {
+  const list = upcomingReservations(g);
+  if (!list.length) return '';
+  const nr = list[0];
+  const more = list.length > 1 ? ` <span style="opacity:.7">+${list.length - 1}</span>` : '';
+  const when = daysUntil(nr.dateFrom) === 0 ? 'od dziś' : `${fmtDate(nr.dateFrom)} → ${fmtDate(nr.dateTo)}`;
+  return `<div class="reservation-badge" onclick="openReservations('${g.id}')" ${extraStyle ? `style="${extraStyle}"` : ''} title="Zarezerwowane – kliknij, aby zobaczyć kalendarz">📅 Zarezerwowane: ${when} · ${escapeHtml(nr.person)}${more}</div>`;
+}
+
 function cardHtml(g) {
   const overdue = g.status === 'borrowed' && g.dueDate && daysUntil(g.dueDate) < 0;
   const loanCount = (g.history || []).length;
   const nextRes = nextReservation(g);
-  const resBadge = nextRes ? `<div class="reservation-badge" onclick="openReservations('${g.id}')">📅 ${daysUntil(nextRes.dateFrom) === 0 ? 'dziś' : fmtDate(nextRes.dateFrom)} → ${escapeHtml(nextRes.person)}</div>` : '';
+  const resBadge = reservationBadgeHtml(g);
   const statusHtml = g.status === 'available'
     ? `<div class="status-row">
          <span class="status-available">✓ Dostępna</span>
@@ -1389,27 +1850,92 @@ function openEdit(id) {
 
 function openBorrow(id) {
   const g = games.find(x => x.id === id);
+  const upcoming = upcomingReservations(g);
+  const resInfo = upcoming.length ? `
+        <div class="field-hint" id="f-borrow-res-info" style="padding:8px 10px; border-radius:6px; background: rgba(184,147,95,0.14); color: var(--ink-muted); line-height:1.5">
+          📅 Nadchodzące rezerwacje:<br>${upcoming.slice(0, 3).map(r => `<b style="color:var(--ink)">${escapeHtml(r.person)}</b> · ${fmtDate(r.dateFrom)} → ${fmtDate(r.dateTo)}`).join('<br>')}
+          <br><span id="f-borrow-cap"></span>
+        </div>` : '';
   openModal(`
     <div class="modal">
       <div class="modal-head"><h2 class="display">Wypożycz: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
-        <div class="field"><label>Kto wypożycza</label><input id="f-borrower" placeholder="Imię i nazwisko" autofocus></div>
-        <div class="field"><label>Termin zwrotu (opcjonalnie)</label><input id="f-due" type="date"></div>
+        ${resInfo}
+        <div class="field" id="f-borrower-field"><label>Kto wypożycza</label><input id="f-borrower" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
+        <div class="field" id="f-due-field"><label>Termin zwrotu ${upcoming.length ? '' : '(opcjonalnie)'}</label><input id="f-due" type="date" min="${todayStr()}"><div class="field-error" id="f-due-error">Termin koliduje z rezerwacją</div></div>
+        <div class="field-hint" id="f-borrow-status"></div>
       </div>
       <div class="modal-foot" style="justify-content:flex-end">
         <button class="btn btn-green" id="f-confirm">Potwierdź wypożyczenie</button>
       </div>
     </div>
   `);
+
+  const borrowerEl = document.getElementById('f-borrower');
+  const dueEl = document.getElementById('f-due');
+  function refreshCap() {
+    const capEl = document.getElementById('f-borrow-cap');
+    const maxDue = maxDueDateFor(g, borrowerEl.value);
+    if (maxDue === null) {
+      if (capEl) capEl.textContent = 'Trwa rezerwacja innej osoby – wypożyczyć może tylko ona.';
+      dueEl.removeAttribute('max');
+    } else if (maxDue) {
+      if (capEl) capEl.textContent = `Zwrot najpóźniej ${fmtDate(maxDue)}, aby nie kolidować z rezerwacją.`;
+      dueEl.max = maxDue;
+    } else {
+      if (capEl) capEl.textContent = upcoming.length ? 'To Twoja rezerwacja – odbierając grę, zostanie ona zrealizowana.' : '';
+      dueEl.removeAttribute('max');
+    }
+  }
+  refreshCap();
+  borrowerEl.addEventListener('input', refreshCap);
+
   document.getElementById('f-confirm').onclick = () => {
-    const borrower = document.getElementById('f-borrower').value.trim();
-    if (!borrower) return;
-    g.status = 'borrowed';
-    g.borrower = borrower;
-    g.borrowedDate = todayStr();
-    g.dueDate = document.getElementById('f-due').value;
-    closeModal();
-    saveGameMeta(g);
+    const borrower = borrowerEl.value.trim();
+    const due = dueEl.value;
+    const bField = document.getElementById('f-borrower-field');
+    const dField = document.getElementById('f-due-field');
+    const statusEl = document.getElementById('f-borrow-status');
+    bField.classList.remove('invalid'); dField.classList.remove('invalid');
+    statusEl.textContent = ''; statusEl.style.color = '';
+    if (!borrower) {
+      bField.classList.add('invalid', 'shake'); borrowerEl.focus();
+      setTimeout(() => bField.classList.remove('shake'), 300);
+      return;
+    }
+    if (due && due < todayStr()) {
+      document.getElementById('f-due-error').textContent = 'Termin zwrotu nie może być w przeszłości';
+      dField.classList.add('invalid', 'shake');
+      setTimeout(() => dField.classList.remove('shake'), 300);
+      return;
+    }
+    // Wstępna kontrola lokalna (szybka informacja); ostateczna odbywa się atomowo w commitGame.
+    const localConflict = reservationBlockingBorrow(g, borrower, due);
+    if (localConflict) {
+      document.getElementById('f-due-error').textContent = due
+        ? `Termin koliduje z rezerwacją: ${localConflict.person} (${fmtDate(localConflict.dateFrom)} → ${fmtDate(localConflict.dateTo)})`
+        : `Podaj termin zwrotu przed rezerwacją: ${localConflict.person} od ${fmtDate(localConflict.dateFrom)}`;
+      dField.classList.add('invalid', 'shake');
+      setTimeout(() => dField.classList.remove('shake'), 300);
+      return;
+    }
+    const btn = document.getElementById('f-confirm');
+    btn.disabled = true;
+    commitGame(id, cur => {
+      if (cur.status === 'borrowed') return `Gra została właśnie wypożyczona przez: ${cur.borrower || 'inną osobę'}.`;
+      const conflict = reservationBlockingBorrow(cur, borrower, due);
+      if (conflict) return `Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)}).`;
+      // Odbiór własnej rezerwacji: zamieniamy ją na wypożyczenie.
+      const today = todayStr();
+      cur.reservations = (cur.reservations || []).filter(r => !(sameName(r.person, borrower) && r.dateFrom <= today && r.dateTo >= today));
+      cur.status = 'borrowed';
+      cur.borrower = borrower;
+      cur.borrowedDate = today;
+      cur.dueDate = due;
+    }).then(() => {
+      closeModal();
+      toast('Wypożyczono: ' + borrower);
+    }).catch(() => { btn.disabled = false; });
   };
 }
 
@@ -1443,26 +1969,27 @@ function openExtend(id) {
       return;
     }
     const newDue = document.getElementById('f-extend-due').value;
-    if (!g.extensions) g.extensions = [];
-    g.extensions.push({ date: todayStr(), previousDueDate: g.dueDate, newDueDate: newDue, by: typedName });
-    g.dueDate = newDue;
-    closeModal();
-    saveGameMeta(g);
+    if (!newDue) return;
+    commitGame(id, cur => {
+      if (cur.status !== 'borrowed' || !sameName(cur.borrower, typedName)) return 'Stan wypożyczenia w międzyczasie się zmienił.';
+      const conflict = reservationBlockingBorrow(cur, typedName, newDue);
+      if (conflict) return `Nie można przedłużyć: koliduje z rezerwacją ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)}).`;
+      if (!cur.extensions) cur.extensions = [];
+      cur.extensions.push({ date: todayStr(), previousDueDate: cur.dueDate || '', newDueDate: newDue, by: typedName });
+      cur.dueDate = newDue;
+    }).then(() => { closeModal(); toast('Przedłużono do ' + fmtDate(newDue)); }).catch(() => {});
   };
 }
 
 function returnGame(id) {
-  const g = games.find(x => x.id === id);
-  if (!g.history) g.history = [];
-  if (g.borrower) {
-    g.history.push({ borrower: g.borrower, borrowedDate: g.borrowedDate, returnedDate: todayStr() });
-  }
-  g.status = 'available';
-  g.borrower = '';
-  g.borrowedDate = '';
-  g.dueDate = '';
-  saveGameMeta(g);
-  spawnConfetti();
+  commitGame(id, cur => {
+    if (cur.status !== 'borrowed') return 'Ta gra jest już oznaczona jako dostępna.';
+    if (cur.borrower) cur.history.push({ borrower: cur.borrower, borrowedDate: cur.borrowedDate || '', returnedDate: todayStr() });
+    cur.status = 'available';
+    cur.borrower = '';
+    cur.borrowedDate = '';
+    cur.dueDate = '';
+  }).then(() => spawnConfetti()).catch(() => {});
 }
 
 function openHistory(id) {
@@ -1490,8 +2017,16 @@ function openReservations(id) {
 
   openModal(`
     <div class="modal modal-wide">
-      <div class="modal-head"><h2 class="display">Rezerwacje: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-head"><h2 class="display">Wypożyczenie i rezerwacje: ${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="modal-body">
+        <div style="margin-bottom:14px">
+          <div class="field-hint" style="margin-bottom:6px">Co chcesz zrobić?</div>
+          <div class="cal-mode" id="cal-mode">
+            <button type="button" class="cal-mode-btn" data-mode="borrow" id="cal-mode-borrow">⏱ Wypożycz od dziś</button>
+            <button type="button" class="cal-mode-btn" data-mode="reserve" id="cal-mode-reserve">📅 Zarezerwuj termin</button>
+          </div>
+          <div class="cal-hint" id="cal-mode-hint"></div>
+        </div>
         <div class="cal-head">
           <button type="button" id="cal-prev">‹</button>
           <span id="cal-label"></span>
@@ -1501,13 +2036,15 @@ function openReservations(id) {
         <div class="cal-legend">
           <span><span class="cal-dot" style="background:rgba(168,72,58,0.3)"></span>Zarezerwowane</span>
           <span><span class="cal-dot" style="background:transparent;border:1px solid var(--gold)"></span>Dziś</span>
+          <span><span class="cal-dot" style="background:rgba(184,147,95,0.35)"></span>Wypożyczona</span>
         </div>
+        <div class="cal-hint" id="cal-hint">Kliknij dzień w kalendarzu, aby ustawić datę „Od”, a potem drugi dzień jako „Do”.</div>
         <div style="margin-top:16px">
           <div class="field-hint" style="margin-bottom:6px">Nadchodzące rezerwacje</div>
           <div id="res-list"></div>
         </div>
         <div style="border-top:1px dashed var(--border-card); margin-top:8px; padding-top:14px; display:flex; flex-direction:column; gap:12px">
-          <div class="field" id="f-res-name-field"><label>Kto rezerwuje</label><input id="f-res-name" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
+          <div class="field" id="f-res-name-field"><label id="f-res-name-label">Kto rezerwuje</label><input id="f-res-name" placeholder="Imię i nazwisko" autofocus><div class="field-error">Podaj imię i nazwisko</div></div>
           <div style="display:flex; gap:10px">
             <div class="field" style="flex:1" id="f-res-from-field"><label>Od</label><input id="f-res-from" type="date" min="${todayStr()}"><div class="field-error">Wybierz poprawny zakres dat</div></div>
             <div class="field" style="flex:1"><label>Do</label><input id="f-res-to" type="date" min="${todayStr()}"></div>
@@ -1521,6 +2058,47 @@ function openReservations(id) {
     </div>
   `);
 
+  let previewDate = '';
+  let mode = g.status === 'borrowed' ? 'reserve' : 'borrow'; // 'borrow' = wypożyczenie od dziś, 'reserve' = rezerwacja
+
+  function setMode(m) {
+    if (m === 'borrow' && g.status === 'borrowed') m = 'reserve';
+    mode = m;
+    const fromEl = document.getElementById('f-res-from');
+    const toEl = document.getElementById('f-res-to');
+    document.querySelectorAll('.cal-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    document.getElementById('cal-mode-borrow').disabled = g.status === 'borrowed';
+    document.getElementById('cal-mode-borrow').title = g.status === 'borrowed' ? `Gra jest już wypożyczona${g.borrower ? ' przez ' + g.borrower : ''}` : '';
+    const saveBtn = document.getElementById('f-res-save');
+    if (mode === 'borrow') {
+      fromEl.value = todayStr(); fromEl.readOnly = true; fromEl.style.opacity = '0.7';
+      const maxDue = maxDueDateFor(g, document.getElementById('f-res-name').value);
+      if (maxDue) toEl.max = maxDue; else toEl.removeAttribute('max');
+      document.getElementById('f-res-name-label').textContent = 'Kto wypożycza';
+      document.getElementById('cal-mode-hint').textContent = maxDue === null
+        ? 'Trwa rezerwacja innej osoby – wypożyczyć może tylko ona.'
+        : (maxDue ? `Wypożyczenie zaczyna się dziś. Zwrot najpóźniej ${fmtDate(maxDue)} (przed następną rezerwacją).` : 'Wypożyczenie zaczyna się dziś. Kliknij dzień zwrotu w kalendarzu (opcjonalnie).');
+      saveBtn.className = 'btn btn-dark';
+      saveBtn.textContent = '⏱ Wypożycz';
+    } else {
+      if (fromEl.readOnly) { fromEl.value = ''; toEl.value = ''; }
+      fromEl.readOnly = false; fromEl.style.opacity = ''; toEl.removeAttribute('max');
+      document.getElementById('f-res-name-label').textContent = 'Kto rezerwuje';
+      document.getElementById('cal-mode-hint').textContent = 'Rezerwacja blokuje termin w przyszłości. W dniu „Od” gra automatycznie stanie się wypożyczona.';
+      saveBtn.className = 'btn btn-green';
+      saveBtn.textContent = '📅 Zarezerwuj termin';
+    }
+    document.getElementById('f-res-status').textContent = '';
+    renderCalendar();
+  }
+
+  function getSel() {
+    const from = document.getElementById('f-res-from').value;
+    let to = document.getElementById('f-res-to').value;
+    if (from && to && to < from) to = '';
+    return { from, to };
+  }
+
   function renderCalendar() {
     const label = viewDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
     document.getElementById('cal-label').textContent = label;
@@ -1528,17 +2106,102 @@ function openReservations(id) {
     const firstDow = (new Date(year, month, 1).getDay() + 6) % 7; // Poniedziałek = 0
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = todayStr();
+    const { from, to } = getSel();
+    // zakres do podglądu (najechanie myszką po wybraniu "Od")
+    const pvFrom = from && !to && previewDate && previewDate > from ? from : '';
+    const pvTo = pvFrom ? previewDate : '';
     let cells = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'].map(d => `<div class="cal-dow">${d}</div>`).join('');
     for (let i = 0; i < firstDow; i++) cells += `<div class="cal-day empty"></div>`;
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const isReserved = g.reservations.some(r => dateStr >= r.dateFrom && dateStr <= r.dateTo);
+      const isBorrowed = g.status === 'borrowed' && dateStr >= today && (!g.dueDate || dateStr <= g.dueDate);
       const isPast = dateStr < today;
       const isToday = dateStr === today;
-      cells += `<div class="cal-day ${isReserved ? 'reserved' : ''} ${isPast ? 'past' : ''} ${isToday ? 'today' : ''}">${day}</div>`;
+      const cls = [];
+      if (isReserved) cls.push('reserved');
+      if (isBorrowed && !isReserved) cls.push('borrowed');
+      if (isPast) cls.push('past');
+      if (isToday) cls.push('today');
+      if (!isPast) cls.push('clickable');
+      if (from) {
+        const end = to || from;
+        if (dateStr === from) cls.push('sel-start');
+        if (dateStr === end) cls.push('sel-end');
+        if (dateStr > from && dateStr < end) cls.push('sel-mid');
+      }
+      if (pvFrom && dateStr > pvFrom && dateStr <= pvTo) {
+        cls.push('sel-preview');
+        if (dateStr === pvTo) cls.push('preview-end');
+      }
+      const title = isReserved ? 'Termin już zarezerwowany' : (isBorrowed ? `Gra wypożyczona${g.dueDate ? ' do ' + fmtDate(g.dueDate) : ''}` : '');
+      cells += `<div class="cal-day ${cls.join(' ')}" data-date="${dateStr}" ${title ? `title="${title}"` : ''}>${day}</div>`;
     }
-    document.getElementById('cal-grid').innerHTML = cells;
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = cells;
+    grid.classList.toggle('mode-borrow', mode === 'borrow');
+    grid.classList.toggle('mode-reserve', mode === 'reserve');
+    updateHint();
   }
+
+  function updateHint() {
+    const { from, to } = getSel();
+    const hint = document.getElementById('cal-hint');
+    if (!hint) return;
+    const days = from && to ? Math.round((new Date(to) - new Date(from)) / 86400000) + 1 : 0;
+    if (mode === 'borrow') {
+      hint.textContent = to
+        ? `Wypożyczenie: dziś → ${fmtDate(to)} (${days} ${days === 1 ? 'dzień' : 'dni'}). Kliknij inny dzień, aby zmienić termin zwrotu.`
+        : 'Kliknij dzień w kalendarzu, aby ustawić termin zwrotu („Do”).';
+      return;
+    }
+    if (!from) hint.textContent = 'Kliknij dzień w kalendarzu, aby ustawić datę „Od”, a potem drugi dzień jako „Do”.';
+    else if (!to) hint.textContent = `Od ${fmtDate(from)} — teraz kliknij dzień zakończenia („Do”). Kliknięcie wcześniejszej daty zmieni „Od”.`;
+    else hint.textContent = `Rezerwacja: ${fmtDate(from)} → ${fmtDate(to)} (${days} ${days === 1 ? 'dzień' : 'dni'}). Kliknij inny dzień, aby zacząć od nowa.`;
+  }
+
+  function onDayClick(dateStr) {
+    const fromEl = document.getElementById('f-res-from');
+    const toEl = document.getElementById('f-res-to');
+    const { from, to } = getSel();
+    if (mode === 'borrow') {
+      fromEl.value = todayStr();
+      toEl.value = dateStr; // w trybie wypożyczenia klik ustawia termin zwrotu
+    } else if (!from || (from && to) || dateStr < from) {
+      // start nowego zakresu
+      fromEl.value = dateStr;
+      toEl.value = '';
+    } else {
+      // dateStr >= from, brak "Do"
+      toEl.value = dateStr;
+    }
+    previewDate = '';
+    document.getElementById('f-res-status').textContent = '';
+    document.getElementById('f-res-from-field').classList.remove('invalid');
+    renderCalendar();
+  }
+
+  const gridEl = document.getElementById('cal-grid');
+  gridEl.addEventListener('click', (e) => {
+    const cell = e.target.closest('.cal-day.clickable');
+    if (!cell || cell.classList.contains('reserved') || cell.classList.contains('borrowed')) return;
+    onDayClick(cell.dataset.date);
+  });
+  gridEl.addEventListener('mouseover', (e) => {
+    const cell = e.target.closest('.cal-day.clickable');
+    if (!cell) return;
+    const { from, to } = getSel();
+    if (!from || to) return;
+    if (previewDate !== cell.dataset.date) { previewDate = cell.dataset.date; renderCalendar(); }
+  });
+  gridEl.addEventListener('mouseleave', () => {
+    if (previewDate) { previewDate = ''; renderCalendar(); }
+  });
+  // ręczna zmiana w polach Od / Do też odświeża pasek w kalendarzu
+  document.getElementById('f-res-from').addEventListener('change', renderCalendar);
+  document.getElementById('f-res-to').addEventListener('change', renderCalendar);
+  document.querySelectorAll('.cal-mode-btn').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  document.getElementById('f-res-name').addEventListener('input', () => { if (mode === 'borrow') setMode('borrow'); });
 
   function renderResList() {
     const list = upcomingReservations(g);
@@ -1551,7 +2214,7 @@ function openReservations(id) {
       : `<div class="rank-empty">Brak nadchodzących rezerwacji.</div>`;
   }
 
-  renderCalendar();
+  setMode(mode);
   renderResList();
 
   document.getElementById('cal-prev').onclick = () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); };
@@ -1575,36 +2238,79 @@ function openReservations(id) {
       setTimeout(() => nameField.classList.remove('shake'), 300);
       return;
     }
+    const showConflict = (msg) => { statusEl.style.color = '#A8483A'; statusEl.textContent = '⚠ ' + msg; };
+    const saveBtn = document.getElementById('f-res-save');
+
+    if (mode === 'borrow') {
+      const due = document.getElementById('f-res-to').value; // puste = bez terminu zwrotu
+      if (due && due < todayStr()) return showConflict('Termin zwrotu nie może być w przeszłości.');
+      const lc = reservationBlockingBorrow(g, person, due);
+      if (lc) return showConflict(due
+        ? `Termin koliduje z rezerwacją: ${lc.person} (${fmtDate(lc.dateFrom)} → ${fmtDate(lc.dateTo)}).`
+        : `Podaj termin zwrotu przed rezerwacją: ${lc.person} od ${fmtDate(lc.dateFrom)}.`);
+      saveBtn.disabled = true;
+      commitGame(g.id, cur => {
+        if (cur.status === 'borrowed') return `Gra została właśnie wypożyczona przez: ${cur.borrower || 'inną osobę'}.`;
+        const c = reservationBlockingBorrow(cur, person, due);
+        if (c) return `Termin koliduje z rezerwacją: ${c.person} (${fmtDate(c.dateFrom)} → ${fmtDate(c.dateTo)}).`;
+        const today = todayStr();
+        cur.reservations = (cur.reservations || []).filter(r => !(sameName(r.person, person) && r.dateFrom <= today && r.dateTo >= today));
+        cur.status = 'borrowed'; cur.borrower = person; cur.borrowedDate = today; cur.dueDate = due;
+      }).then(() => {
+        closeModal();
+        toast(`Wypożyczono: ${person}${due ? ' (do ' + fmtDate(due) + ')' : ''}`);
+      }).catch(err => { showConflict(err.message); })
+        .finally(() => { saveBtn.disabled = false; });
+      return;
+    }
+
     if (!from || to < from) {
       fromField.classList.add('invalid', 'shake');
       setTimeout(() => fromField.classList.remove('shake'), 300);
       return;
     }
     const conflict = findReservationConflict(g, from, to);
-    if (conflict) {
-      statusEl.style.color = '#A8483A';
-      statusEl.textContent = `⚠ Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)})`;
-      return;
+    if (conflict) return showConflict(`Termin koliduje z rezerwacją: ${conflict.person} (${fmtDate(conflict.dateFrom)} → ${fmtDate(conflict.dateTo)})`);
+    if (borrowBlocksRange(g, from, to) && !sameName(g.borrower, person)) {
+      return showConflict(g.dueDate
+        ? `Gra jest wypożyczona przez ${g.borrower} do ${fmtDate(g.dueDate)} – wybierz termin od ${fmtDate(nextDayStr(g.dueDate))}.`
+        : `Gra jest obecnie wypożyczona przez ${g.borrower} bez określonego terminu zwrotu.`);
     }
-    g.reservations.push({ id: uid(), person, dateFrom: from, dateTo: to });
-    saveGameMeta(g);
-    renderCalendar();
-    renderResList();
-    document.getElementById('f-res-name').value = '';
-    document.getElementById('f-res-from').value = '';
-    document.getElementById('f-res-to').value = '';
-    toast('Zarezerwowano termin dla ' + person);
-    render();
+    saveBtn.disabled = true;
+    const startsToday = from <= todayStr();
+    commitGame(g.id, cur => {
+      const c = findReservationConflict(cur, from, to);
+      if (c) return `Ktoś właśnie zarezerwował ten termin: ${c.person} (${fmtDate(c.dateFrom)} → ${fmtDate(c.dateTo)}).`;
+      if (borrowBlocksRange(cur, from, to) && !sameName(cur.borrower, person)) return `Gra została właśnie wypożyczona${cur.dueDate ? ' do ' + fmtDate(cur.dueDate) : ''}.`;
+      const r = { id: uid(), person, dateFrom: from, dateTo: to };
+      if (startsToday && cur.status !== 'borrowed') {
+        activateReservation(cur, r); // termin zaczyna się dziś -> od razu wypożyczenie
+      } else {
+        cur.reservations.push(r);
+      }
+    }).then(updated => {
+      Object.assign(g, updated, { reservations: updated.reservations || [], history: updated.history || [] });
+      renderResList();
+      document.getElementById('f-res-name').value = '';
+      document.getElementById('f-res-from').value = '';
+      document.getElementById('f-res-to').value = '';
+      renderCalendar();
+      toast(startsToday && g.status === 'borrowed' ? `Wypożyczono od dziś: ${person} (do ${fmtDate(to)})` : 'Zarezerwowano termin dla ' + person);
+    }).catch(err => {
+      showConflict(err.message);
+      // odśwież kalendarz o stan z serwera
+      const fresh = games.find(x => x.id === g.id); if (fresh) { g.reservations = fresh.reservations || []; renderCalendar(); renderResList(); }
+    }).finally(() => { saveBtn.disabled = false; });
   };
 }
 
 function removeReservation(gameId, resId) {
-  const g = games.find(x => x.id === gameId);
-  g.reservations = (g.reservations || []).filter(r => r.id !== resId);
-  saveGameMeta(g);
-  closeModal();
-  openReservations(gameId);
-  render();
+  commitGame(gameId, cur => {
+    cur.reservations = (cur.reservations || []).filter(r => r.id !== resId);
+  }).then(() => {
+    closeModal();
+    openReservations(gameId);
+  }).catch(() => {});
 }
 
 function openQuickActions(id) {
@@ -1631,7 +2337,7 @@ function openQuickActions(id) {
           : `<div class="borrow-info" style="display:flex; align-items:center; gap:8px">${avatarHtml(g.borrower)}<span><span class="status-borrowed ${overdue ? 'status-overdue' : ''}">${overdue ? '⚠ Zaległy zwrot' : '⏱ Wypożyczona'}</span><br>Kto: <b>${escapeHtml(g.borrower)}</b><br>Od: ${fmtDate(g.borrowedDate)}${g.dueDate ? ' · do: ' + fmtDate(g.dueDate) : ''}${(g.extensions || []).length ? ' · przedłużono ' + g.extensions.length + 'x' : ''}</span></div>`}
         </div>
         ${loanCount ? `<div class="loan-count" style="margin-top:8px; font-family:'JetBrains Mono',monospace; font-size:11px">Wypożyczano łącznie ${loanCount}x</div>` : ''}
-        ${(() => { const nr = nextReservation(g); return nr ? `<div class="reservation-badge" onclick="openReservations('${g.id}')" style="margin-top:8px">📅 ${daysUntil(nr.dateFrom) === 0 ? 'dziś' : fmtDate(nr.dateFrom)} → ${escapeHtml(nr.person)}</div>` : ''; })()}
+        ${reservationBadgeHtml(g, 'margin-top:8px')}
         <div class="icon-toolbar">
           <button class="icon-toolbar-btn" onclick="openReservations('${id}')" title="Rezerwuj termin">📅</button>
           <button class="icon-toolbar-btn" onclick="openHistory('${id}')" title="Historia wypożyczeń">🕑</button>
@@ -2368,6 +3074,7 @@ gamesRef.on('value', (snapshot) => {
   firstLoad = false;
   document.getElementById('saveErrorBox').style.display = 'none';
   render();
+  activateDueReservations();
   if (wasFirstLoad) {
     handleQrDeepLink();
     document.body.classList.remove('pre-intro');
