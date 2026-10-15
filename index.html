@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biblioteczka Gier JFF</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0d3244;
@@ -616,6 +616,17 @@
     .deco-layer, .deco-layer * { animation: none !important; }
   }
 
+  /* ---- Minigra ---- */
+  .modal.modal-game { max-width: min(760px, 96vw); }
+  .game-canvas {
+    display:block; width:100%; height:auto; aspect-ratio: 16 / 9;
+    image-rendering: pixelated; image-rendering: crisp-edges;
+    border-radius: 8px; border: 2px solid var(--border-card); cursor: pointer;
+    touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+    background: #3f7cc0;
+  }
+  .game-hint { font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); text-align:center; line-height:1.5; }
+
   /* ---- Poprawki dla telefonów / wąskich ekranów ---- */
   @media (max-width: 600px) {
     .wrap { padding: 24px 14px; }
@@ -921,6 +932,7 @@
       <button class="btn btn-outline notif-btn" id="notifToggle" title="Powiadomienia o terminach zwrotu">🔔</button>
       <button class="btn btn-outline" id="themeToggle" title="Zmień motyw">☀️</button>
       <button class="btn btn-outline" id="rankingBtn">🏆 Ranking</button>
+      <button class="btn btn-outline" id="gameBtn" title="Minigra">🎮 Minigra</button>
       <button class="btn btn-outline" id="shareBtn">🔗 Udostępnij</button>
       <button class="btn btn-outline" id="importBtn">📋 Import listy</button>
       <button class="btn btn-gold" id="addBtn">+ Dodaj grę</button>
@@ -2663,5 +2675,400 @@ function handleQrDeepLink() {
 } // koniec bloku CONFIGURED
 </script>
 
+<script>
+// ===================== MINIGRA: "Lot nad miastem" (styl Flappy Bird, pixel-art) =====================
+(function () {
+  const W = 320, H = 180, GY = 160;          // rozdzielczość logiczna i poziom ziemi
+  const STEP = 1000 / 60;                     // stały krok fizyki (niezależny od odświeżania ekranu)
+  const GRAV = 0.16, FLAP = -3.0, MAXV = 4.2, PX = 62;
+  const HI_KEY = 'biblioteczka-gier-minigra-hi';
+  const FONT = '"Press Start 2P", "JetBrains Mono", monospace';
+  const SKY_TOP = '#3f7cc0', SKY_BOT = '#5a95d0';
+
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const ri = (a, b) => Math.floor(rnd(a, b + 1));
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const pad = (n) => String(Math.min(99999, n)).padStart(5, '0');
+  function loadHi() { try { return parseInt(localStorage.getItem(HI_KEY) || '0', 10) || 0; } catch (e) { return 0; } }
+  function saveHi(v) { try { localStorage.setItem(HI_KEY, String(v)); } catch (e) {} }
+  function cnv(w, h) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const x = c.getContext('2d'); x.imageSmoothingEnabled = false; return [c, x];
+  }
+  function disc(x, cx, cy, r, color) {
+    x.fillStyle = color;
+    for (let dy = -r; dy <= r; dy++) {
+      const half = Math.floor(Math.sqrt(r * r - dy * dy));
+      x.fillRect(cx - half, cy + dy, half * 2 + 1, 1);
+    }
+  }
+  function sprite(rows, pal) {
+    const [c, x] = cnv(rows[0].length, rows.length);
+    rows.forEach((r, y) => { for (let i = 0; i < r.length; i++) { const p = pal[r[i]]; if (p) { x.fillStyle = p; x.fillRect(i, y, 1, 1); } } });
+    return c;
+  }
+
+  // ---- Samolot (odrzutowiec, widok z boku, przodem w prawo) ----
+  const PLANE = sprite([
+    "..oo..........................",
+    "..owo.........................",
+    "..owwo........................",
+    "..obwwo.......................",
+    "..obbwwo......................",
+    "..owwwwwooooooooooooooo.......",
+    ".oggwwwwwwwwwwwwwwwwwwwwoo....",
+    "oggowwwwwwwwwwwwwwwwwwwwwkko..",
+    "owwbbbbbbbbbbbbbbbbbbbbwwkkko.",
+    ".owwwkwwkwwkwwkwwkwwkwwwwwwwwo",
+    "..oggggggggggggggggggggggggoo.",
+    "...oooooooggggggggggooooooo...",
+    "...........oggggggggo.........",
+    "............oggggggo..........",
+    ".............oooooo...........",
+  ], { o: '#25323d', w: '#f6f5f0', g: '#bfc6cc', b: '#3d6fb8', k: '#1b2833' });
+  const PW = PLANE.width, PH = PLANE.height;
+
+  // ---- Chmury tła ----
+  function makeCloud(w) {
+    const h = Math.round(w * 0.42);
+    const [c, x] = cnv(w, h + 2);
+    const blobs = [
+      [Math.round(w * 0.30), Math.round(h * 0.62), Math.round(h * 0.36)],
+      [Math.round(w * 0.52), Math.round(h * 0.48), Math.round(h * 0.48)],
+      [Math.round(w * 0.73), Math.round(h * 0.64), Math.round(h * 0.32)],
+    ];
+    blobs.forEach(([cx, cy, r]) => disc(x, cx, cy + 1, r, '#c9dcef'));
+    x.fillStyle = '#c9dcef'; x.fillRect(Math.round(w * 0.14), Math.round(h * 0.7), Math.round(w * 0.72), Math.round(h * 0.3) + 1);
+    blobs.forEach(([cx, cy, r]) => disc(x, cx, cy, r, '#ffffff'));
+    x.fillStyle = '#ffffff'; x.fillRect(Math.round(w * 0.14), Math.round(h * 0.7), Math.round(w * 0.72), Math.round(h * 0.3) - 1);
+    return c;
+  }
+  const CLOUD_SPRITES = [makeCloud(46), makeCloud(34), makeCloud(58), makeCloud(28)];
+
+  // ---- Dalekie miasto (paralaksa) ----
+  function makeSkyline(w, h) {
+    const [c, x] = cnv(w, h);
+    let px = 0;
+    while (px < w) {
+      const bw = ri(10, 22), bh = ri(18, h - 6);
+      x.fillStyle = '#6fa1d4'; x.fillRect(px, h - bh, bw, bh);
+      if (Math.random() < 0.3) x.fillRect(px + Math.floor(bw / 2), h - bh - ri(4, 9), 1, 9);
+      x.fillStyle = '#7fb0de';
+      for (let yy = h - bh + 3; yy < h - 2; yy += 4) for (let xx = px + 2; xx < px + bw - 2; xx += 3) if (Math.random() < 0.5) x.fillRect(xx, yy, 1, 2);
+      px += bw + ri(0, 3);
+    }
+    return c;
+  }
+  const SKYLINE = makeSkyline(480, 64);
+
+  // ---- Ziemia ----
+  const GROUND = (() => {
+    const [c, x] = cnv(64, H - GY);
+    x.fillStyle = '#ebe8e0'; x.fillRect(0, 0, 64, H - GY);
+    x.fillStyle = '#cfcabd'; x.fillRect(0, 0, 64, 1);
+    x.fillStyle = '#4c4943';
+    for (let i = 0; i < 26; i++) x.fillRect(ri(0, 63), ri(3, H - GY - 1), Math.random() < 0.3 ? 2 : 1, 1);
+    return c;
+  })();
+
+  // ---- Dekoracje przy ziemi (krzaki, kamienie, trawa) ----
+  const DECOR = [
+    (() => { const [c, x] = cnv(14, 9); disc(x, 7, 6, 5, '#3f7a35'); disc(x, 5, 5, 3, '#5f9e4a'); disc(x, 9, 4, 3, '#6cad55'); return c; })(),
+    (() => { const [c, x] = cnv(16, 9); disc(x, 8, 7, 6, '#77746f'); disc(x, 7, 6, 5, '#9a9893'); x.fillStyle = '#b7b5ae'; x.fillRect(5, 3, 3, 1); return c; })(),
+    sprite(["..g...g..", ".gg.g.gg.", "ggg.gggg.", "gGgggGggg"], { g: '#5f9e4a', G: '#3f7a35' }),
+    (() => { const [c, x] = cnv(9, 6); disc(x, 4, 4, 3, '#d9a640'); disc(x, 4, 3, 2, '#e9c25a'); return c; })(),
+  ];
+
+  // ---- Wieżowiec (przeszkoda od dołu) ----
+  const BUILD_PAL = [
+    { b: '#c9c2af', s: '#a49c88' }, { b: '#adb8c0', s: '#8995a0' },
+    { b: '#bfb398', s: '#9a8e72' }, { b: '#a2b4c4', s: '#8094a6' },
+  ];
+  function makeBuilding(w, h) {
+    const p = pick(BUILD_PAL), OUT = '#33414c';
+    const [c, x] = cnv(w, h);
+    const hits = [];
+    function block(bx, by, bw, bh, windows) {
+      x.fillStyle = OUT; x.fillRect(bx, by, bw, bh);
+      x.fillStyle = p.b; x.fillRect(bx + 1, by + 1, bw - 2, bh - 1);
+      x.fillStyle = p.s; x.fillRect(bx + bw - 4, by + 1, 3, bh - 1);
+      if (windows) {
+        for (let yy = by + 4; yy < by + bh - 7; yy += 5)
+          for (let xx = bx + 3; xx < bx + bw - 4; xx += 4) {
+            x.fillStyle = '#5c809f'; x.fillRect(xx, yy, 2, 3);
+            if (Math.random() < 0.35) { x.fillStyle = '#a5c7e0'; x.fillRect(xx, yy, 2, 1); }
+          }
+      }
+      hits.push({ x: bx, y: by, w: bw, h: bh });
+    }
+    const type = h > 40 ? ri(0, 2) : 0;
+    let top = 0;
+    if (type === 1) {                                   // schodkowa korona z iglicą
+      const spH = 9, t2w = Math.max(6, Math.round(w * 0.36)), t1w = Math.round(w * 0.66);
+      x.fillStyle = OUT; x.fillRect(Math.floor(w / 2) - 1, 0, 2, spH);
+      hits.push({ x: Math.floor(w / 2) - 1, y: 0, w: 2, h: spH });
+      block(Math.floor((w - t2w) / 2), spH, t2w, 7, false);
+      block(Math.floor((w - t1w) / 2), spH + 7, t1w, 7, false);
+      top = spH + 14;
+    } else if (type === 2) {                            // płaski dach z anteną
+      const ax = Math.round(w * 0.3);
+      x.fillStyle = OUT; x.fillRect(ax, 0, 1, 8); x.fillRect(ax - 1, 2, 3, 1);
+      hits.push({ x: ax - 1, y: 0, w: 3, h: 8 });
+      top = 8;
+    } else {                                            // płaski dach z nadbudówką
+      block(3, 0, 8, 4, false);
+      top = 4;
+    }
+    block(0, top, w, h - top, true);
+    x.fillStyle = OUT; x.fillRect(Math.floor(w / 2) - 2, h - 6, 4, 6);  // drzwi
+    return { canvas: c, hits };
+  }
+
+  // ---- Burzowa chmura (przeszkoda od góry) ----
+  function makeStorm(w, h) {
+    const cw = w + 8;
+    const [c, x] = cnv(cw, h);
+    const body = '#5d6879', dark = '#4a5464', light = '#717d8f';
+    const base = h - 6;
+    x.fillStyle = body; x.fillRect(2, 0, cw - 4, Math.max(0, base));
+    for (let bx = 5; bx < cw - 3; bx += 7) { disc(x, bx, base, 5, dark); }
+    for (let bx = 5; bx < cw - 3; bx += 7) { disc(x, bx, base - 1, 5, body); }
+    x.fillStyle = light;
+    for (let yy = 6; yy < base - 4; yy += 9) x.fillRect(4 + (yy % 5), yy, Math.round(cw * 0.4), 1);
+    return { canvas: c, hit: { x: 2, y: 0, w: cw - 4, h: h - 2 }, offsetX: -4 };
+  }
+
+  // ---- Kostka do zebrania (+3) ----
+  const DICE = sprite([
+    ".ooooooo.",
+    "oyyyyyyyo",
+    "oykyyykyo",
+    "oyyyyyyyo",
+    "oyyykyyyo",
+    "oyyyyyyyo",
+    "oykyyykyo",
+    "oyyyyyyyo",
+    ".ooooooo.",
+  ], { o: '#6b4b1c', y: '#e8c066', k: '#3a2a10' });
+
+  // ======================================================================
+  function createGame(canvas, hintEl) {
+    const ctx = canvas.getContext('2d');
+    canvas.width = W; canvas.height = H;
+    ctx.imageSmoothingEnabled = false;
+
+    let state, py, vy, angle, speed, score, hi = loadHi(), obstacles, clouds, decor, pops,
+        groundX, skyX, frame, overAt, flash, newRecord, nextDecorX;
+
+    function reset() {
+      state = 'ready'; py = 76; vy = 0; angle = 0; speed = 1.3; score = 0; frame = 0;
+      obstacles = []; pops = []; groundX = 0; skyX = 0; flash = 0; newRecord = false;
+      clouds = Array.from({ length: 5 }, (_, i) => ({ x: i * 72 + rnd(0, 30), y: rnd(10, 70), s: pick(CLOUD_SPRITES), f: rnd(0.15, 0.3) }));
+      decor = []; nextDecorX = 0;
+      for (let dx = 10; dx < W; dx += ri(30, 80)) decor.push({ x: dx, s: pick(DECOR) });
+    }
+    reset();
+
+    function lastGapCenter() { return obstacles.length ? obstacles[obstacles.length - 1].center : 80; }
+    function spawnObstacle() {
+      const gap = Math.max(50, 66 - score * 0.6);
+      const prev = lastGapCenter();
+      const minC = 14 + gap / 2, maxC = GY - 42 - gap / 2;   // wieżowce zawsze co najmniej ~40 px wysokości
+      let center = prev + rnd(-40, 40);
+      center += ((minC + maxC) / 2 - center) * 0.3;   // lekki dryf w górę = wyższe wieżowce
+      center = Math.max(minC, Math.min(maxC, center));
+      const w = ri(28, 36);
+      const gapTop = Math.round(center - gap / 2), gapBot = Math.round(center + gap / 2);
+      const b = makeBuilding(w, GY - gapBot + 2);
+      const s = makeStorm(w, gapTop);
+      obstacles.push({
+        x: W + 4, w, center, gapTop, gapBot, b, s, passed: false,
+        dice: Math.random() < 0.4 ? { y: Math.round(center - 4), got: false } : null,
+      });
+    }
+
+    function hitPlane(rx, ry, rw, rh) {
+      const hx = PX + 4, hy = py + 4, hw = PW - 8, hh = PH - 7;
+      return hx < rx + rw && hx + hw > rx && hy < ry + rh && hy + hh > ry;
+    }
+
+    function crash() {
+      if (state !== 'playing') return;
+      state = 'dying'; flash = 1; vy = Math.min(vy, -1.2);
+    }
+    function finish() {
+      state = 'over'; overAt = performance.now();
+      if (score > hi) { hi = score; saveHi(hi); newRecord = true; }
+    }
+
+    function flap() {
+      if (state === 'ready') { state = 'playing'; vy = FLAP; spawnObstacle(); return; }
+      if (state === 'playing') { vy = FLAP; return; }
+      if (state === 'over' && performance.now() - overAt > 450) { reset(); state = 'playing'; vy = FLAP; spawnObstacle(); }
+    }
+
+    function update() {
+      frame++;
+      if (flash > 0) flash = Math.max(0, flash - 0.06);
+      const moving = state === 'ready' || state === 'playing';
+      const sp = moving ? speed : 0;
+
+      skyX = (skyX + sp * 0.3) % SKYLINE.width;
+      groundX = (groundX + sp) % GROUND.width;
+      clouds.forEach(c => { c.x -= (moving ? speed : 0.3) * c.f; if (c.x < -c.s.width) { c.x = W + rnd(0, 40); c.y = rnd(8, 70); c.s = pick(CLOUD_SPRITES); } });
+      decor.forEach(d => { d.x -= sp; });
+      decor = decor.filter(d => d.x > -20);
+      const lastDecor = decor.length ? decor[decor.length - 1].x : 0;
+      if (lastDecor < W) decor.push({ x: W + ri(10, 70), s: pick(DECOR) });
+      pops.forEach(p => { p.y -= 0.4; p.t--; }); pops = pops.filter(p => p.t > 0);
+
+      if (state === 'ready') { py = 76 + Math.sin(frame / 18) * 4; angle = Math.sin(frame / 18) * 0.06; return; }
+
+      if (state === 'playing') {
+        speed = Math.min(2.5, 1.3 + score * 0.035);
+        obstacles.forEach(o => { o.x -= speed; });
+        obstacles = obstacles.filter(o => o.x > -o.w - 12);
+        const last = obstacles[obstacles.length - 1];
+        if (!last || last.x < W - 118) spawnObstacle();
+      }
+
+      vy = Math.min(MAXV, vy + GRAV);
+      py += vy;
+      const target = state === 'dying' ? 1.25 : Math.max(-0.42, Math.min(0.8, vy * 0.13));
+      angle += (target - angle) * (state === 'dying' ? 0.08 : 0.25);
+      if (py < -2) { py = -2; vy = 0; }
+
+      if (py + PH - 2 >= GY) {
+        py = GY - PH + 2;
+        if (state === 'playing') { state = 'dying'; flash = 1; }
+        finish();
+        return;
+      }
+      if (state !== 'playing') return;
+
+      for (const o of obstacles) {
+        const bx = o.x, by = o.gapBot;
+        for (const h of o.b.hits) if (hitPlane(bx + h.x, by + h.y, h.w, h.h)) { crash(); return; }
+        const sh = o.s.hit;
+        if (hitPlane(o.x + o.s.offsetX + sh.x, sh.y, sh.w, sh.h)) { crash(); return; }
+        if (o.dice && !o.dice.got) {
+          const dx = o.x + o.w / 2 - 4, dy = o.dice.y + Math.sin(frame / 10) * 2;
+          if (hitPlane(dx, dy, 9, 9)) { o.dice.got = true; score += 3; pops.push({ x: dx, y: dy, t: 40, txt: '+3' }); }
+        }
+        if (!o.passed && o.x + o.w < PX + 4) { o.passed = true; score++; }
+      }
+    }
+
+    function text(s, x, y, align, color, size) {
+      ctx.font = `${size || 8}px ${FONT}`;
+      ctx.textAlign = align || 'left'; ctx.textBaseline = 'top';
+      ctx.fillStyle = 'rgba(16,34,56,0.55)'; ctx.fillText(s, x + 1, y + 1);
+      ctx.fillStyle = color || '#ffffff'; ctx.fillText(s, x, y);
+    }
+    function panel(x, y, w, h) {
+      ctx.fillStyle = 'rgba(18,40,64,0.86)'; ctx.fillRect(x, y, w, h);
+      ctx.fillStyle = '#e8c066'; ctx.fillRect(x, y, w, 1); ctx.fillRect(x, y + h - 1, w, 1);
+    }
+
+    function draw() {
+      const g = ctx.createLinearGradient(0, 0, 0, GY);
+      g.addColorStop(0, SKY_TOP); g.addColorStop(1, SKY_BOT);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, GY);
+
+      clouds.forEach(c => ctx.drawImage(c.s, Math.round(c.x), Math.round(c.y)));
+      for (let x = -Math.floor(skyX); x < W; x += SKYLINE.width) ctx.drawImage(SKYLINE, x, GY - SKYLINE.height + 2);
+
+      obstacles.forEach(o => {
+        ctx.drawImage(o.s.canvas, Math.round(o.x + o.s.offsetX), 0);
+        ctx.drawImage(o.b.canvas, Math.round(o.x), o.gapBot);
+        if (o.dice && !o.dice.got) ctx.drawImage(DICE, Math.round(o.x + o.w / 2 - 4), Math.round(o.dice.y + Math.sin(frame / 10) * 2));
+      });
+
+      for (let x = -Math.floor(groundX); x < W; x += GROUND.width) ctx.drawImage(GROUND, x, GY);
+      decor.forEach(d => ctx.drawImage(d.s, Math.round(d.x), GY - d.s.height + 2));
+
+      ctx.save();
+      ctx.translate(Math.round(PX + PW / 2), Math.round(py + PH / 2));
+      ctx.rotate(angle);
+      ctx.drawImage(PLANE, -Math.round(PW / 2), -Math.round(PH / 2));
+      ctx.restore();
+
+      pops.forEach(p => text(p.txt, p.x, p.y, 'left', '#e8c066'));
+
+      text(`HI ${pad(hi)}  ${pad(score)}`, W - 6, 6, 'right');
+
+      if (flash > 0) { ctx.fillStyle = `rgba(255,255,255,${flash * 0.6})`; ctx.fillRect(0, 0, W, H); }
+
+      if (state === 'ready') {
+        panel(70, 108, 180, 42);
+        text('LOT NAD MIASTEM', W / 2, 116, 'center', '#e8c066');
+        if (Math.floor(frame / 30) % 2 === 0) text('SPACJA / KLIK = START', W / 2, 134, 'center', '#ffffff', 6);
+      }
+      if (state === 'over') {
+        panel(56, 44, 208, 76);
+        text('KONIEC LOTU', W / 2, 52, 'center', '#e8c066');
+        text(`WYNIK  ${score}`, W / 2, 70, 'center');
+        text(newRecord ? 'NOWY REKORD!' : `REKORD ${hi}`, W / 2, 84, 'center', newRecord ? '#9fe07a' : '#cfe0ef', 7);
+        if (performance.now() - overAt > 450 && Math.floor(frame / 30) % 2 === 0) text('SPACJA = JESZCZE RAZ', W / 2, 102, 'center', '#ffffff', 6);
+      }
+    }
+
+    // ---- Pętla gry ----
+    let raf = 0, last = performance.now(), acc = 0, alive = true;
+    function loop(t) {
+      if (!alive) return;
+      if (!canvas.isConnected) { destroy(); return; }
+      acc += Math.min(100, t - last); last = t;
+      while (acc >= STEP) { update(); acc -= STEP; }
+      draw();
+      raf = requestAnimationFrame(loop);
+    }
+
+    // ---- Sterowanie ----
+    const KEYS = ['Space', 'ArrowUp', 'KeyW'];
+    function onKeyDown(e) {
+      if (!canvas.isConnected) return;
+      if (KEYS.includes(e.code)) { e.preventDefault(); if (!e.repeat) flap(); }
+    }
+    function onKeyUp(e) { if (KEYS.includes(e.code)) e.preventDefault(); }
+    function onPointer(e) { e.preventDefault(); flap(); }
+    function onVisibility() { last = performance.now(); acc = 0; }
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('visibilitychange', onVisibility);
+    canvas.addEventListener('pointerdown', onPointer);
+
+    function destroy() {
+      alive = false; cancelAnimationFrame(raf);
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
+      document.removeEventListener('visibilitychange', onVisibility);
+    }
+
+    const start = () => { last = performance.now(); raf = requestAnimationFrame(loop); };
+    if (document.fonts && document.fonts.load) document.fonts.load(`8px ${FONT}`).then(start, start); else start();
+    return { destroy };
+  }
+
+  function openMinigame() {
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    openModal(`
+      <div class="modal modal-game">
+        <div class="modal-head"><h2 class="display">✈️ Lot nad miastem</h2><button onclick="closeModal()">✕</button></div>
+        <div class="modal-body">
+          <canvas class="game-canvas" id="gameCanvas" width="320" height="180" aria-label="Minigra: lot samolotem nad miastem"></canvas>
+          <div class="game-hint">Spacja / ↑ / klik / dotyk — wznoszenie · Omijaj wieżowce i burzowe chmury · 🎲 = +3 pkt</div>
+        </div>
+      </div>
+    `);
+    createGame(document.getElementById('gameCanvas'));
+  }
+
+  window.openMinigame = openMinigame;
+  const btn = document.getElementById('gameBtn');
+  if (btn) btn.onclick = openMinigame;
+})();
+
+</script>
 </body>
 </html>
