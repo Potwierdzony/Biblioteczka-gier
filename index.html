@@ -669,6 +669,67 @@
   .arcade-board-row .who { flex: 1; display: flex; align-items: center; gap: 7px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .arcade-board-row .pts { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); }
 
+  .modal-game .modal-head { gap: 10px; }
+  .modal-game .modal-head h2 { flex: 1; }
+  .arcade-back {
+    font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; color: var(--ink) !important;
+    border: 1px solid var(--border-card) !important; border-radius: 6px; padding: 5px 10px !important;
+  }
+  .arcade-back:hover { border-color: var(--gold) !important; }
+  .arcade-hub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .arcade-tile {
+    display: flex; gap: 12px; align-items: flex-start; text-align: left; cursor: pointer;
+    background: var(--card-alt); border: 1px solid var(--border-card); border-radius: 10px; padding: 14px;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; color: var(--ink); font: inherit;
+  }
+  .arcade-tile:hover { transform: translateY(-2px); border-color: var(--gold); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+  .arcade-tile:active { transform: scale(0.98); }
+  .arcade-tile-icon {
+    flex-shrink: 0; width: 52px; height: 52px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; background: linear-gradient(160deg, #2C6597, #5C97C6); border: 2px solid #1E2B38; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+  }
+  .arcade-tile-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .arcade-tile-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--ink); }
+  .arcade-tile-desc { font-size: 12px; line-height: 1.4; color: var(--ink-muted); }
+  .arcade-tile-best { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--label); margin-top: 2px; }
+  .arcade-tile-best b { color: var(--gold); }
+  .arcade-wrap-draw { touch-action: none; cursor: crosshair; }
+  .arcade-hud {
+    position: absolute; top: 6px; left: 6px; pointer-events: none; display: flex; flex-direction: column; gap: 2px;
+    font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.6vw, 11px); line-height: 1.35; color: #F4F1E8;
+    background: rgba(14,30,44,0.62); border-radius: 6px; padding: 5px 8px; text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+  }
+  .arcade-hud:empty { display: none; }
+  .arcade-hud.arcade-hud-right { left: auto; right: 6px; align-items: flex-end; text-align: right; }
+  .arcade-hud b { color: #F2D27A; }
+  .arcade-hud b.ok { color: #7FD08A; } .arcade-hud b.warn { color: #F2D27A; } .arcade-hud b.bad { color: #FF7A6B; }
+  .arcade-bar { display: inline-block; width: 70px; height: 7px; border: 1px solid #F4F1E8; border-radius: 2px; vertical-align: middle; overflow: hidden; }
+  .arcade-bar > span { display: block; height: 100%; background: #7FD08A; }
+  .arcade-mini { display: inline-grid; gap: 1px; vertical-align: middle; }
+  .arcade-mini i { width: 6px; height: 6px; display: block; }
+  .arcade-banner {
+    position: absolute; left: 50%; top: 14%; transform: translateX(-50%); pointer-events: none; text-align: center;
+    background: rgba(14,30,44,0.9); border: 2px solid #B8935F; border-radius: 8px; padding: 8px 14px; color: #F4F1E8;
+    font-family: 'JetBrains Mono', monospace; font-size: clamp(10px, 1.8vw, 12px); line-height: 1.5; box-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+    max-width: 90%; animation: arcade-pop .25s ease;
+  }
+  .arcade-banner b { font-family: 'Fraunces', serif; font-size: clamp(13px, 2.6vw, 17px); color: #fff; }
+  .arcade-banner.hidden { display: none; }
+  .arcade-banner-pts { color: #F2D27A; font-weight: 700; font-size: clamp(14px, 3vw, 20px); }
+  @keyframes arcade-pop { from { transform: translateX(-50%) scale(0.9); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
+  .arcade-btn-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .arcade-btn-row .btn { justify-content: center; padding: 9px 6px; }
+  .arcade-btn-row .btn-outline { color: var(--ink); border-color: var(--border-card); }
+  .arcade-kbd { font-size: 10px; opacity: 0.6; border: 1px solid currentColor; border-radius: 3px; padding: 0 3px; }
+  @media (max-width: 600px) {
+    .arcade-hub { grid-template-columns: 1fr; }
+    .arcade-kbd { display: none; }
+    .arcade-hud { font-size: 8px; padding: 3px 5px; top: 3px; left: 3px; gap: 0; }
+    .arcade-hud.arcade-hud-right { left: auto; right: 3px; }
+    .arcade-mini { gap: 0; }
+    .arcade-mini i { width: 4px; height: 4px; }
+    .arcade-bar { width: 44px; height: 5px; }
+  }
   /* ---- Poprawki dla telefonów / wąskich ekranów ---- */
   @media (max-width: 600px) {
     .wrap { padding: 24px 14px; }
@@ -2499,14 +2560,22 @@ document.getElementById('importBtn').onclick = openImport;
 document.getElementById('rankingBtn').onclick = openStats;
 document.getElementById('arcadeBtn').onclick = openArcade;
 
-// ================== MINIGRA: "Lot nad miastem" (styl Flappy Bird, pixel-art) ==================
+// ================== SALON GIER LOTNICZYCH (pixel-art) ==================
 const ARC_W = 288, ARC_H = 162, ARC_GROUND = ARC_H - 12;
 const ARC_HI_KEY = 'biblioteczka-gier-arcade-hi';
 const ARC_NAME_KEY = 'biblioteczka-gier-arcade-name';
-const arcadeRef = db.ref('arcade/flappy');
+const arcadeRoot = db.ref('arcade');
 let arcadeSession = null;
 
-// Sprite odrzutowca (26x12). d=kontur, w=biel, g=szary, b=niebieski pas, r=czerwony akcent, c=okna/kokpit
+const ARC_GAMES = [
+  { key: 'flappy',  icon: '✈️', title: 'Lot nad miastem',     desc: 'Omijaj wieżowce i burzowe chmury. Klik lub Spacja podrywa samolot.', open: () => openFlappy() },
+  { key: 'landing', icon: '🛬', title: 'Lądowanie na pasie',  desc: 'Dawkuj moc silnika i przyziemiaj miękko w strefie przyziemienia.', open: () => openLanding() },
+  { key: 'atc',     icon: '🗼', title: 'Wieża kontroli lotów', desc: 'Rysuj trasy podejścia i sprowadzaj samoloty na pasy w ich kolorze.', open: () => openAtc() },
+  { key: 'cargo',   icon: '📦', title: 'Pakowanie ładowni',   desc: 'Układaj ładunek i pilnuj środka ciężkości, zanim samolot wystartuje.', open: () => openCargo() }
+];
+function arcGame(key) { return ARC_GAMES.find(g => g.key === key); }
+
+// Sprite odrzutowca z boku (d=kontur, w=biel, g=szary, b=niebieski pas, r=czerwony akcent, c=okna)
 const ARC_PLANE_ROWS = [
   'dd',
   'drd',
@@ -2526,9 +2595,8 @@ const ARC_PLANE_COLORS = { d: '#1E2B38', w: '#F4F1E8', g: '#AEB8C1', b: '#2F6FA8
 const ARC_FONT = {
   '0':'111101101101111','1':'010110010010111','2':'111001111100111','3':'111001111001111','4':'101101111001001',
   '5':'111100111001111','6':'111100111101111','7':'111001010010010','8':'111101111101111','9':'111101111001111',
-  'H':'101101111101101','I':'111010010010111',' ':'000000000000000'
+  'H':'101101111101101','I':'111010010010111','T':'111010010010010',' ':'000000000000000'
 };
-const ARC_BUILD_COLORS = ['#CDBB94', '#9FB3C4', '#B3AA92', '#7F9BB3', '#C4B08A'];
 
 function arcMakeSprite(rows, colors) {
   const w = Math.max(...rows.map(r => r.length));
@@ -2540,61 +2608,242 @@ function arcMakeSprite(rows, colors) {
   }));
   return c;
 }
-function arcText(ctx, text, x, y, color, scale) {
+function arcText(ctx, text, x, y, color, scale, shadow) {
   scale = scale || 1;
-  [...text].forEach((ch, i) => {
+  [...String(text)].forEach((ch, i) => {
     const bits = ARC_FONT[ch] || ARC_FONT[' '];
     for (let p = 0; p < 15; p++) {
       if (bits[p] === '1') {
         const px = x + i * 4 * scale + (p % 3) * scale, py = y + Math.floor(p / 3) * scale;
-        ctx.fillStyle = '#1E2B38'; ctx.fillRect(px + scale, py + scale, scale, scale);
+        if (shadow !== false) { ctx.fillStyle = '#1E2B38'; ctx.fillRect(px + scale, py + scale, scale, scale); }
         ctx.fillStyle = color; ctx.fillRect(px, py, scale, scale);
       }
     }
   });
 }
-function arcTextWidth(text, scale) { return text.length * 4 * (scale || 1) - (scale || 1); }
+function arcTextWidth(text, scale) { return String(text).length * 4 * (scale || 1) - (scale || 1); }
 function arcPad(n) { return String(Math.min(n, 99999)).padStart(5, '0'); }
 function arcRectsHit(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
-function arcGetHi() { try { return Number(localStorage.getItem(ARC_HI_KEY)) || 0; } catch (e) { return 0; } }
-function arcSetHi(v) { try { localStorage.setItem(ARC_HI_KEY, String(v)); } catch (e) {} }
+function arcClamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function arcHiKeyFor(g) { return g === 'flappy' ? ARC_HI_KEY : ARC_HI_KEY + '-' + g; }
+function arcGetHi(g) { try { return Number(localStorage.getItem(arcHiKeyFor(g))) || 0; } catch (e) { return 0; } }
+function arcSetHi(g, v) { try { localStorage.setItem(arcHiKeyFor(g), String(v)); } catch (e) {} }
 function arcGetName() { try { return localStorage.getItem(ARC_NAME_KEY) || ''; } catch (e) { return ''; } }
 function arcSetName(v) { try { localStorage.setItem(ARC_NAME_KEY, v); } catch (e) {} }
+function arcIsTyping(e) { return e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'); }
 
+// ---- sesja gry: pętla animacji + nasłuchy, które trzeba posprzątać przy zamknięciu ----
 function stopArcade() {
   if (!arcadeSession) return;
-  cancelAnimationFrame(arcadeSession.raf);
-  document.removeEventListener('keydown', arcadeSession.onKey);
-  try { arcadeSession.boardQuery.off(); } catch (e) {}
+  const s = arcadeSession;
   arcadeSession = null;
+  cancelAnimationFrame(s.raf);
+  s.cleanups.forEach(fn => { try { fn(); } catch (e) {} });
+}
+function arcNewSession() { stopArcade(); arcadeSession = { raf: 0, cleanups: [] }; return arcadeSession; }
+function arcOnCleanup(fn) { if (arcadeSession) arcadeSession.cleanups.push(fn); }
+function arcListen(target, type, fn, opts) {
+  target.addEventListener(type, fn, opts);
+  arcOnCleanup(() => target.removeEventListener(type, fn, opts));
+}
+function arcRunLoop(canvas, step) {
+  const sess = arcadeSession;
+  let last = performance.now();
+  const loop = (now) => {
+    if (arcadeSession !== sess) return;
+    if (!canvas.isConnected) { stopArcade(); return; }
+    const dt = Math.min(0.033, (now - last) / 1000);
+    last = now;
+    step(dt);
+    sess.raf = requestAnimationFrame(loop);
+  };
+  sess.raf = requestAnimationFrame(loop);
+}
+function arcPointer(canvas, e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * ARC_W / r.width, y: (e.clientY - r.top) * ARC_H / r.height };
 }
 
-function openArcade() {
-  stopArcade();
+// ---- wspólne okno gry ----
+function arcOpenShell(gameKey, opts) {
+  const game = arcGame(gameKey);
+  arcNewSession();
   openModal(`
     <div class="modal modal-game">
-      <div class="modal-head"><h2 class="display">🎮 Lot nad miastem</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-head">
+        <button class="arcade-back" id="arcade-back" title="Wróć do salonu gier">‹ Salon</button>
+        <h2 class="display">${game.icon} ${game.title}</h2>
+        <button onclick="closeModal()">✕</button>
+      </div>
       <div class="modal-body">
-        <div class="arcade-wrap" id="arcade-wrap">
+        <div class="arcade-wrap ${opts.wrapClass || ''}" id="arcade-wrap">
           <canvas id="arcade-canvas" width="${ARC_W}" height="${ARC_H}"></canvas>
+          <div class="arcade-hud" id="arcade-hud"></div>
+          <div class="arcade-banner hidden" id="arcade-banner"></div>
           <div class="arcade-overlay ready" id="arcade-ready">
-            <div class="arcade-title">✈️ Lot nad miastem</div>
-            <div class="arcade-hint">Kliknij, dotknij lub naciśnij Spację, aby wystartować</div>
+            <div class="arcade-title">${game.icon} ${game.title}</div>
+            <div class="arcade-hint">${opts.readyHint}</div>
           </div>
           <div class="arcade-overlay over hidden" id="arcade-over"></div>
         </div>
-        <div class="arcade-controls">Sterowanie: klik / dotyk / Spacja / ↑ — omijaj wieżowce i burzowe chmury</div>
+        ${opts.below || ''}
+        <div class="arcade-controls">${opts.controls}</div>
         <div>
-          <div class="rank-section-title">🏆 Najlepsi piloci</div>
+          <div class="rank-section-title">🏆 Najlepsi gracze</div>
           <div id="arcade-board"><div class="rank-empty">Ładowanie rankingu…</div></div>
         </div>
       </div>
     </div>
   `);
-
+  document.getElementById('arcade-back').onclick = () => openArcade();
+  arcBindBoard(gameKey);
   const canvas = document.getElementById('arcade-canvas');
   const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
+  let bannerTimer = null;
+  return {
+    game, canvas, ctx,
+    wrap: document.getElementById('arcade-wrap'),
+    hud: document.getElementById('arcade-hud'),
+    hideReady: () => document.getElementById('arcade-ready').classList.add('hidden'),
+    showReady: () => {
+      document.getElementById('arcade-ready').classList.remove('hidden');
+      document.getElementById('arcade-over').classList.add('hidden');
+    },
+    banner: (html, ms) => {
+      const b = document.getElementById('arcade-banner');
+      if (!b) return;
+      b.innerHTML = html;
+      b.classList.remove('hidden');
+      clearTimeout(bannerTimer);
+      bannerTimer = setTimeout(() => b.classList.add('hidden'), ms || 1800);
+    },
+    hideBanner: () => { const b = document.getElementById('arcade-banner'); if (b) b.classList.add('hidden'); }
+  };
+}
+
+function arcBindBoard(gameKey) {
+  const q = arcadeRoot.child(gameKey).orderByChild('score').limitToLast(10);
+  q.on('value', (snap) => {
+    const val = snap.val() || {};
+    const list = Object.values(val).filter(r => r && r.name && typeof r.score === 'number')
+      .sort((a, b) => b.score - a.score).slice(0, 10);
+    const box = document.getElementById('arcade-board');
+    if (!box) return;
+    if (!list.length) { box.innerHTML = '<div class="rank-empty">Brak wyników — bądź pierwszy!</div>'; return; }
+    const medals = ['🥇', '🥈', '🥉'];
+    box.innerHTML = list.map((r, i) => `
+      <div class="arcade-board-row">
+        <span class="pos">${medals[i] || (i + 1)}</span>
+        <span class="who">${avatarHtml(r.name)}${escapeHtml(r.name)}</span>
+        <span class="pts">${r.score}</span>
+      </div>`).join('');
+  }, () => {
+    const box = document.getElementById('arcade-board');
+    if (box) box.innerHTML = '<div class="rank-empty">Ranking niedostępny (brak dostępu do bazy). Twój rekord zapisuje się lokalnie.</div>';
+  });
+  arcOnCleanup(() => q.off());
+}
+
+function arcSaveScore(gameKey, name, score, btn) {
+  if (!name) { toast('Wpisz imię, aby zapisać wynik.', 'error'); return; }
+  arcSetName(name);
+  btn.disabled = true;
+  const ref = arcadeRoot.child(gameKey);
+  const key = name.toLowerCase().replace(/[.#$\[\]\/\s]+/g, '_').slice(0, 40) || 'anon';
+  ref.child(key).once('value')
+    .then(snap => {
+      const cur = snap.val();
+      if (cur && cur.score >= score) { toast(`Twój najlepszy wynik w rankingu to nadal ${cur.score}.`); return; }
+      return ref.child(key).set({ name, score, date: todayStr() }).then(() => toast('Wynik zapisany w rankingu!'));
+    })
+    .catch(() => { btn.disabled = false; toast('Nie udało się zapisać wyniku (sprawdź reguły Firebase dla „arcade”).', 'error'); });
+}
+
+// Ekran końca gry. Zwraca true, jeśli padł nowy rekord.
+function arcShowOver(gameKey, o) {
+  const prev = arcGetHi(gameKey);
+  const newRecord = o.score > prev && o.score > 0;
+  if (newRecord) arcSetHi(gameKey, o.score);
+  const best = Math.max(prev, o.score);
+  setTimeout(() => {
+    const el = document.getElementById('arcade-over');
+    if (!el) return;
+    el.innerHTML = `
+      <div class="arcade-card">
+        <div class="arcade-title">${o.title}</div>
+        ${o.reason ? `<div class="arcade-sub">${o.reason}</div>` : ''}
+        <div class="arcade-score-big">${o.score}</div>
+        <div class="arcade-sub">Twój rekord: ${best}</div>
+        ${newRecord ? '<div class="arcade-record">★ NOWY REKORD ★</div>' : ''}
+        ${o.score > 0 ? `
+        <div class="arcade-save-row">
+          <input id="arcade-name" maxlength="20" placeholder="Twoje imię" value="${escapeHtml(arcGetName())}">
+          <button class="btn btn-green" id="arcade-save">Zapisz</button>
+        </div>` : ''}
+        <button class="btn btn-gold" id="arcade-again">↺ Zagraj ponownie</button>
+        <div class="arcade-sub">lub naciśnij Spację</div>
+      </div>`;
+    el.classList.remove('hidden');
+    el.onpointerdown = (e) => e.stopPropagation();
+    document.getElementById('arcade-again').onclick = (e) => { e.currentTarget.blur(); o.onAgain(); };
+    const saveBtn = document.getElementById('arcade-save');
+    if (saveBtn) {
+      const input = document.getElementById('arcade-name');
+      const save = () => arcSaveScore(gameKey, input.value.trim(), o.score, saveBtn);
+      saveBtn.onclick = save;
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); save(); } });
+    }
+    if (newRecord && typeof spawnConfetti === 'function') spawnConfetti();
+  }, o.delay != null ? o.delay : 550);
+  return newRecord;
+}
+
+// ---- salon z wyborem gier ----
+function openArcade() {
+  stopArcade();
+  const tiles = ARC_GAMES.map(g => `
+    <button class="arcade-tile" data-game="${g.key}">
+      <span class="arcade-tile-icon">${g.icon}</span>
+      <span class="arcade-tile-text">
+        <span class="arcade-tile-title">${g.title}</span>
+        <span class="arcade-tile-desc">${g.desc}</span>
+        <span class="arcade-tile-best">Twój rekord: <b>${arcGetHi(g.key)}</b></span>
+      </span>
+    </button>`).join('');
+  openModal(`
+    <div class="modal modal-game">
+      <div class="modal-head"><h2 class="display">🎮 Salon gier lotniczych</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="arcade-hub">${tiles}</div>
+        <div class="arcade-controls">Każda gra ma własny ranking — zapisz wynik po zakończeniu rozgrywki.</div>
+      </div>
+    </div>
+  `);
+  document.querySelectorAll('#overlay .arcade-tile').forEach(btn => {
+    btn.onclick = () => arcGame(btn.dataset.game).open();
+  });
+}
+
+// ================== GRA 1: Lot nad miastem ==================
+const ARC_BUILD_COLORS = ['#CDBB94', '#9FB3C4', '#B3AA92', '#7F9BB3', '#C4B08A'];
+
+function arcDrawCloud(ctx, x, y, s) {
+  x = Math.round(x); y = Math.round(y);
+  ctx.fillStyle = '#C9D8E4'; ctx.fillRect(x, y + 4 * s, 24 * s, 2 * s);
+  ctx.fillStyle = '#F4F8FB';
+  ctx.fillRect(x + 1 * s, y + 2 * s, 22 * s, 2 * s);
+  ctx.fillRect(x + 5 * s, y, 8 * s, 2 * s);
+  ctx.fillRect(x + 14 * s, y + 1 * s, 6 * s, 1 * s);
+  ctx.fillRect(x + 3 * s, y + 4 * s, 17 * s, 1 * s);
+}
+
+function openFlappy() {
+  const ui = arcOpenShell('flappy', {
+    readyHint: 'Kliknij, dotknij lub naciśnij Spację, aby wystartować',
+    controls: 'Sterowanie: klik / dotyk / Spacja / ↑ — omijaj wieżowce i burzowe chmury'
+  });
+  const { canvas, ctx } = ui;
   const plane = arcMakeSprite(ARC_PLANE_ROWS, ARC_PLANE_COLORS);
   const sky = ctx.createLinearGradient(0, 0, 0, ARC_GROUND);
   sky.addColorStop(0, '#2C6597'); sky.addColorStop(1, '#5C97C6');
@@ -2610,19 +2859,15 @@ function openArcade() {
 
   const S = {
     state: 'ready', py: 70, vy: 0, angle: 0, t: 0, score: 0, obstacles: [], dist: 70,
-    groundOff: 0, farOff: 0, particles: [], shake: 0, flash: 0, overAt: 0, hi: arcGetHi(), last: performance.now()
+    groundOff: 0, farOff: 0, particles: [], shake: 0, flash: 0, overAt: 0
   };
 
   function reset() {
     Object.assign(S, { state: 'ready', py: 70, vy: 0, angle: 0, score: 0, obstacles: [], dist: 70, particles: [], shake: 0, flash: 0 });
-    document.getElementById('arcade-ready').classList.remove('hidden');
-    document.getElementById('arcade-over').classList.add('hidden');
+    ui.showReady();
   }
   function flap() {
-    if (S.state === 'ready') {
-      S.state = 'playing';
-      document.getElementById('arcade-ready').classList.add('hidden');
-    }
+    if (S.state === 'ready') { S.state = 'playing'; ui.hideReady(); }
     if (S.state === 'playing') S.vy = FLAP;
     else if (S.state === 'over' && performance.now() - S.overAt > 700) { reset(); flap(); }
   }
@@ -2652,9 +2897,7 @@ function openArcade() {
     for (let i = 0; i < 14; i++) {
       S.particles.push({ x: PLANE_X + 8, y: S.py, vx: (Math.random() - 0.3) * 90, vy: (Math.random() - 0.7) * 90, life: 0.6 + Math.random() * 0.5, c: Math.random() < 0.5 ? '#F2A33A' : '#F2D27A' });
     }
-    const newRecord = S.score > S.hi && S.score > 0;
-    if (newRecord) { S.hi = S.score; arcSetHi(S.score); }
-    setTimeout(() => showOver(newRecord), 550);
+    arcShowOver('flappy', { title: 'Koniec lotu!', score: S.score, onAgain: reset });
   }
 
   function update(dt) {
@@ -2670,26 +2913,22 @@ function openArcade() {
     } else if (S.state === 'playing') {
       S.vy = Math.min(S.vy + G * dt, MAX_FALL);
       S.py += S.vy * dt;
-      S.angle = Math.max(-0.4, Math.min(0.7, S.vy / 320));
+      S.angle = arcClamp(S.vy / 320, -0.4, 0.7);
       if (S.py < 4) { S.py = 4; S.vy = 0; }
-
       S.dist += speed * dt;
       if (S.dist >= SPACING) { S.dist = 0; spawn(); }
       S.obstacles.forEach(o => { o.x -= speed * dt; });
       S.obstacles = S.obstacles.filter(o => o.x + o.w > -10);
-
       const hit = { x: PLANE_X - 10, y: S.py - 3, w: 20, h: 7 };
       for (const o of S.obstacles) {
         if (!o.passed && o.x + o.w < PLANE_X - 10) { o.passed = true; S.score++; }
         if (obstacleRects(o).some(r => arcRectsHit(hit, r))) { crash(); break; }
       }
       if (S.state === 'playing' && S.py + 4 >= ARC_GROUND) { S.py = ARC_GROUND - 4; crash(); }
-    } else {
-      if (S.py + 4 < ARC_GROUND) {
-        S.vy = Math.min(S.vy + G * dt, MAX_FALL);
-        S.py = Math.min(S.py + S.vy * dt, ARC_GROUND - 4);
-        S.angle = Math.min(S.angle + dt * 3, 1.0);
-      }
+    } else if (S.py + 4 < ARC_GROUND) {
+      S.vy = Math.min(S.vy + G * dt, MAX_FALL);
+      S.py = Math.min(S.py + S.vy * dt, ARC_GROUND - 4);
+      S.angle = Math.min(S.angle + dt * 3, 1.0);
     }
     S.particles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 120 * dt; p.life -= dt; });
     S.particles = S.particles.filter(p => p.life > 0);
@@ -2697,22 +2936,12 @@ function openArcade() {
     S.flash = Math.max(0, S.flash - dt * 4);
   }
 
-  function drawCloud(x, y, s) {
-    x = Math.round(x); y = Math.round(y);
-    ctx.fillStyle = '#C9D8E4'; ctx.fillRect(x, y + 4 * s, 24 * s, 2 * s);
-    ctx.fillStyle = '#F4F8FB';
-    ctx.fillRect(x + 1 * s, y + 2 * s, 22 * s, 2 * s);
-    ctx.fillRect(x + 5 * s, y, 8 * s, 2 * s);
-    ctx.fillRect(x + 14 * s, y + 1 * s, 6 * s, 1 * s);
-    ctx.fillRect(x + 3 * s, y + 4 * s, 17 * s, 1 * s);
-  }
   function drawStormCloud(o) {
     const x = Math.round(o.x), h = o.gapTop;
     ctx.fillStyle = '#26343F'; ctx.fillRect(x - 1, 0, o.w + 2, h - 1);
     ctx.fillStyle = '#4A5A69'; ctx.fillRect(x, 0, o.w, h - 3);
     ctx.fillStyle = '#5D6F80';
     for (let yy = 6; yy < h - 6; yy += 9) ctx.fillRect(x + 2 + (yy % 4), yy, o.w - 7, 2);
-    // nieregularny dół chmury
     for (let i = 0; i < o.w; i += 4) {
       const bump = ((i * 7 + o.seed) % 3);
       ctx.fillStyle = '#26343F'; ctx.fillRect(x + i - 1, h - 3, 6, bump + 2);
@@ -2748,7 +2977,6 @@ function openArcade() {
         ctx.fillRect(wx, wy, 1, 2);
       }
     }
-    // krzaczki przy podstawie
     ctx.fillStyle = '#3F7A44'; ctx.fillRect(x - 3, ARC_GROUND - 3, 5, 3); ctx.fillRect(x + w - 1, ARC_GROUND - 2, 4, 2);
     ctx.fillStyle = '#62A85A'; ctx.fillRect(x - 2, ARC_GROUND - 4, 3, 2); ctx.fillRect(x + w, ARC_GROUND - 3, 2, 1);
   }
@@ -2756,8 +2984,7 @@ function openArcade() {
     ctx.save();
     if (S.shake > 0) ctx.translate(Math.round((Math.random() - 0.5) * S.shake * 0.4), Math.round((Math.random() - 0.5) * S.shake * 0.4));
     ctx.fillStyle = sky; ctx.fillRect(-4, -4, ARC_W + 8, ARC_GROUND + 4);
-    clouds.forEach(c => drawCloud(c.x, c.y, c.s));
-    // odległa panorama (paralaksa)
+    clouds.forEach(c => arcDrawCloud(ctx, c.x, c.y, c.s));
     ctx.fillStyle = '#4C80AD';
     far.forEach(b => {
       let bx = Math.round(b.x - S.farOff);
@@ -2767,7 +2994,6 @@ function openArcade() {
       if (b.spire) ctx.fillRect(bx + Math.floor(b.w / 2), ARC_GROUND - b.h - 6, 1, 6);
     });
     S.obstacles.forEach(o => { drawStormCloud(o); drawBuilding(o); });
-    // ziemia
     ctx.fillStyle = '#26343F'; ctx.fillRect(-4, ARC_GROUND, ARC_W + 8, 1);
     ctx.fillStyle = '#EEF0EA'; ctx.fillRect(-4, ARC_GROUND + 1, ARC_W + 8, ARC_H - ARC_GROUND);
     ctx.fillStyle = '#6B6B66';
@@ -2775,7 +3001,6 @@ function openArcade() {
       const gx = ((i * 23 - S.groundOff) % ARC_W + ARC_W) % ARC_W;
       ctx.fillRect(Math.round(gx), ARC_GROUND + 3 + (i * 7) % 6, 2, 1);
     }
-    // samolot
     ctx.save();
     ctx.translate(PLANE_X, Math.round(S.py));
     ctx.rotate(S.angle);
@@ -2783,103 +3008,977 @@ function openArcade() {
     ctx.restore();
     S.particles.forEach(p => { ctx.fillStyle = p.c; ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 2); });
     ctx.restore();
-    // HUD
-    const hiTxt = 'HI ' + arcPad(S.hi);
+    const hiTxt = 'HI ' + arcPad(Math.max(arcGetHi('flappy'), S.score));
     arcText(ctx, hiTxt, ARC_W - 6 - arcTextWidth(hiTxt, 1), 6, '#F2D27A', 1);
     const sc = arcPad(S.score);
     arcText(ctx, sc, ARC_W - 6 - arcTextWidth(sc, 2), 14, '#FFFFFF', 2);
     if (S.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${S.flash * 0.6})`; ctx.fillRect(0, 0, ARC_W, ARC_H); }
   }
 
-  function showOver(newRecord) {
-    if (!document.getElementById('arcade-over')) return;
-    const el = document.getElementById('arcade-over');
-    el.innerHTML = `
-      <div class="arcade-card">
-        <div class="arcade-title">Koniec lotu!</div>
-        <div class="arcade-score-big">${S.score}</div>
-        <div class="arcade-sub">Twój rekord: ${S.hi}</div>
-        ${newRecord ? '<div class="arcade-record">★ NOWY REKORD ★</div>' : ''}
-        ${S.score > 0 ? `
-        <div class="arcade-save-row">
-          <input id="arcade-name" maxlength="20" placeholder="Twoje imię" value="${escapeHtml(arcGetName())}">
-          <button class="btn btn-green" id="arcade-save">Zapisz</button>
-        </div>` : ''}
-        <button class="btn btn-gold" id="arcade-again">↺ Leć ponownie</button>
-        <div class="arcade-sub">lub naciśnij Spację</div>
-      </div>`;
-    el.classList.remove('hidden');
-    el.onpointerdown = (e) => e.stopPropagation();
-    document.getElementById('arcade-again').onclick = (e) => { e.currentTarget.blur(); reset(); };
-    const saveBtn = document.getElementById('arcade-save');
-    if (saveBtn) {
-      const input = document.getElementById('arcade-name');
-      const save = () => saveScore(input.value.trim(), S.score, saveBtn);
-      saveBtn.onclick = save;
-      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); save(); } });
-    }
-    if (newRecord && typeof spawnConfetti === 'function') spawnConfetti();
-  }
-
-  function saveScore(name, score, btn) {
-    if (!name) { toast('Wpisz imię, aby zapisać wynik.', 'error'); return; }
-    arcSetName(name);
-    btn.disabled = true;
-    const key = name.toLowerCase().replace(/[.#$\[\]\/\s]+/g, '_').slice(0, 40) || 'anon';
-    arcadeRef.child(key).once('value')
-      .then(snap => {
-        const cur = snap.val();
-        if (cur && cur.score >= score) { toast(`Twój najlepszy wynik w rankingu to nadal ${cur.score}.`); return; }
-        return arcadeRef.child(key).set({ name, score, date: todayStr() }).then(() => toast('Wynik zapisany w rankingu!'));
-      })
-      .catch(() => { btn.disabled = false; toast('Nie udało się zapisać wyniku (sprawdź reguły Firebase dla „arcade”).', 'error'); });
-  }
-
-  function renderBoard(list) {
-    const box = document.getElementById('arcade-board');
-    if (!box) return;
-    if (!list.length) { box.innerHTML = '<div class="rank-empty">Brak wyników — bądź pierwszym pilotem!</div>'; return; }
-    const medals = ['🥇', '🥈', '🥉'];
-    box.innerHTML = list.map((r, i) => `
-      <div class="arcade-board-row">
-        <span class="pos">${medals[i] || (i + 1)}</span>
-        <span class="who">${avatarHtml(r.name)}${escapeHtml(r.name)}</span>
-        <span class="pts">${r.score}</span>
-      </div>`).join('');
-  }
-
-  const boardQuery = arcadeRef.orderByChild('score').limitToLast(10);
-  boardQuery.on('value', (snap) => {
-    const val = snap.val() || {};
-    const list = Object.values(val).filter(r => r && r.name && typeof r.score === 'number').sort((a, b) => b.score - a.score).slice(0, 10);
-    renderBoard(list);
-  }, () => {
-    const box = document.getElementById('arcade-board');
-    if (box) box.innerHTML = '<div class="rank-empty">Ranking niedostępny (brak dostępu do bazy). Twój rekord zapisuje się lokalnie.</div>';
-  });
-
-  const onKey = (e) => {
-    if (!document.getElementById('arcade-canvas')) { stopArcade(); return; }
-    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  arcListen(document, 'keydown', (e) => {
+    if (arcIsTyping(e)) return;
     if (e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { e.preventDefault(); flap(); }
-  };
-  document.addEventListener('keydown', onKey);
-  document.getElementById('arcade-wrap').addEventListener('pointerdown', (e) => {
+  });
+  arcListen(ui.wrap, 'pointerdown', (e) => {
     if (S.state === 'over') return;
     e.preventDefault();
     flap();
   });
+  arcRunLoop(canvas, (dt) => { update(dt); draw(); });
+}
 
-  function loop(now) {
-    if (!document.getElementById('arcade-canvas')) { stopArcade(); return; }
-    const dt = Math.min(0.033, (now - S.last) / 1000);
-    S.last = now;
-    update(dt);
-    draw();
-    arcadeSession.raf = requestAnimationFrame(loop);
+// ================== GRA 2: Lądowanie na pasie ==================
+function openLanding() {
+  const ui = arcOpenShell('landing', {
+    readyHint: 'Przytrzymaj Spację, przycisk myszy lub palec, aby dodać mocy — puść, aby opadać',
+    controls: 'Trzymaj = moc silnika (wolniejsze opadanie, zużywa paliwo), puść = opadanie. Przyziem miękko przy białych znakach, przed czerwoną linią. Światła PAPI przy pasie: 2 białe + 2 czerwone = idealna ścieżka.'
+  });
+  const { canvas, ctx } = ui;
+  ui.hud.classList.add('arcade-hud-right');
+  const plane = arcMakeSprite(ARC_PLANE_ROWS, ARC_PLANE_COLORS);
+  const GY = 134;          // linia ziemi na ekranie
+  const PSX = 76;          // stała pozycja samolotu na ekranie
+  const STOP = 36;         // minimalna droga hamowania za punktem przyziemienia
+  const sky = ctx.createLinearGradient(0, 0, 0, GY);
+  sky.addColorStop(0, '#2C6597'); sky.addColorStop(1, '#9CC3DE');
+  const clouds = Array.from({ length: 5 }, (_, i) => ({ x: i * 66 + Math.random() * 30, y: 8 + Math.random() * 42, s: Math.random() < 0.3 ? 2 : 1, k: 0.15 + Math.random() * 0.2 }));
+  const hills = [];
+  for (let x = 0; x < ARC_W * 2; x += 30 + Math.floor(Math.random() * 20)) hills.push({ x, h: 6 + Math.floor(Math.random() * 12), w: 34 + Math.floor(Math.random() * 30) });
+
+  const S = {
+    state: 'ready', level: 1, total: 0, t: 0, x: 0, alt: 80, vy: 5, vx: 60, fuel: 100, holding: false,
+    rw: null, wind: 0, gust: 1.2, gustT: 0.6, particles: [], puffs: [], shake: 0, flash: 0,
+    overAt: 0, hudT: 0, rollV: 0, landedAt: 0, angle: 0
+  };
+
+  function setupLevel() {
+    const n = S.level;
+    const start = 500 + Math.random() * 90;
+    const len = Math.max(82, 176 - (n - 1) * 14);
+    S.rw = { start, len, aim: start + 26, end: start + len };
+    S.x = 0; S.alt = 76 + Math.random() * 16; S.vy = 5; S.fuel = 100;
+    S.wind = Math.round((n - 1) * 2.5 + Math.random() * 4);
+    S.vx = 62 - S.wind * 0.6;
+    S.gust = 1.2 + (n - 1) * 1.1;
+    S.gustT = 0.6; S.puffs = []; S.angle = 0;
   }
-  arcadeSession = { raf: 0, onKey, boardQuery };
-  arcadeSession.raf = requestAnimationFrame(loop);
+  function reset() {
+    Object.assign(S, { state: 'ready', level: 1, total: 0, particles: [], shake: 0, flash: 0, holding: false });
+    setupLevel();
+    ui.showReady(); ui.hideBanner();
+  }
+  setupLevel();
+
+  function idealAlt(x) { return Math.max(0, (S.rw.aim - x) * 0.15); }
+
+  function crash(reason) {
+    S.state = 'over'; S.overAt = performance.now(); S.shake = 10; S.flash = 1; S.holding = false;
+    for (let i = 0; i < 16; i++) {
+      S.particles.push({ x: PSX + 6, y: GY - S.alt - 8, vx: (Math.random() - 0.3) * 80, vy: (Math.random() - 0.8) * 80, life: 0.6 + Math.random() * 0.6, c: Math.random() < 0.5 ? '#F2A33A' : '#F2D27A' });
+    }
+    ui.hideBanner();
+    arcShowOver('landing', { title: 'Koniec podejścia!', reason, score: S.total, onAgain: reset });
+  }
+
+  function touchdown() {
+    const rw = S.rw, tx = S.x, vy = S.vy;
+    if (tx < rw.start) return crash('Przyziemienie przed progiem pasa.');
+    if (tx > rw.end - STOP) return crash('Za daleko — samolot nie wyhamuje przed końcem pasa.');
+    if (vy > 15) return crash(`Zbyt twarde lądowanie (${Math.round(vy * 40)} ft/min).`);
+    const precision = Math.max(0, Math.round(100 - Math.abs(tx - rw.aim) * 2));
+    const soft = vy <= 4 ? 100 : Math.max(0, Math.round(100 - (vy - 4) * 9));
+    const fuel = Math.round(S.fuel);
+    const mult = 1 + (S.level - 1) * 0.25;
+    const pts = Math.round((precision + soft + fuel) * mult);
+    S.total += pts;
+    S.state = 'landed'; S.alt = 0; S.rollV = S.vx; S.landedAt = performance.now(); S.holding = false;
+    const grade = soft >= 85 ? 'Perfekcyjnie miękko!' : soft >= 50 ? 'Dobre lądowanie' : 'Twardawo, ale bezpiecznie';
+    ui.banner(`<b>${grade}</b><div>Celność ${precision} · Miękkość ${soft} · Paliwo ${fuel}${mult > 1 ? ` · ×${mult.toFixed(2)}` : ''}</div><div class="arcade-banner-pts">+${pts}</div>`, 2300);
+  }
+
+  function update(dt) {
+    S.t += dt;
+    const moving = S.state === 'playing' || S.state === 'landed';
+    clouds.forEach(c => {
+      c.x -= ((moving ? S.vx : 10) * c.k + 2) * dt;
+      if (c.x < -50) { c.x = ARC_W + Math.random() * 30; c.y = 8 + Math.random() * 42; }
+    });
+    if (S.state === 'ready') {
+      S.alt = 84 + Math.sin(S.t * 2) * 2;
+      S.x += 0;
+    } else if (S.state === 'playing') {
+      const power = S.holding && S.fuel > 0;
+      if (power) {
+        S.vy -= 26 * dt;
+        S.fuel = Math.max(0, S.fuel - 11 * dt);
+        if (Math.random() < 0.6) S.puffs.push({ x: S.x - 14, y: S.alt + 4, life: 0.5 });
+      } else {
+        S.vy += 15 * dt;
+      }
+      S.gustT -= dt;
+      if (S.gustT <= 0) { S.vy += (Math.random() * 2 - 1) * S.gust; S.gustT = 0.4 + Math.random() * 0.8; }
+      S.vy = arcClamp(S.vy, -10, 34);
+      S.alt -= S.vy * dt;
+      if (S.alt > 120) { S.alt = 120; S.vy = Math.max(S.vy, 0); }
+      S.x += S.vx * dt;
+      S.angle = arcClamp((S.vy - 8) / 90, -0.18, 0.22);
+      if (S.alt <= 0) { S.alt = 0; touchdown(); }
+      else if (S.x > S.rw.end - STOP) crash('Przeleciałeś nad pasem — zabrakło miejsca na przyziemienie.');
+    } else if (S.state === 'landed') {
+      S.angle = 0;
+      S.rollV = Math.max(0, S.rollV - 46 * dt);
+      S.x += S.rollV * dt;
+      if (performance.now() - S.landedAt > 2500) {
+        S.level++;
+        setupLevel();
+        S.state = 'playing';
+        ui.banner(`<b>Poziom ${S.level}</b><div>Pas ${Math.round(S.rw.len * 10)} m · wiatr ${S.wind} kt</div>`, 1600);
+      }
+    } else if (S.state === 'over') {
+      if (S.alt > 0) { S.vy += 60 * dt; S.alt = Math.max(0, S.alt - S.vy * dt); S.x += S.vx * 0.4 * dt; }
+      S.angle = Math.min(S.angle + dt * 1.5, 0.5);
+    }
+    S.puffs.forEach(p => { p.life -= dt; p.y += 6 * dt; });
+    S.puffs = S.puffs.filter(p => p.life > 0);
+    S.particles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 120 * dt; p.life -= dt; });
+    S.particles = S.particles.filter(p => p.life > 0);
+    S.shake = Math.max(0, S.shake - dt * 30);
+    S.flash = Math.max(0, S.flash - dt * 4);
+    S.hudT -= dt;
+    if (S.hudT <= 0) { S.hudT = 0.1; drawHud(); }
+  }
+
+  function drawHud() {
+    const vs = Math.round(S.vy * 40);
+    const cls = S.vy <= 6 ? 'ok' : S.vy <= 15 ? 'warn' : 'bad';
+    const dist = Math.max(0, Math.round((S.rw.start - S.x) * 10));
+    ui.hud.innerHTML = `
+      <div>Poziom <b>${S.level}</b> · Wynik <b>${S.total}</b></div>
+      <div>Paliwo <span class="arcade-bar"><span style="width:${S.fuel.toFixed(0)}%"></span></span></div>
+      <div>Opadanie <b class="${cls}">${S.state === 'landed' ? 0 : vs} ft/min</b></div>
+      <div>Wiatr <b>${S.wind} kt</b> · pas <b>${Math.round(S.rw.len * 10)} m</b>${dist ? ` · do progu <b>${dist} m</b>` : ''}</div>`;
+  }
+
+  function draw() {
+    const camX = S.x - PSX;
+    const sx = (wx) => Math.round(wx - camX);
+    const rw = S.rw;
+    ctx.save();
+    if (S.shake > 0) ctx.translate(Math.round((Math.random() - 0.5) * S.shake * 0.4), Math.round((Math.random() - 0.5) * S.shake * 0.4));
+    ctx.fillStyle = sky; ctx.fillRect(-4, -4, ARC_W + 8, GY + 4);
+    clouds.forEach(c => arcDrawCloud(ctx, c.x, c.y, c.s));
+    // wzgórza w oddali (paralaksa)
+    const off = camX * 0.2;
+    hills.forEach(hl => {
+      const hx = ((hl.x - off) % (ARC_W * 2) + ARC_W * 2) % (ARC_W * 2) - 40;
+      if (hx > ARC_W + 10) return;
+      for (let k = 0; k < hl.h; k++) {
+        const ww = Math.round(hl.w * (1 - (k / hl.h) * (k / hl.h)));
+        ctx.fillStyle = k < 2 ? '#4E7F6B' : '#5C8F78';
+        ctx.fillRect(Math.round(hx + (hl.w - ww) / 2), GY - k - 1, ww, 1);
+      }
+    });
+    // trawa
+    ctx.fillStyle = '#5E8F4E'; ctx.fillRect(-4, GY, ARC_W + 8, ARC_H - GY + 4);
+    ctx.fillStyle = '#4C7A3F'; ctx.fillRect(-4, GY, ARC_W + 8, 1);
+    ctx.fillStyle = '#6FA35A';
+    for (let i = 0; i < 36; i++) {
+      const gx = ((i * 37 - camX) % ARC_W + ARC_W) % ARC_W;
+      ctx.fillRect(Math.round(gx), GY + 9 + (i * 5) % 16, 2, 1);
+    }
+    // światła podejścia (biegnący „króliczek”)
+    for (let i = 1; i <= 8; i++) {
+      const lx = sx(rw.start - i * 8);
+      if (lx < -4 || lx > ARC_W + 4) continue;
+      ctx.fillStyle = '#26343F'; ctx.fillRect(lx, GY - 3, 1, 3);
+      const lit = (8 - (Math.floor(S.t * 12) % 9)) === i;
+      ctx.fillStyle = lit ? '#FFFFFF' : '#F2D27A'; ctx.fillRect(lx - 1, GY - 4, 3, 1);
+    }
+    // pas startowy
+    const rx = sx(rw.start), rEnd = sx(rw.end);
+    ctx.fillStyle = '#2E353A'; ctx.fillRect(rx, GY - 1, rEnd - rx, 1);
+    ctx.fillStyle = '#4A535A'; ctx.fillRect(rx, GY, rEnd - rx, 7);
+    ctx.fillStyle = '#F4F1E8';
+    for (let i = 0; i < 4; i++) ctx.fillRect(rx + 2 + i * 2, GY + 1, 1, 5);           // próg (piano)
+    ctx.fillRect(sx(rw.aim) - 3, GY + 1, 7, 2); ctx.fillRect(sx(rw.aim) - 3, GY + 4, 7, 2); // znaki celowania
+    for (let d = rw.start + 40; d < rw.end - STOP - 4; d += 12) ctx.fillRect(sx(d), GY + 3, 5, 1); // oś pasa
+    ctx.fillStyle = '#C0473A';
+    ctx.fillRect(sx(rw.end - STOP), GY, 1, 7);                                          // granica przyziemienia
+    for (let d = rw.end - STOP + 6; d < rw.end - 2; d += 7) { ctx.fillRect(sx(d), GY + 2, 2, 1); ctx.fillRect(sx(d) + 1, GY + 3, 2, 1); ctx.fillRect(sx(d), GY + 4, 2, 1); }
+    ctx.fillRect(rEnd - 1, GY, 2, 7);
+    // PAPI
+    if (S.state === 'playing' && S.x < rw.aim) {
+      const whites = arcClamp(2 + Math.round((S.alt - idealAlt(S.x)) / 7), 0, 4);
+      for (let i = 0; i < 4; i++) {
+        const px = sx(rw.aim + 10 + i * 4);
+        ctx.fillStyle = '#26343F'; ctx.fillRect(px, GY - 2, 1, 2);
+        ctx.fillStyle = i < whites ? '#FFFFFF' : '#E0453A'; ctx.fillRect(px - 1, GY - 4, 3, 2);
+      }
+    }
+    // rękaw wiatrowy
+    const wsx = sx(rw.start - 18);
+    ctx.fillStyle = '#26343F'; ctx.fillRect(wsx, GY - 12, 1, 12);
+    const sockLen = 3 + Math.min(6, Math.round(S.wind / 2));
+    for (let i = 0; i < sockLen; i++) {
+      ctx.fillStyle = i % 2 ? '#F4F1E8' : '#E07A3A';
+      ctx.fillRect(wsx - 1 - i, GY - 12 + Math.round(Math.sin(S.t * 6 + i) * 0.6) + (S.wind < 3 ? Math.floor(i / 2) : 0), 1, 3);
+    }
+    // wieża i hangar
+    const tx = sx(rw.end + 22);
+    ctx.fillStyle = '#26343F'; ctx.fillRect(tx - 1, GY - 33, 10, 33);
+    ctx.fillStyle = '#CDBB94'; ctx.fillRect(tx, GY - 26, 8, 26);
+    ctx.fillStyle = '#26343F'; ctx.fillRect(tx - 3, GY - 33, 14, 8);
+    ctx.fillStyle = '#7F9BB3'; ctx.fillRect(tx - 2, GY - 32, 12, 6);
+    ctx.fillStyle = '#22405E'; for (let i = 0; i < 4; i++) ctx.fillRect(tx - 1 + i * 3, GY - 31, 2, 4);
+    const hx = sx(rw.end + 44);
+    ctx.fillStyle = '#26343F'; ctx.fillRect(hx - 1, GY - 17, 46, 17);
+    ctx.fillStyle = '#9FB3C4'; ctx.fillRect(hx, GY - 16, 44, 16);
+    ctx.fillStyle = '#7F9BB3'; ctx.fillRect(hx, GY - 16, 44, 3);
+    ctx.fillStyle = '#3D5468'; ctx.fillRect(hx + 8, GY - 10, 28, 10);
+    // spaliny
+    S.puffs.forEach(p => { ctx.fillStyle = `rgba(230,236,240,${p.life})`; ctx.fillRect(sx(p.x), Math.round(GY - p.y - 10), 2, 2); });
+    // samolot
+    ctx.save();
+    ctx.translate(PSX, Math.round(GY - S.alt - 9));
+    ctx.rotate(S.angle);
+    if (S.alt < 40 || S.state === 'landed') {
+      ctx.fillStyle = '#1E2B38';
+      ctx.fillRect(-4, 5, 1, 2); ctx.fillRect(-5, 7, 3, 2);
+      ctx.fillRect(8, 5, 1, 2); ctx.fillRect(7, 7, 3, 2);
+    }
+    ctx.drawImage(plane, -13, -7);
+    ctx.restore();
+    S.particles.forEach(p => { ctx.fillStyle = p.c; ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 2); });
+    ctx.restore();
+    if (S.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${S.flash * 0.6})`; ctx.fillRect(0, 0, ARC_W, ARC_H); }
+  }
+
+  function press() {
+    if (S.state === 'over') { if (performance.now() - S.overAt > 700) reset(); return; }
+    if (S.state === 'ready') { S.state = 'playing'; ui.hideReady(); }
+    S.holding = true;
+  }
+  arcListen(document, 'keydown', (e) => {
+    if (arcIsTyping(e)) return;
+    if (e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+      e.preventDefault();
+      if (!e.repeat) press();
+    }
+  });
+  arcListen(document, 'keyup', (e) => {
+    if (e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') S.holding = false;
+  });
+  arcListen(ui.wrap, 'pointerdown', (e) => {
+    if (S.state === 'over') return;
+    e.preventDefault();
+    press();
+  });
+  arcListen(window, 'pointerup', () => { S.holding = false; });
+  arcListen(window, 'pointercancel', () => { S.holding = false; });
+  arcListen(window, 'blur', () => { S.holding = false; });
+  drawHud();
+  arcRunLoop(canvas, (dt) => { update(dt); draw(); });
+}
+
+// ================== GRA 3: Wieża kontroli lotów ==================
+const ATC_JET = [
+  '.......k......',
+  '.......kk.....',
+  '........kk....',
+  '........kkk...',
+  '.k......kkkk..',
+  'wwwwwwwwwwwwd.',
+  'wwwwwwwwwwwccd',
+  'wwwwwwwwwwwwd.',
+  '.k......kkkk..',
+  '........kkk...',
+  '........kk....',
+  '.......kk.....',
+  '.......k......'
+];
+const ATC_PROP = [
+  '.....kk....',
+  '.....kk....',
+  '.....kk....',
+  '.k...kk..p.',
+  'wwwwwwwwwcp',
+  '.k...kk..p.',
+  '.....kk....',
+  '.....kk....',
+  '.....kk....'
+];
+const ATC_GOLD = '#E0B04F', ATC_TEAL = '#4FC1CF';
+
+function openAtc() {
+  const ui = arcOpenShell('atc', {
+    wrapClass: 'arcade-wrap-draw',
+    readyHint: 'Kliknij samolot i przeciągnij trasę do pasa w jego kolorze',
+    controls: '<b style="color:#B8935F">Złote</b> odrzutowce lądują na długim pasie, <b style="color:#2e7f9b">turkusowe</b> samoloty śmigłowe — na krótkim. Trasa musi wejść na pas od strony progu (strzałki). Nie dopuść do zderzenia!'
+  });
+  const { canvas, ctx } = ui;
+  const base = { w: '#F4F1E8', d: '#1E2B38', c: '#22405E', p: '#26343F' };
+  const SPR = {
+    jet: arcMakeSprite(ATC_JET, { ...base, k: ATC_GOLD }),
+    prop: arcMakeSprite(ATC_PROP, { ...base, k: ATC_TEAL }),
+    jetShadow: arcMakeSprite(ATC_JET, { w: '#000', d: '#000', c: '#000', k: '#000' }),
+    propShadow: arcMakeSprite(ATC_PROP, { w: '#000', d: '#000', c: '#000', p: '#000', k: '#000' })
+  };
+  const RW = {
+    jet:  { x: 70, y: 58, w: 128, h: 10, axis: 'h', color: ATC_GOLD },
+    prop: { x: 238, y: 84, w: 10, h: 64, axis: 'v', color: ATC_TEAL }
+  };
+  const TERM = { x: 92, y: 104, w: 104, h: 22 };
+  const trees = [];
+  const blocked = (x, y) => [RW.jet, RW.prop, TERM].some(r => x > r.x - 10 && x < r.x + r.w + 10 && y > r.y - 10 && y < r.y + r.h + 10)
+    || (y > 76 && y < 92 && x > 80 && x < 250) || (x > 138 && x < 150 && y > 68 && y < 106);
+  for (let i = 0; i < 60 && trees.length < 22; i++) {
+    const x = 6 + Math.random() * (ARC_W - 12), y = 6 + Math.random() * (ARC_H - 12);
+    if (!blocked(x, y)) trees.push({ x: Math.round(x), y: Math.round(y) });
+  }
+
+  const S = { state: 'ready', t: 0, score: 0, planes: [], spawnT: 0, nextId: 0, sel: null, particles: [], floats: [], shake: 0, flash: 0, overAt: 0, crashed: [] };
+
+  function reset() {
+    Object.assign(S, { state: 'ready', score: 0, planes: [], spawnT: 0, sel: null, particles: [], floats: [], shake: 0, flash: 0, crashed: [] });
+    ui.showReady(); hud();
+  }
+  function start() {
+    if (S.state !== 'ready') return;
+    S.state = 'playing'; ui.hideReady();
+    spawnPlane(); spawnPlane();
+    S.spawnT = 5;
+  }
+  function hud() { ui.hud.innerHTML = `<div>Wylądowało: <b>${S.score}</b></div>`; }
+
+  function spawnPlane() {
+    for (let tries = 0; tries < 12; tries++) {
+      const side = Math.floor(Math.random() * 4);
+      let x, y;
+      if (side === 0) { x = -8; y = 18 + Math.random() * (ARC_H - 36); }
+      else if (side === 1) { x = ARC_W + 8; y = 18 + Math.random() * (ARC_H - 36); }
+      else if (side === 2) { y = -8; x = 18 + Math.random() * (ARC_W - 36); }
+      else { y = ARC_H + 8; x = 18 + Math.random() * (ARC_W - 36); }
+      if (S.planes.some(p => Math.hypot(p.x - x, p.y - y) < 44)) continue;
+      const tx = 60 + Math.random() * (ARC_W - 120), ty = 30 + Math.random() * (ARC_H - 60);
+      const type = Math.random() < 0.55 ? 'jet' : 'prop';
+      const boost = 1 + Math.min(S.score, 30) * 0.012;
+      S.planes.push({ type, x, y, a: Math.atan2(ty - y, tx - x), v: (type === 'jet' ? 15 : 10.5) * boost, path: [], entered: false, landing: false, lt: 0, id: ++S.nextId, warn: false });
+      return;
+    }
+  }
+
+  function tryLand(p) {
+    const rw = RW[p.type];
+    if (!(p.x > rw.x - 2 && p.x < rw.x + rw.w + 2 && p.y > rw.y - 2 && p.y < rw.y + rw.h + 2)) return;
+    const c = Math.cos(p.a), s = Math.sin(p.a);
+    let prog;
+    if (rw.axis === 'h') {
+      if (Math.abs(c) < 0.82) return;
+      prog = c > 0 ? (p.x - rw.x) / rw.w : (rw.x + rw.w - p.x) / rw.w;
+    } else {
+      if (Math.abs(s) < 0.82) return;
+      prog = s > 0 ? (p.y - rw.y) / rw.h : (rw.y + rw.h - p.y) / rw.h;
+    }
+    if (prog > 0.45) return;
+    p.landing = true; p.path = [];
+    if (S.sel === p) S.sel = null;
+    p.a = rw.axis === 'h' ? (c > 0 ? 0 : Math.PI) : (s > 0 ? Math.PI / 2 : -Math.PI / 2);
+    if (rw.axis === 'h') p.y = rw.y + rw.h / 2; else p.x = rw.x + rw.w / 2;
+    S.score++; hud();
+    S.floats.push({ x: p.x, y: p.y - 8, life: 1 });
+  }
+
+  function crash(a, b) {
+    S.state = 'over'; S.overAt = performance.now(); S.shake = 10; S.flash = 1; S.crashed = [a, b]; S.sel = null;
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    for (let i = 0; i < 20; i++) {
+      S.particles.push({ x: mx, y: my, vx: (Math.random() - 0.5) * 100, vy: (Math.random() - 0.5) * 100, life: 0.5 + Math.random() * 0.6, c: Math.random() < 0.5 ? '#F2A33A' : '#F2D27A' });
+    }
+    arcShowOver('atc', { title: 'Kolizja w powietrzu!', reason: 'Dwa samoloty zbliżyły się do siebie za bardzo.', score: S.score, onAgain: reset, delay: 800 });
+  }
+
+  function update(dt) {
+    S.t += dt;
+    if (S.state === 'playing') {
+      S.spawnT -= dt;
+      const flying = S.planes.filter(p => !p.landing);
+      if (S.spawnT <= 0) {
+        if (flying.length < 9) spawnPlane();
+        S.spawnT = Math.max(2.6, 6.5 - S.score * 0.18);
+      }
+      for (const p of S.planes) {
+        if (p.landing) {
+          p.lt += dt;
+          p.v = Math.max(3, p.v - 10 * dt);
+        } else if (p.path.length) {
+          const tgt = p.path[0];
+          if (Math.hypot(tgt.x - p.x, tgt.y - p.y) < 3) p.path.shift();
+          else {
+            const want = Math.atan2(tgt.y - p.y, tgt.x - p.x);
+            const diff = ((want - p.a + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+            p.a += arcClamp(diff, -3.4 * dt, 3.4 * dt);
+          }
+        }
+        p.x += Math.cos(p.a) * p.v * dt;
+        p.y += Math.sin(p.a) * p.v * dt;
+        if (p.landing) continue;
+        if (p.x > 5 && p.x < ARC_W - 5 && p.y > 5 && p.y < ARC_H - 5) p.entered = true;
+        if (p.entered && !p.path.length) {
+          if ((p.x < 5 && Math.cos(p.a) < 0) || (p.x > ARC_W - 5 && Math.cos(p.a) > 0)) p.a = Math.PI - p.a;
+          if ((p.y < 5 && Math.sin(p.a) < 0) || (p.y > ARC_H - 5 && Math.sin(p.a) > 0)) p.a = -p.a;
+        }
+        tryLand(p);
+      }
+      S.planes = S.planes.filter(p => !(p.landing && p.lt > 1.3));
+      const air = S.planes.filter(p => !p.landing);
+      air.forEach(p => { p.warn = false; });
+      outer: for (let i = 0; i < air.length; i++) {
+        for (let j = i + 1; j < air.length; j++) {
+          const d = Math.hypot(air[i].x - air[j].x, air[i].y - air[j].y);
+          if (d < 7) { crash(air[i], air[j]); break outer; }
+          if (d < 20) { air[i].warn = true; air[j].warn = true; }
+        }
+      }
+    }
+    S.floats.forEach(f => { f.life -= dt; f.y -= 10 * dt; });
+    S.floats = S.floats.filter(f => f.life > 0);
+    S.particles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.96; p.vy *= 0.96; p.life -= dt; });
+    S.particles = S.particles.filter(p => p.life > 0);
+    S.shake = Math.max(0, S.shake - dt * 30);
+    S.flash = Math.max(0, S.flash - dt * 4);
+  }
+
+  function drawRunway(rw) {
+    ctx.fillStyle = '#2E353A'; ctx.fillRect(rw.x - 1, rw.y - 1, rw.w + 2, rw.h + 2);
+    ctx.fillStyle = '#4A535A'; ctx.fillRect(rw.x, rw.y, rw.w, rw.h);
+    ctx.fillStyle = '#F4F1E8';
+    if (rw.axis === 'h') {
+      for (let x = rw.x + 14; x < rw.x + rw.w - 16; x += 9) ctx.fillRect(x, rw.y + rw.h / 2, 5, 1);
+      for (let i = 0; i < 4; i++) { ctx.fillRect(rw.x + 2, rw.y + 1 + i * 2, 5, 1); ctx.fillRect(rw.x + rw.w - 7, rw.y + 1 + i * 2, 5, 1); }
+      ctx.fillStyle = rw.color;
+      ctx.fillRect(rw.x, rw.y - 1, rw.w, 1); ctx.fillRect(rw.x, rw.y + rw.h, rw.w, 1);
+      // strzałki progów
+      for (let k = 0; k < 4; k++) {
+        ctx.fillRect(rw.x - 10 + k, rw.y + 1 + k, 1, rw.h - 2 - k * 2);
+        ctx.fillRect(rw.x + rw.w + 9 - k, rw.y + 1 + k, 1, rw.h - 2 - k * 2);
+      }
+    } else {
+      for (let y = rw.y + 12; y < rw.y + rw.h - 14; y += 9) ctx.fillRect(rw.x + rw.w / 2, y, 1, 5);
+      for (let i = 0; i < 4; i++) { ctx.fillRect(rw.x + 1 + i * 2, rw.y + 2, 1, 5); ctx.fillRect(rw.x + 1 + i * 2, rw.y + rw.h - 7, 1, 5); }
+      ctx.fillStyle = rw.color;
+      ctx.fillRect(rw.x - 1, rw.y, 1, rw.h); ctx.fillRect(rw.x + rw.w, rw.y, 1, rw.h);
+      for (let k = 0; k < 4; k++) {
+        ctx.fillRect(rw.x + 1 + k, rw.y - 10 + k, rw.w - 2 - k * 2, 1);
+        ctx.fillRect(rw.x + 1 + k, rw.y + rw.h + 9 - k, rw.w - 2 - k * 2, 1);
+      }
+    }
+  }
+
+  function drawPlane(p, alpha) {
+    const spr = SPR[p.type], sh = SPR[p.type + 'Shadow'];
+    const scale = p.landing ? Math.max(0.45, 1 - p.lt * 0.45) : 1;
+    ctx.save();
+    ctx.globalAlpha = 0.22 * alpha;
+    ctx.translate(Math.round(p.x) + (p.landing ? 1 : 3), Math.round(p.y) + (p.landing ? 1 : 3));
+    ctx.rotate(p.a); ctx.scale(scale, scale);
+    ctx.drawImage(sh, -Math.floor(sh.width / 2), -Math.floor(sh.height / 2));
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = alpha * (p.landing ? Math.max(0, 1 - Math.max(0, p.lt - 0.7) * 1.6) : 1);
+    ctx.translate(Math.round(p.x), Math.round(p.y));
+    ctx.rotate(p.a); ctx.scale(scale, scale);
+    ctx.drawImage(spr, -Math.floor(spr.width / 2), -Math.floor(spr.height / 2));
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.save();
+    if (S.shake > 0) ctx.translate(Math.round((Math.random() - 0.5) * S.shake * 0.4), Math.round((Math.random() - 0.5) * S.shake * 0.4));
+    ctx.fillStyle = '#5E8F4E'; ctx.fillRect(-4, -4, ARC_W + 8, ARC_H + 8);
+    ctx.fillStyle = '#62944F';
+    for (let x = 0; x < ARC_W; x += 32) ctx.fillRect(x, 0, 16, ARC_H);
+    // drogi kołowania i płyta
+    ctx.fillStyle = '#6E787E';
+    ctx.fillRect(84, 80, 160, 6);
+    ctx.fillRect(140, 68, 6, 36);
+    ctx.fillRect(196, 68, 6, 12);
+    ctx.fillStyle = '#E8C35A';
+    for (let x = 86; x < 240; x += 6) ctx.fillRect(x, 83, 3, 1);
+    ctx.fillStyle = '#6B757B'; ctx.fillRect(TERM.x - 6, TERM.y - 8, TERM.w + 12, 8);
+    // terminal i wieża
+    ctx.fillStyle = '#26343F'; ctx.fillRect(TERM.x - 1, TERM.y - 1, TERM.w + 2, TERM.h + 2);
+    ctx.fillStyle = '#CDBB94'; ctx.fillRect(TERM.x, TERM.y, TERM.w, TERM.h);
+    ctx.fillStyle = '#9FB3C4'; ctx.fillRect(TERM.x, TERM.y, TERM.w, 5);
+    ctx.fillStyle = '#3D5468';
+    for (let x = TERM.x + 4; x < TERM.x + TERM.w - 4; x += 6) { ctx.fillRect(x, TERM.y + 8, 3, 3); ctx.fillRect(x, TERM.y + 14, 3, 3); }
+    ctx.fillStyle = '#26343F'; ctx.fillRect(TERM.x + TERM.w + 6, TERM.y + 2, 12, 12);
+    ctx.fillStyle = '#7F9BB3'; ctx.fillRect(TERM.x + TERM.w + 7, TERM.y + 3, 10, 10);
+    ctx.fillStyle = '#22405E'; ctx.fillRect(TERM.x + TERM.w + 9, TERM.y + 5, 6, 6);
+    // drzewa
+    trees.forEach(t => {
+      ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.fillRect(t.x + 1, t.y + 2, 5, 4);
+      ctx.fillStyle = '#3F7A44'; ctx.fillRect(t.x, t.y, 5, 5);
+      ctx.fillStyle = '#62A85A'; ctx.fillRect(t.x, t.y, 3, 2);
+    });
+    drawRunway(RW.jet); drawRunway(RW.prop);
+    // trasy
+    S.planes.forEach(p => {
+      if (!p.path.length) return;
+      const rw = RW[p.type];
+      const last = p.path[p.path.length - 1];
+      const ok = last.x > rw.x - 2 && last.x < rw.x + rw.w + 2 && last.y > rw.y - 2 && last.y < rw.y + rw.h + 2;
+      ctx.fillStyle = p.type === 'jet' ? ATC_GOLD : ATC_TEAL;
+      ctx.globalAlpha = ok ? 0.95 : 0.6;
+      let px = p.x, py = p.y, acc = 0;
+      p.path.forEach(pt => {
+        const d = Math.hypot(pt.x - px, pt.y - py);
+        const steps = Math.max(1, Math.round(d));
+        for (let k = 1; k <= steps; k++) {
+          acc++;
+          if (acc % 3 === 0) ctx.fillRect(Math.round(px + (pt.x - px) * k / steps), Math.round(py + (pt.y - py) * k / steps), 1, 1);
+        }
+        px = pt.x; py = pt.y;
+      });
+      ctx.globalAlpha = 1;
+      if (ok) { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(Math.round(last.x) - 1, Math.round(last.y) - 1, 3, 3); }
+    });
+    // samoloty
+    S.planes.filter(p => p.landing).forEach(p => drawPlane(p, 1));
+    S.planes.filter(p => !p.landing).forEach(p => {
+      const crashed = S.crashed.includes(p);
+      drawPlane(p, 1);
+      if ((p.warn && Math.floor(S.t * 6) % 2 === 0) || crashed) {
+        ctx.strokeStyle = '#E0453A'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(Math.round(p.x) + 0.5, Math.round(p.y) + 0.5, 10, 0, Math.PI * 2); ctx.stroke();
+      }
+      if (p === S.sel) {
+        ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(Math.round(p.x) + 0.5, Math.round(p.y) + 0.5, 9, 0, Math.PI * 2); ctx.stroke();
+      }
+      if (!p.entered && Math.floor(S.t * 4) % 2 === 0) {
+        const ex = arcClamp(p.x, 3, ARC_W - 4), ey = arcClamp(p.y, 3, ARC_H - 4);
+        ctx.fillStyle = p.type === 'jet' ? ATC_GOLD : ATC_TEAL;
+        ctx.fillRect(Math.round(ex) - 1, Math.round(ey) - 1, 3, 3);
+      }
+    });
+    S.floats.forEach(f => {
+      ctx.globalAlpha = Math.min(1, f.life * 1.5);
+      ctx.fillStyle = '#1E2B38'; ctx.fillRect(Math.round(f.x) - 3, Math.round(f.y) + 3, 5, 1); ctx.fillRect(Math.round(f.x) - 1, Math.round(f.y) + 1, 1, 5);
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(Math.round(f.x) - 4, Math.round(f.y) + 2, 5, 1); ctx.fillRect(Math.round(f.x) - 2, Math.round(f.y), 1, 5);
+      arcText(ctx, '1', Math.round(f.x) + 2, Math.round(f.y), '#FFFFFF', 1);
+      ctx.globalAlpha = 1;
+    });
+    S.particles.forEach(p => { ctx.fillStyle = p.c; ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 2); });
+    ctx.restore();
+    if (S.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${S.flash * 0.6})`; ctx.fillRect(0, 0, ARC_W, ARC_H); }
+  }
+
+  arcListen(ui.wrap, 'pointerdown', (e) => {
+    if (S.state === 'over') return;
+    e.preventDefault();
+    if (S.state === 'ready') start();
+    const pt = arcPointer(canvas, e);
+    let best = null, bestD = 14;
+    S.planes.forEach(p => {
+      if (p.landing) return;
+      const d = Math.hypot(p.x - pt.x, p.y - pt.y);
+      if (d < bestD) { bestD = d; best = p; }
+    });
+    if (best) {
+      S.sel = best; best.path = [];
+      try { ui.wrap.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+  });
+  arcListen(ui.wrap, 'pointermove', (e) => {
+    const p = S.sel;
+    if (!p || p.landing || S.state !== 'playing') return;
+    const pt = arcPointer(canvas, e);
+    pt.x = arcClamp(pt.x, 3, ARC_W - 3); pt.y = arcClamp(pt.y, 3, ARC_H - 3);
+    const last = p.path[p.path.length - 1] || { x: p.x, y: p.y };
+    if (Math.hypot(pt.x - last.x, pt.y - last.y) >= 4 && p.path.length < 300) p.path.push(pt);
+  });
+  const release = () => { S.sel = null; };
+  arcListen(ui.wrap, 'pointerup', release);
+  arcListen(ui.wrap, 'pointercancel', release);
+  arcListen(document, 'keydown', (e) => {
+    if (arcIsTyping(e)) return;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (S.state === 'over' && performance.now() - S.overAt > 900) reset();
+      else if (S.state === 'ready') start();
+    }
+  });
+  hud();
+  arcRunLoop(canvas, (dt) => { update(dt); draw(); });
+}
+
+// ================== GRA 4: Pakowanie ładowni ==================
+const CARGO_SHAPES = [
+  [[0, 0]],
+  [[0, 0], [1, 0]],
+  [[0, 0], [1, 0], [2, 0]],
+  [[0, 0], [1, 0], [2, 0], [3, 0]],
+  [[0, 0], [1, 0], [0, 1], [1, 1]],
+  [[0, 0], [0, 1], [1, 1], [2, 1]],
+  [[0, 0], [1, 0], [2, 0], [1, 1]],
+  [[0, 0], [1, 0], [1, 1]],
+  [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]]
+];
+const CARGO_COLORS = { 1: '#CDBB94', 2: '#7F9BB3', 3: '#A8483A' };
+const CARGO_LIGHT = { 1: '#E2D4B0', 2: '#A3BACB', 3: '#C66A5A' };
+const CARGO_DARK = { 1: '#A8966E', 2: '#5E7A92', 3: '#7E3329' };
+
+function openCargo() {
+  const ui = arcOpenShell('cargo', {
+    wrapClass: 'arcade-wrap-draw',
+    readyHint: 'Kliknij lub naciśnij Spację, aby rozpocząć załadunek',
+    below: `<div class="arcade-btn-row">
+      <button class="btn btn-outline" id="cargo-rotate">⟳ Obróć <span class="arcade-kbd">R</span></button>
+      <button class="btn btn-outline" id="cargo-place">📦 Postaw <span class="arcade-kbd">Spacja</span></button>
+      <button class="btn btn-gold" id="cargo-go">✈ Startuj <span class="arcade-kbd">T</span></button>
+    </div>`,
+    controls: 'Mysz: ruch = pozycja, klik = postaw, prawy przycisk lub kółko = obróć. Dotyk: stuknij, by ustawić paczkę, stuknij ponownie w to samo miejsce, by ją postawić. Klawiatura: strzałki, R, Spacja, T. Przy starcie żółty znacznik pod samolotem musi być w zielonej strefie.'
+  });
+  const { canvas, ctx } = ui;
+  const COLS = 16, ROWS = 6, CELL = 11, OX = 56, OY = 40;
+  const GW = COLS * CELL, GH = ROWS * CELL;
+  const BAR_Y = 146;
+
+  const S = {
+    state: 'ready', flight: 1, total: 0, t: 0, grid: [], cur: null, next: null, gc: 6, gr: 2,
+    pid: 0, filled: 0, anim: 0, tilt: 0, shake: 0, flash: 0, overAt: 0, hudT: 0, touchArmed: false, bad: 0, lastWheel: 0
+  };
+
+  function limit() { return Math.max(0.6, 2.4 - (S.flight - 1) * 0.3); }
+  function newPiece() {
+    const shape = CARGO_SHAPES[Math.floor(Math.random() * CARGO_SHAPES.length)].map(c => c.slice());
+    const heavy = Math.min(0.45, 0.15 + (S.flight - 1) * 0.06);
+    const r = Math.random();
+    let cells = shape;
+    for (let i = Math.floor(Math.random() * 4); i > 0; i--) cells = rotateCells(cells);
+    return { cells, d: r < heavy ? 3 : r < heavy + 0.35 ? 2 : 1 };
+  }
+  function rotateCells(cells) {
+    const r = cells.map(([c, rr]) => [rr, -c]);
+    const mc = Math.min(...r.map(v => v[0])), mr = Math.min(...r.map(v => v[1]));
+    return r.map(([c, rr]) => [c - mc, rr - mr]);
+  }
+  function dims(cells) { return { w: Math.max(...cells.map(v => v[0])) + 1, h: Math.max(...cells.map(v => v[1])) + 1 }; }
+  function absCells(piece, gc, gr) { return piece.cells.map(([c, r]) => [c + gc, r + gr]); }
+  function fits(abs) { return abs.every(([c, r]) => c >= 0 && c < COLS && r >= 0 && r < ROWS && !S.grid[r][c]); }
+  function clampAnchor() {
+    const { w, h } = dims(S.cur.cells);
+    S.gc = arcClamp(S.gc, 0, COLS - w); S.gr = arcClamp(S.gr, 0, ROWS - h);
+  }
+  function fitsAnywhere(piece) {
+    let cells = piece.cells;
+    for (let k = 0; k < 4; k++) {
+      const { w, h } = dims(cells);
+      for (let r = 0; r <= ROWS - h; r++) for (let c = 0; c <= COLS - w; c++) {
+        if (fits(cells.map(([a, b]) => [a + c, b + r]))) return true;
+      }
+      cells = rotateCells(cells);
+    }
+    return false;
+  }
+  function cgInfo(extra, extraD) {
+    let sum = 0, mom = 0;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const cell = S.grid[r][c];
+      if (cell) { sum += cell.d; mom += cell.d * (c + 0.5); }
+    }
+    if (extra) extra.forEach(([c]) => { sum += extraD; mom += extraD * (c + 0.5); });
+    return { total: sum, cg: sum ? mom / sum : COLS / 2 };
+  }
+  function newFlight() {
+    S.grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+    S.filled = 0; S.anim = 0; S.tilt = 0;
+    S.cur = newPiece(); S.next = newPiece();
+    S.gc = 6; S.gr = 2; clampAnchor();
+  }
+  function reset() {
+    Object.assign(S, { state: 'ready', flight: 1, total: 0, shake: 0, flash: 0, touchArmed: false });
+    newFlight(); ui.showReady(); ui.hideBanner(); drawHud();
+  }
+  function start() { if (S.state === 'ready') { S.state = 'playing'; ui.hideReady(); } }
+  newFlight();
+
+  function rotateCur() {
+    if (S.state === 'ready') start();
+    if (S.state !== 'playing') return;
+    const before = dims(S.cur.cells);
+    S.cur.cells = rotateCells(S.cur.cells);
+    const after = dims(S.cur.cells);
+    S.gc += Math.floor((before.w - after.w) / 2); S.gr += Math.floor((before.h - after.h) / 2);
+    clampAnchor(); S.touchArmed = false;
+  }
+  function moveTo(pt) {
+    const { w, h } = dims(S.cur.cells);
+    const pc = Math.floor((pt.x - OX) / CELL), pr = Math.floor((pt.y - OY) / CELL);
+    S.gc = pc - Math.floor((w - 1) / 2); S.gr = pr - Math.floor((h - 1) / 2);
+    clampAnchor();
+  }
+  function place() {
+    if (S.state === 'ready') { start(); return; }
+    if (S.state !== 'playing') return;
+    const abs = absCells(S.cur, S.gc, S.gr);
+    if (!fits(abs)) { S.bad = 0.35; return; }
+    S.pid++;
+    abs.forEach(([c, r]) => { S.grid[r][c] = { d: S.cur.d, pid: S.pid }; });
+    S.filled += abs.length;
+    S.cur = S.next; S.next = newPiece(); S.touchArmed = false;
+    clampAnchor();
+    drawHud();
+    if (!fitsAnywhere(S.cur)) takeoff(true);
+  }
+  function takeoff(auto) {
+    if (S.state === 'ready') { start(); return; }
+    if (S.state !== 'playing') return;
+    const { total, cg } = cgInfo();
+    const dev = cg - COLS / 2, lim = limit();
+    const fill = S.filled / (COLS * ROWS);
+    if (Math.abs(dev) > lim) {
+      S.state = 'crash'; S.anim = 0; S.shake = 8;
+      S.tilt = dev > 0 ? 1 : -1;
+      const reason = dev > 0
+        ? 'Przeciążony dziób — samolot nie uniósł przedniego podwozia.'
+        : 'Przeciążony ogon — samolot usiadł na ogonie przy rotacji.';
+      S.overAt = performance.now();
+      ui.hideBanner();
+      arcShowOver('cargo', { title: 'Start przerwany!', reason, score: S.total, onAgain: reset, delay: 900 });
+      S.state = 'over';
+      return;
+    }
+    const balance = 1 - 0.5 * Math.abs(dev) / lim;
+    const bonus = fill >= 0.9 ? 150 : fill >= 0.75 ? 75 : 0;
+    const mult = 1 + (S.flight - 1) * 0.2;
+    const pts = Math.round((total * 10 * balance + bonus) * mult);
+    S.total += pts;
+    S.state = 'takeoff'; S.anim = 0;
+    ui.banner(`<b>${auto ? 'Ładownia pełna — start!' : 'Start udany!'}</b><div>Ładunek ${total} t · wypełnienie ${Math.round(fill * 100)}% · wyważenie ${Math.round(balance * 100)}%${bonus ? ` · bonus ${bonus}` : ''}${mult > 1 ? ` · ×${mult.toFixed(1)}` : ''}</div><div class="arcade-banner-pts">+${pts}</div>`, 2300);
+    drawHud();
+  }
+
+  function miniGrid(piece) {
+    const { w, h } = dims(piece.cells);
+    const set = new Set(piece.cells.map(([c, r]) => c + ',' + r));
+    let html = `<span class="arcade-mini" style="grid-template-columns:repeat(${w},6px)">`;
+    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+      html += `<i style="background:${set.has(c + ',' + r) ? CARGO_COLORS[piece.d] : 'transparent'}"></i>`;
+    }
+    return html + '</span>';
+  }
+  function drawHud() {
+    const { total } = cgInfo();
+    ui.hud.innerHTML = `
+      <div>Lot <b>${S.flight}</b> · Wynik <b>${S.total}</b> · ładunek <b>${total} t</b> · <b>${Math.round(S.filled / (COLS * ROWS) * 100)}%</b></div>
+      <div>Teraz: ${miniGrid(S.cur)} <b>${S.cur.cells.length * S.cur.d} t</b> · Następna: ${miniGrid(S.next)}</div>`;
+  }
+
+  function update(dt) {
+    S.t += dt;
+    S.bad = Math.max(0, S.bad - dt);
+    if (S.state === 'takeoff') {
+      S.anim += dt;
+      if (S.anim > 2.2) {
+        S.flight++; newFlight(); S.state = 'playing';
+        ui.banner(`<b>Lot ${S.flight}</b><div>Dopuszczalne odchylenie środka ciężkości: ±${limit().toFixed(1)}</div>`, 1600);
+        drawHud();
+      }
+    }
+    S.shake = Math.max(0, S.shake - dt * 25);
+  }
+
+  function scanFill(y0, y1, xAt) {
+    for (let y = y0; y <= y1; y++) { const [a, b] = xAt(y); if (b > a) ctx.fillRect(Math.round(a), y, Math.round(b - a), 1); }
+  }
+  function drawPieceCells(abs, d, alpha, invalid, ghost) {
+    const set = new Set(abs.map(([c, r]) => c + ',' + r));
+    ctx.globalAlpha = alpha;
+    abs.forEach(([c, r]) => {
+      const x = OX + c * CELL, y = OY + r * CELL;
+      ctx.fillStyle = invalid ? '#E0453A' : CARGO_COLORS[d]; ctx.fillRect(x, y, CELL, CELL);
+      if (!invalid) {
+        ctx.fillStyle = CARGO_LIGHT[d]; ctx.fillRect(x + 1, y + 1, CELL - 2, 1);
+        ctx.fillStyle = CARGO_DARK[d]; ctx.fillRect(x + 1, y + CELL - 2, CELL - 2, 1);
+        if (d === 1) { ctx.fillRect(x + 2, y + 4, CELL - 4, 1); ctx.fillRect(x + 2, y + 7, CELL - 4, 1); }
+        if (d === 3) { for (let k = 2; k < CELL - 2; k += 3) ctx.fillRect(x + k, y + 3, 1, CELL - 6); }
+      }
+      if (invalid) {
+        ctx.fillStyle = '#FFFFFF';
+        for (let k = 2; k < CELL - 2; k++) { ctx.fillRect(x + k, y + k, 1, 1); ctx.fillRect(x + CELL - 1 - k, y + k, 1, 1); }
+      }
+      ctx.fillStyle = ghost && !invalid ? (Math.floor(S.t * 5) % 2 ? '#FFFFFF' : '#F2D27A') : '#26343F';
+      if (!set.has(c + ',' + (r - 1))) ctx.fillRect(x, y, CELL, 1);
+      if (!set.has(c + ',' + (r + 1))) ctx.fillRect(x, y + CELL - 1, CELL, 1);
+      if (!set.has((c - 1) + ',' + r)) ctx.fillRect(x, y, 1, CELL);
+      if (!set.has((c + 1) + ',' + r)) ctx.fillRect(x + CELL - 1, y, 1, CELL);
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function drawAircraft() {
+    const cx = OX + GW / 2, top = OY - 5, bot = OY + GH + 4;
+    // skrzydła (pod kadłubem)
+    ctx.fillStyle = '#26343F';
+    scanFill(6, top, (y) => { const k = (y - 6) / (top - 6); return [cx - 12 - (1 - k) * 22 - 1, cx + 22 - (1 - k) * 30 + 1]; });
+    scanFill(bot, 140, (y) => { const k = (140 - y) / (140 - bot); return [cx - 12 - (1 - k) * 22 - 1, cx + 22 - (1 - k) * 30 + 1]; });
+    ctx.fillStyle = '#B9C2CA';
+    scanFill(7, top, (y) => { const k = (y - 6) / (top - 6); return [cx - 12 - (1 - k) * 22, cx + 22 - (1 - k) * 30]; });
+    scanFill(bot, 139, (y) => { const k = (140 - y) / (140 - bot); return [cx - 12 - (1 - k) * 22, cx + 22 - (1 - k) * 30]; });
+    ctx.fillStyle = '#7F8C96';
+    ctx.fillRect(cx - 4, 18, 14, 6); ctx.fillRect(cx - 4, 122, 14, 6);           // silniki
+    ctx.fillStyle = '#26343F'; ctx.fillRect(cx + 9, 18, 1, 6); ctx.fillRect(cx + 9, 122, 1, 6);
+    // statecznik poziomy
+    ctx.fillStyle = '#26343F';
+    scanFill(top - 22, top, (y) => { const k = (y - (top - 22)) / 22; return [OX - 38 + (1 - k) * 4, OX - 22 + k * 8]; });
+    scanFill(bot, bot + 22, (y) => { const k = (bot + 22 - y) / 22; return [OX - 38 + (1 - k) * 4, OX - 22 + k * 8]; });
+    ctx.fillStyle = '#B9C2CA';
+    scanFill(top - 21, top, (y) => { const k = (y - (top - 22)) / 22; return [OX - 37 + (1 - k) * 4, OX - 23 + k * 8]; });
+    scanFill(bot, bot + 21, (y) => { const k = (bot + 22 - y) / 22; return [OX - 37 + (1 - k) * 4, OX - 23 + k * 8]; });
+    // kadłub
+    ctx.fillStyle = '#26343F'; ctx.fillRect(OX - 8, top - 1, GW + 16, bot - top + 2);
+    ctx.fillStyle = '#E8E4D8'; ctx.fillRect(OX - 7, top, GW + 14, bot - top);
+    // dziób
+    const nx = OX + GW + 8, mid = (top + bot) / 2, half = (bot - top) / 2 + 1;
+    for (let i = 0; i < 30; i++) {
+      const hh = half * Math.sqrt(1 - Math.pow(i / 30, 2.2));
+      ctx.fillStyle = '#26343F'; ctx.fillRect(nx + i, Math.round(mid - hh), 1, Math.round(hh * 2));
+      if (hh > 1.5) { ctx.fillStyle = '#E8E4D8'; ctx.fillRect(nx + i, Math.round(mid - hh) + 1, 1, Math.round(hh * 2) - 2); }
+    }
+    ctx.fillStyle = '#22405E'; ctx.fillRect(nx + 16, Math.round(mid) - 6, 4, 4); ctx.fillRect(nx + 16, Math.round(mid) + 2, 4, 4);
+    // ogon
+    const tx = OX - 8;
+    for (let i = 0; i < 34; i++) {
+      const hh = half * (1 - (i / 34) * 0.72);
+      ctx.fillStyle = '#26343F'; ctx.fillRect(tx - i - 1, Math.round(mid - hh), 1, Math.round(hh * 2));
+      ctx.fillStyle = '#E8E4D8'; ctx.fillRect(tx - i - 1, Math.round(mid - hh) + 1, 1, Math.max(0, Math.round(hh * 2) - 2));
+    }
+    ctx.fillStyle = '#B8935F'; ctx.fillRect(tx - 33, Math.round(mid) - 1, 22, 2);   // statecznik pionowy (z góry)
+    // podłoga ładowni
+    ctx.fillStyle = '#D9D3C3'; ctx.fillRect(OX, OY, GW, GH);
+    ctx.fillStyle = '#C4BCA8';
+    for (let c = 0; c <= COLS; c++) ctx.fillRect(OX + c * CELL, OY, 1, GH);
+    for (let r = 0; r <= ROWS; r++) ctx.fillRect(OX, OY + r * CELL, GW, 1);
+    // znacznik środka (oś skrzydła)
+    ctx.fillStyle = 'rgba(79,122,87,0.18)';
+    const lim = limit();
+    ctx.fillRect(Math.round(OX + (COLS / 2 - lim) * CELL), OY, Math.round(lim * 2 * CELL), GH);
+    ctx.fillStyle = '#4F7A57'; ctx.fillRect(Math.round(OX + GW / 2), OY - 3, 1, 3); ctx.fillRect(Math.round(OX + GW / 2), OY + GH, 1, 3);
+    // postawione paczki
+    const groups = {};
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const cell = S.grid[r][c];
+      if (cell) (groups[cell.pid] = groups[cell.pid] || { d: cell.d, cells: [] }).cells.push([c, r]);
+    }
+    Object.values(groups).forEach(g => {
+      drawPieceCells(g.cells, g.d, 1, false);
+      const [c0, r0] = g.cells[Math.floor(g.cells.length / 2)];
+      const t = String(g.cells.length * g.d);
+      arcText(ctx, t, OX + c0 * CELL + Math.floor((CELL - arcTextWidth(t, 1)) / 2), OY + r0 * CELL + 3, '#FFFFFF', 1);
+    });
+    // podgląd aktualnej paczki
+    if (S.state === 'playing') {
+      const abs = absCells(S.cur, S.gc, S.gr);
+      const ok = fits(abs);
+      drawPieceCells(abs, S.cur.d, ok ? 0.8 : 0.6, !ok || S.bad > 0, true);
+    }
+  }
+
+  function drawBalance() {
+    const x0 = OX, x1 = OX + GW, lim = limit();
+    ctx.fillStyle = '#26343F'; ctx.fillRect(x0 - 1, BAR_Y - 1, GW + 2, 8);
+    ctx.fillStyle = '#4A535A'; ctx.fillRect(x0, BAR_Y, GW, 6);
+    ctx.fillStyle = '#4F7A57'; ctx.fillRect(Math.round(x0 + (COLS / 2 - lim) * CELL), BAR_Y, Math.round(lim * 2 * CELL), 6);
+    ctx.fillStyle = '#F4F1E8'; ctx.fillRect(Math.round(x0 + GW / 2), BAR_Y - 2, 1, 10);
+    const { total, cg } = cgInfo();
+    if (S.state === 'playing') {
+      const abs = absCells(S.cur, S.gc, S.gr);
+      if (fits(abs)) {
+        const pv = cgInfo(abs, S.cur.d);
+        const px = Math.round(x0 + pv.cg * CELL);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(px - 2, BAR_Y + 7, 5, 1); ctx.fillRect(px - 1, BAR_Y + 8, 3, 1); ctx.fillRect(px, BAR_Y + 9, 1, 1);
+      }
+    }
+    const mx = Math.round(x0 + cg * CELL);
+    const off = Math.abs(cg - COLS / 2) > lim;
+    ctx.fillStyle = total ? (off ? '#E0453A' : '#F2D27A') : '#AEB8C1';
+    ctx.fillRect(mx - 3, BAR_Y - 4, 7, 2); ctx.fillRect(mx - 2, BAR_Y - 2, 5, 1); ctx.fillRect(mx - 1, BAR_Y - 1, 3, 2);
+    // oznaczenia ogon / dziób
+    ctx.fillStyle = '#AEB8C1';
+    ctx.fillRect(x0 - 10, BAR_Y + 2, 6, 2); ctx.fillRect(x0 - 10, BAR_Y, 1, 6);              // ogon (|—)
+    ctx.fillRect(x1 + 4, BAR_Y + 2, 6, 2); ctx.fillRect(x1 + 9, BAR_Y + 1, 2, 4); ctx.fillRect(x1 + 11, BAR_Y + 2, 1, 2); // dziób (—>)
+  }
+
+  function draw() {
+    ctx.save();
+    if (S.shake > 0) ctx.translate(Math.round((Math.random() - 0.5) * S.shake * 0.4), Math.round((Math.random() - 0.5) * S.shake * 0.4));
+    ctx.fillStyle = '#56616A'; ctx.fillRect(-4, -4, ARC_W + 8, ARC_H + 8);
+    const scroll = S.state === 'takeoff' ? (S.anim * S.anim * 140) % 24 : 0;
+    ctx.fillStyle = '#4C565E';
+    for (let x = -24; x < ARC_W + 24; x += 24) ctx.fillRect(Math.round(x - scroll), 0, 12, ARC_H);
+    ctx.fillStyle = '#E8C35A';
+    for (let x = -12; x < ARC_W + 12; x += 12) ctx.fillRect(Math.round(x - scroll * 2) , 73, 6, 1);
+    ctx.save();
+    if (S.state === 'takeoff') {
+      const k = S.anim * S.anim;
+      ctx.translate(Math.round(k * 70), 0);
+    }
+    drawAircraft();
+    if (S.tilt && Math.floor(S.t * 4) % 2 === 0) {
+      ctx.fillStyle = 'rgba(224,69,58,0.45)';
+      ctx.fillRect(S.tilt > 0 ? OX + GW / 2 : OX, OY, GW / 2, GH);
+    }
+    ctx.restore();
+    if (S.state !== 'takeoff') drawBalance();
+    ctx.restore();
+  }
+
+  // ---- sterowanie ----
+  arcListen(ui.wrap, 'contextmenu', (e) => { e.preventDefault(); rotateCur(); });
+  arcListen(ui.wrap, 'wheel', (e) => {
+    e.preventDefault();
+    const now = performance.now();
+    if (now - S.lastWheel > 160) { S.lastWheel = now; rotateCur(); }
+  }, { passive: false });
+  arcListen(ui.wrap, 'pointermove', (e) => {
+    if (e.pointerType === 'mouse' && S.state === 'playing') moveTo(arcPointer(canvas, e));
+  });
+  arcListen(ui.wrap, 'pointerdown', (e) => {
+    if (S.state === 'over') return;
+    e.preventDefault();
+    if (e.button === 2) return;
+    if (S.state === 'ready') { start(); return; }
+    if (S.state !== 'playing') return;
+    const pt = arcPointer(canvas, e);
+    if (e.pointerType === 'mouse') { moveTo(pt); place(); return; }
+    const before = S.gc + ',' + S.gr;
+    moveTo(pt);
+    if (S.touchArmed && before === S.gc + ',' + S.gr) place();
+    else S.touchArmed = true;
+  });
+  document.getElementById('cargo-rotate').onclick = (e) => { e.currentTarget.blur(); rotateCur(); };
+  document.getElementById('cargo-place').onclick = (e) => { e.currentTarget.blur(); place(); };
+  document.getElementById('cargo-go').onclick = (e) => { e.currentTarget.blur(); takeoff(false); };
+  arcListen(document, 'keydown', (e) => {
+    if (arcIsTyping(e)) return;
+    const k = e.key;
+    if (S.state === 'over') {
+      if (e.code === 'Space') { e.preventDefault(); if (performance.now() - S.overAt > 900) reset(); }
+      return;
+    }
+    if (e.code === 'Space' || k === 'Enter') { e.preventDefault(); place(); return; }
+    if (k === 'r' || k === 'R' || k === 'q' || k === 'Q') { e.preventDefault(); rotateCur(); return; }
+    if (k === 't' || k === 'T') { e.preventDefault(); takeoff(false); return; }
+    if (S.state !== 'playing') return;
+    if (k === 'ArrowLeft') { e.preventDefault(); S.gc--; clampAnchor(); }
+    if (k === 'ArrowRight') { e.preventDefault(); S.gc++; clampAnchor(); }
+    if (k === 'ArrowUp') { e.preventDefault(); S.gr--; clampAnchor(); }
+    if (k === 'ArrowDown') { e.preventDefault(); S.gr++; clampAnchor(); }
+  });
+  drawHud();
+  arcRunLoop(canvas, (dt) => { update(dt); draw(); });
 }
 document.getElementById('searchInput').oninput = (e) => { query = e.target.value; render(); };
 function filterBy(value) {
