@@ -61,12 +61,16 @@
   .btn-green { background: var(--green); color: var(--card); font-weight: 500; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .header-actions { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .header-actions { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
   .header-actions .btn { justify-content: center; white-space: nowrap; min-width: 0; padding: 11px 8px; }
+  @media (max-width: 880px) {
+    .header-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
   @media (max-width: 760px) {
-    .header-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .header-actions #addBtn { grid-column: 1 / -1; order: -1; }
     .author-tag { display: block; margin-left: 0; margin-top: 3px; }
+  }
+  @media (max-width: 520px) {
+    .header-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
   .search-wrap { position: relative; margin-bottom: 24px; }
@@ -730,6 +734,293 @@
     .arcade-mini i { width: 4px; height: 4px; }
     .arcade-bar { width: 44px; height: 5px; }
   }
+  /* ---- Stoliki do gry (zapisy na wspólne granie) ---- */
+  .tbl-count:not(:empty) {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px; padding: 0 4px;
+    border-radius: 9px; background: var(--gold); color: #16232B; font-size: 10px; font-weight: 700; margin-left: 2px;
+  }
+  .modal.modal-tables { max-width: min(1500px, 97vw); width: 100%; height: 94vh; max-height: 94vh; }
+  .modal-tables .modal-body { gap: 14px; padding: 16px 22px 22px; }
+  .modal-tables .tbl-floor-main { flex: 1 0 auto; }
+  .modal.modal-invite { max-width: min(760px, 96vw); }
+  .modal.modal-tables-form { max-width: min(820px, 96vw); }
+  .modal-tables .modal-head, .modal-tables-form .modal-head, .modal-invite .modal-head { gap: 10px; }
+  .modal-tables .modal-head h2, .modal-tables-form .modal-head h2, .modal-invite .modal-head h2 { flex: 1; }
+  .tbl-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .tbl-tabs { display: inline-flex; gap: 3px; background: var(--card-alt); border: 1px solid var(--border-card); border-radius: 10px; padding: 3px; }
+  .tbl-tab {
+    border: none; background: none; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 7px 12px; border-radius: 7px; color: var(--ink-muted); transition: background .15s ease, color .15s ease;
+  }
+  .tbl-tab:hover { color: var(--ink); }
+  .tbl-tab.active { background: var(--ink); color: var(--card); }
+  .tbl-tab .cnt { opacity: .65; margin-left: 3px; }
+  .tbl-me { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
+  .tbl-me b { color: var(--ink); }
+  .tbl-link { background: none; border: none; cursor: pointer; color: var(--gold); font-family: inherit; font-size: inherit; text-decoration: underline; padding: 0; }
+  .tbl-toolbar-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  /* drewniana podłoga sali */
+  .tbl-floor {
+    position: relative; border-radius: 12px; padding: 18px 16px 22px; min-height: 260px;
+    background-color: #7B5534;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.24) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 34px, rgba(0,0,0,0.05) 34px 68px, rgba(255,255,255,0) 68px 102px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 9px),
+      linear-gradient(180deg, #8A623E, #6C482B);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.38), inset 0 2px 0 rgba(255,255,255,0.06);
+  }
+  .tbl-day {
+    display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .06em; color: #F4EBDD; background: rgba(20,12,6,0.38);
+    padding: 5px 12px; border-radius: 20px; margin: 4px 0 14px;
+  }
+  .tbl-day b { color: #F2D27A; }
+  .tbl-day-block + .tbl-day-block { margin-top: 18px; }
+  .tbl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 32px 20px; }
+  .tbl-card { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; animation: card-in .3s ease backwards; }
+  .tbl-card.past { filter: grayscale(.55) brightness(.92); opacity: .82; }
+  .tbl-card:hover .tbl-scene { transform: translateY(-4px); }
+  .tbl-card:hover .tbl-info { box-shadow: 0 8px 18px rgba(0,0,0,0.35); }
+
+  /* scena stołu */
+  .tbl-scene { --size: 190px; position: relative; width: var(--size); height: var(--size); flex-shrink: 0; transition: transform .25s cubic-bezier(.2,.7,.3,1); }
+  .tbl-top {
+    position: absolute; inset: 19%; border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, transparent 58%, rgba(0,0,0,0.12) 59%, transparent 61%),
+      radial-gradient(circle at 38% 32%, #46996A 0%, #2F7752 45%, #225C3D 100%);
+    box-shadow:
+      0 0 0 calc(var(--size) * 0.036) #6A4426,
+      0 0 0 calc(var(--size) * 0.044) #3F2614,
+      0 calc(var(--size) * 0.05) calc(var(--size) * 0.09) rgba(0,0,0,0.55),
+      inset 0 0 calc(var(--size) * 0.09) rgba(0,0,0,0.38);
+  }
+  .tbl-game {
+    position: absolute; left: 50%; top: 50%; width: 34%; height: 34%; transform: translate(-50%, -50%) rotate(-7deg);
+    border-radius: 5px; overflow: hidden; background: #26343F; border: 2px solid rgba(255,255,255,0.88);
+    box-shadow: 3px 5px 10px rgba(0,0,0,0.5); transition: transform .3s ease; z-index: 1;
+  }
+  .tbl-card:hover .tbl-game { transform: translate(-50%, -50%) rotate(-2deg) scale(1.05); }
+  .tbl-game img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tbl-game .card-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: calc(var(--size) * 0.1); background: transparent; border: none; }
+  .tbl-box-ph {
+    width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    text-align: center; padding: 4px; box-sizing: border-box; color: #fff;
+    background-image: linear-gradient(145deg, rgba(255,255,255,0.22), rgba(0,0,0,0.25));
+  }
+  .tbl-box-ph span { font-size: calc(var(--size) * 0.075); line-height: 1; }
+  .tbl-box-ph b {
+    font-family: 'Fraunces', serif; font-size: calc(var(--size) * 0.052 * var(--fs, 1)); line-height: 1.1; text-shadow: 1px 1px 0 rgba(0,0,0,0.45);
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: break-word; word-break: normal; hyphens: auto;
+  }
+  .tbl-die {
+    position: absolute; left: 74%; top: 64%; width: 11%; height: 11%; border-radius: 22%; background-color: #F4F1E8;
+    background-image: radial-gradient(circle, #26343F 38%, transparent 44%), radial-gradient(circle, #26343F 38%, transparent 44%), radial-gradient(circle, #26343F 38%, transparent 44%);
+    background-size: 36% 36%; background-position: 10% 10%, 50% 50%, 90% 90%; background-repeat: no-repeat;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.45); transform: rotate(18deg);
+  }
+  .tbl-cards { position: absolute; left: 10%; top: 52%; width: 11%; height: 16%; }
+  .tbl-cards i { position: absolute; inset: 0; border-radius: 2px; background: #F4F1E8; border: 1px solid #B8935F; box-shadow: 1px 1px 2px rgba(0,0,0,0.4); }
+  .tbl-cards i:nth-child(1) { transform: rotate(-16deg); background: #2e7f9b; }
+  .tbl-cards i:nth-child(2) { transform: rotate(8deg); }
+  .tbl-seat {
+    position: absolute; left: 50%; top: 50%; width: calc(var(--size) * 0.2); height: calc(var(--size) * 0.2);
+    margin-left: calc(var(--size) * -0.1); margin-top: calc(var(--size) * -0.1); z-index: 2;
+    transform: rotate(var(--a)) translateY(calc(var(--size) * -0.405)) rotate(calc(var(--a) * -1));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tbl-seat::before {
+    content: ''; position: absolute; inset: 4%; border-radius: 34% 34% 26% 26%; transform: rotate(var(--a));
+    background: linear-gradient(180deg, #4A2F1B 0 26%, #6E4829 26% 100%);
+    box-shadow: 0 calc(var(--size) * 0.012) calc(var(--size) * 0.03) rgba(0,0,0,0.45), inset 0 -2px 0 rgba(0,0,0,0.25);
+  }
+  .tbl-seat.tbl-free .tbl-plus {
+    position: relative; width: 66%; height: 66%; border-radius: 50%; border: 2px dashed rgba(255,236,200,0.6);
+    display: flex; align-items: center; justify-content: center; color: rgba(255,236,200,0.9);
+    font-size: calc(var(--size) * 0.075); font-weight: 700; transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .tbl-seat[data-join] { cursor: pointer; }
+  .tbl-seat[data-join]:hover .tbl-plus { transform: scale(1.12); background: rgba(242,210,122,0.3); border-color: #F2D27A; color: #fff; }
+  .tbl-pawn {
+    position: relative; width: 70%; height: 70%; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: calc(var(--size) * 0.06); color: #fff;
+    border: 2px solid #F4F1E8; box-shadow: 0 2px 5px rgba(0,0,0,0.5); text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+  }
+  .tbl-pawn.pop { animation: tbl-pop .45s cubic-bezier(.3,1.7,.5,1); }
+  @keyframes tbl-pop { from { transform: scale(0); } to { transform: scale(1); } }
+  .tbl-seat.me .tbl-pawn { border-color: #F2D27A; box-shadow: 0 0 0 3px rgba(242,210,122,0.45), 0 2px 5px rgba(0,0,0,0.5); }
+  .tbl-seat.host .tbl-pawn::after { content: '👑'; position: absolute; top: -42%; right: -22%; font-size: calc(var(--size) * 0.06); filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5)); }
+  .tbl-seat[data-leave] { cursor: pointer; }
+  .tbl-seat[data-leave]:hover .tbl-pawn { transform: scale(1.08); }
+  .tbl-name {
+    position: absolute; top: 96%; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none;
+    font-family: 'JetBrains Mono', monospace; font-size: max(10px, calc(var(--size) * 0.038)); color: #fff; background: rgba(14,20,24,0.82);
+    padding: 2px 6px; border-radius: 4px; opacity: 0; transition: opacity .15s ease; z-index: 3;
+  }
+  .tbl-seat:hover .tbl-name, .tbl-scene.big .tbl-name { opacity: 1; }
+  .tbl-badges { position: absolute; left: 0; top: 2%; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; z-index: 4; }
+  .tbl-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: max(10px, calc(var(--size) * 0.036)); font-weight: 700; letter-spacing: .06em; padding: 3px 8px;
+    border-radius: 4px; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); color: #16232B; background: #F2D27A;
+  }
+  .tbl-badge.full { background: #C0473A; color: #fff; }
+  .tbl-badge.past { background: #AEB8C1; }
+  .tbl-badge.mine { background: #7FD08A; }
+
+  /* karteczka z opisem stolika */
+  .tbl-info {
+    width: 100%; max-width: 340px; box-sizing: border-box; background: var(--card); border-radius: 12px; padding: 12px 14px;
+    border: 1px solid var(--border-card); box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: box-shadow .2s ease;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .tbl-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; color: var(--ink); line-height: 1.2; display: flex; align-items: flex-start; gap: 6px; }
+  .tbl-title > span { flex: 1; }
+  .tbl-share-ico {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border-card); background: var(--card-alt);
+    cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; transition: border-color .15s ease, transform .15s ease;
+  }
+  .tbl-share-ico:hover { border-color: var(--gold); transform: scale(1.08); }
+  .tbl-title small { font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 10px; color: var(--label); margin-left: 4px; }
+  .tbl-meta { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-muted); line-height: 1.55; }
+  .tbl-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; }
+  .tbl-seats { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--green); }
+  .tbl-seats.full { color: var(--red); }
+  .tbl-progress { flex: 1; height: 5px; border-radius: 3px; background: var(--card-alt); overflow: hidden; }
+  .tbl-progress span { display: block; height: 100%; background: var(--green); border-radius: 3px; transition: width .4s ease; }
+  .tbl-progress.full span { background: var(--red); }
+  .tbl-foot .btn { padding: 6px 10px; font-size: 11px; }
+
+  /* pusta sala */
+  .tbl-empty { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 18px 0 6px; text-align: center; }
+  .tbl-empty p { margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #F4EBDD; text-shadow: 0 1px 0 rgba(0,0,0,0.4); }
+  .tbl-empty .tbl-scene { opacity: .9; }
+
+  /* szczegóły stolika */
+  .tbl-detail { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start; }
+  .tbl-detail .tbl-floor { display: flex; align-items: center; justify-content: center; padding: 34px; min-height: 0; }
+  .tbl-dl { display: flex; flex-direction: column; gap: 12px; min-width: 0; padding-top: 6px; }
+  .tbl-dl-title { font-family: 'Fraunces', serif; font-size: clamp(22px, 2.4vw, 32px); font-weight: 700; color: var(--ink); line-height: 1.15; }
+  .tbl-dl-row { display: flex; gap: 10px; font-size: 15px; color: var(--ink); line-height: 1.45; }
+  .tbl-dl-row > span:first-child { width: 20px; flex-shrink: 0; text-align: center; }
+  .tbl-dl-row small { color: var(--ink-muted); }
+  .tbl-notes { background: var(--card-alt); border-radius: 8px; padding: 8px 10px; font-size: 13px; color: var(--ink); white-space: pre-wrap; border-left: 3px solid var(--gold); }
+  .tbl-players { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tbl-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 3px; border-radius: 20px; background: var(--card-alt); border: 1px solid var(--border-card); font-size: 12px; color: var(--ink); }
+  .tbl-chip.me { border-color: var(--gold); }
+  .tbl-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .tbl-actions .btn { padding: 10px 14px; font-size: 13px; }
+  .tbl-invite-banner {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 16px; border-radius: 12px;
+    background: linear-gradient(120deg, #B8935F, #D9B57A); color: #16232B; box-shadow: 0 4px 14px rgba(0,0,0,0.2); animation: card-in .35s ease;
+  }
+  .tbl-invite-banner b { font-family: 'Fraunces', serif; font-size: 18px; }
+  .tbl-invite-banner > div { flex: 1; min-width: 200px; font-size: 13px; line-height: 1.4; }
+  .tbl-invite-banner .btn { background: #16232B; color: #F0EAD9; }
+  /* okno zaproszenia */
+  .tbl-inv-grid { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; }
+  .tbl-inv-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .tbl-inv-side .tbl-floor { padding: 18px; min-height: 0; display: flex; justify-content: center; }
+  .tbl-inv-qr { background: #F0EAD9; border-radius: 10px; padding: 8px; border: 1px solid var(--border-card); }
+  .tbl-inv-qr img { display: block; width: 132px; height: 132px; }
+  .tbl-inv-main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .tbl-copy-row { display: flex; gap: 8px; }
+  .tbl-copy-row input { flex: 1; min-width: 0; margin-top: 0 !important; font-family: 'JetBrains Mono', monospace !important; font-size: 12px !important; }
+  .tbl-inv-msg { min-height: 158px !important; font-size: 12px !important; line-height: 1.5; }
+  .tbl-inv-btns { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .tbl-inv-btns .btn { justify-content: center; padding: 10px 8px; }
+  .tbl-btn-danger { background: none; border: 1px solid var(--red) !important; color: var(--red) !important; }
+
+  /* formularz */
+  .tbl-form-grid { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+  .tbl-form { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .tbl-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tbl-form select, .tbl-form textarea { width: 100%; box-sizing: border-box; }
+  .tbl-form select {
+    margin-top: 4px; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-card); background: #fff;
+    font-size: 14px; font-family: 'Inter', sans-serif; color: #16232B; outline: none; cursor: pointer;
+  }
+  .tbl-form .field.invalid select { border-color: var(--red); }
+  .tbl-form textarea { min-height: 62px; }
+  .tbl-stepper { display: inline-flex; align-items: center; border: 1px solid var(--border-card); border-radius: 8px; overflow: hidden; background: var(--card); }
+  .tbl-stepper button { width: 36px; height: 34px; border: none; background: var(--card-alt); cursor: pointer; font-size: 16px; color: var(--ink); }
+  .tbl-stepper button:hover { background: var(--border-card); }
+  .tbl-stepper span { min-width: 44px; text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); }
+  .tbl-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); cursor: pointer; }
+  .tbl-preview { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .tbl-preview .tbl-floor { padding: 22px; min-height: 0; display: flex; justify-content: center; }
+  .tbl-preview-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--label); }
+  @media (max-width: 720px) {
+    .tbl-detail, .tbl-form-grid, .tbl-inv-grid { grid-template-columns: 1fr; }
+    .modal.modal-tables { height: 96vh; max-height: 96vh; width: 98vw; max-width: 98vw; }
+    .modal-tables .modal-body { padding: 12px; }
+    .tbl-detail .tbl-floor, .tbl-preview .tbl-floor { padding: 18px; }
+    .tbl-preview { order: -1; }
+  }
+  @media (max-width: 600px) {
+    .tbl-toolbar { flex-direction: column; align-items: stretch; }
+    .tbl-tabs { justify-content: space-between; }
+    .tbl-tab { flex: 1; padding: 7px 4px; font-size: 11px; }
+    .tbl-toolbar-right { justify-content: space-between; }
+    .tbl-floor { padding: 14px 10px 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tbl-pawn.pop, .tbl-card { animation: none; }
+  }
+  /* ---- Ustawienia: linki i Slack ---- */
+  .modal.modal-settings { max-width: min(640px, 96vw); }
+  .modal-settings .modal-head { gap: 10px; }
+  .modal-settings .modal-head h2 { flex: 1; }
+  .set-section { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid var(--border-card); border-radius: 10px; background: var(--card-alt); }
+  .set-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--ink); }
+  .set-now { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); }
+  .set-now b { color: var(--ink); }
+  .set-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .set-help { font-size: 12px; color: var(--ink); line-height: 1.55; }
+  .set-help summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); }
+  .set-help ol { margin: 8px 0 4px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+  .set-help p { margin: 4px 0 0; color: var(--ink-muted); }
+  .set-help code, .set-warn code { font-size: 11px; background: rgba(0,0,0,0.07); padding: 1px 4px; border-radius: 3px; }
+  .set-warn {
+    border-left: 4px solid #C0473A; background: rgba(192,71,58,0.09); border-radius: 8px; padding: 10px 12px;
+    font-size: 13px; line-height: 1.5; color: var(--ink);
+  }
+  .set-warn b { display: block; margin-bottom: 2px; }
+  .tbl-slack-on { color: #7FD08A; font-size: 10px; }
+
+  /* ---- Minigry: duża plansza + panel boczny ---- */
+  .modal.modal-game-play { max-width: min(1560px, 97vw); width: 100%; max-height: 96vh; }
+  .modal-game-play .modal-body { padding: 14px 18px 18px; }
+  .arcade-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }
+  .arcade-main { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
+  .arcade-main .arcade-wrap, .arcade-main .arcade-btn-row { width: min(100%, calc((96vh - 128px) * 16 / 9)); }
+  .arcade-main.has-below .arcade-wrap, .arcade-main.has-below .arcade-btn-row { width: min(100%, calc((96vh - 186px) * 16 / 9)); }
+  .arcade-side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .arcade-side .arcade-controls {
+    text-align: left; font-size: 12px; line-height: 1.55; background: var(--card-alt); border: 1px solid var(--border-card);
+    border-radius: 10px; padding: 10px 12px;
+  }
+  .arcade-side .rank-section-title { margin-top: 0; }
+  .arcade-wrap { container-type: inline-size; }
+  @supports (font-size: 1cqw) {
+    .arcade-hud { font-size: clamp(8px, 1.5cqw, 15px); }
+    .arcade-banner { font-size: clamp(10px, 1.6cqw, 16px); }
+    .arcade-banner b { font-size: clamp(13px, 2.4cqw, 24px); }
+    .arcade-banner-pts { font-size: clamp(14px, 2.8cqw, 28px); }
+    .arcade-title { font-size: clamp(18px, 4.2cqw, 44px); }
+    .arcade-hint { font-size: clamp(10px, 1.8cqw, 18px); }
+    .arcade-card { width: min(380px, 70%); }
+    .arcade-score-big { font-size: clamp(22px, 5cqw, 48px); }
+    .arcade-bar { width: clamp(44px, 9cqw, 110px); height: clamp(5px, 0.9cqw, 10px); }
+    .arcade-mini i { width: clamp(4px, 0.75cqw, 9px); height: clamp(4px, 0.75cqw, 9px); }
+  }
+  @media (max-width: 980px) {
+    .arcade-layout { grid-template-columns: 1fr; }
+    .arcade-main .arcade-wrap, .arcade-main .arcade-btn-row,
+    .arcade-main.has-below .arcade-wrap, .arcade-main.has-below .arcade-btn-row { width: 100%; }
+  }
+
   /* ---- Poprawki dla telefonów / wąskich ekranów ---- */
   @media (max-width: 600px) {
     .wrap { padding: 24px 14px; }
@@ -1041,6 +1332,7 @@
     </div>
     <div class="header-actions">
       <button class="btn btn-outline" id="rankingBtn">🏆 Ranking</button>
+      <button class="btn btn-outline" id="tablesBtn">🪑 Stoliki <span class="tbl-count" id="tablesCount"></span></button>
       <button class="btn btn-outline" id="arcadeBtn">🎮 Minigra</button>
       <button class="btn btn-outline" id="shareBtn">🔗 Udostępnij</button>
       <button class="btn btn-outline" id="importBtn">📋 Import listy</button>
@@ -1393,8 +1685,7 @@ async function fetchBggCover(bggUrl) {
 
 
 function shareUrl(id) {
-  const base = window.location.href.split("#")[0];
-  return base + "#g-" + id;
+  return publicLink('#g-' + id);
 }
 
 let sortBy = "default";
@@ -2403,6 +2694,7 @@ function openQuickActions(id) {
           <button class="icon-toolbar-btn" onclick="openReservations('${id}')" title="Rezerwuj termin">📅</button>
           <button class="icon-toolbar-btn" onclick="openHistory('${id}')" title="Historia wypożyczeń">🕑</button>
           <button class="icon-toolbar-btn" onclick="openQr('${id}')" title="Kod QR">▦</button>
+          <button class="icon-toolbar-btn" onclick="openTableForm(null, '${id}')" title="Zorganizuj stolik z tą grą">🪑</button>
           <span class="icon-toolbar-spacer"></span>
           <button class="icon-toolbar-btn" onclick="openEdit('${id}')" title="Edytuj grę">✎</button>
         </div>
@@ -2423,13 +2715,32 @@ function openQuickActions(id) {
 function openQr(id) {
   const g = games.find(x => x.id === id);
   const url = shareUrl(id);
+  if (!url) {
+    openModal(`
+      <div class="modal">
+        <div class="modal-head"><h2 class="display">${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
+        <div class="modal-body">
+          <div class="set-warn"><b>Kod QR nie zadziała jeszcze u innych.</b> Strona jest otwarta jako ${escapeHtml(pageLocationLabel())}, a telefon po zeskanowaniu nie otworzy pliku z Twojego komputera.
+          Kod QR pojawi się, gdy strona będzie dostępna w internecie (np. GitHub Pages).</div>
+          <div class="field"><label>Publiczny adres strony</label><input id="qr-pub" type="url" placeholder="https://twoja-nazwa.github.io/biblioteczka/"></div>
+        </div>
+        <div class="modal-foot" style="justify-content:flex-end"><button class="btn btn-gold" id="qr-pub-save">Zapisz i pokaż kod QR</button></div>
+      </div>`);
+    document.getElementById('qr-pub-save').onclick = () => {
+      const v = document.getElementById('qr-pub').value.trim();
+      if (!/^https?:\/\/[^\s]+$/i.test(v)) { toast('Adres musi zaczynać się od https://', 'error'); return; }
+      settingsRef.set({ publicUrl: v, slack: appSettings.slack }).then(() => { appSettings.publicUrl = v; openQr(id); })
+        .catch(() => toast('Nie udało się zapisać (sprawdź reguły Firebase dla „settings”).', 'error'));
+    };
+    return;
+  }
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(url)}&color=1F2A24&bgcolor=F0EAD9`;
   openModal(`
     <div class="modal">
       <div class="modal-head"><h2 class="display">${escapeHtml(g.name)}</h2><button onclick="closeModal()">✕</button></div>
       <div class="qr-body">
         <img src="${qrSrc}" width="200" height="200" alt="QR">
-        <div class="qr-url">${url}</div>
+        <div class="qr-url">${escapeHtml(url)}</div>
         <div class="qr-hint">Wydrukuj i nalep na pudełko gry. Zeskanowanie otworzy tę stronę z podświetloną grą.</div>
       </div>
     </div>
@@ -2669,13 +2980,15 @@ function arcOpenShell(gameKey, opts) {
   const game = arcGame(gameKey);
   arcNewSession();
   openModal(`
-    <div class="modal modal-game">
+    <div class="modal modal-game modal-game-play">
       <div class="modal-head">
         <button class="arcade-back" id="arcade-back" title="Wróć do salonu gier">‹ Salon</button>
         <h2 class="display">${game.icon} ${game.title}</h2>
         <button onclick="closeModal()">✕</button>
       </div>
       <div class="modal-body">
+       <div class="arcade-layout">
+        <div class="arcade-main ${opts.below ? 'has-below' : ''}">
         <div class="arcade-wrap ${opts.wrapClass || ''}" id="arcade-wrap">
           <canvas id="arcade-canvas" width="${ARC_W}" height="${ARC_H}"></canvas>
           <div class="arcade-hud" id="arcade-hud"></div>
@@ -2687,11 +3000,15 @@ function arcOpenShell(gameKey, opts) {
           <div class="arcade-overlay over hidden" id="arcade-over"></div>
         </div>
         ${opts.below || ''}
-        <div class="arcade-controls">${opts.controls}</div>
-        <div>
-          <div class="rank-section-title">🏆 Najlepsi gracze</div>
-          <div id="arcade-board"><div class="rank-empty">Ładowanie rankingu…</div></div>
         </div>
+        <aside class="arcade-side">
+          <div class="arcade-controls">${opts.controls}</div>
+          <div>
+            <div class="rank-section-title">🏆 Najlepsi gracze</div>
+            <div id="arcade-board"><div class="rank-empty">Ładowanie rankingu…</div></div>
+          </div>
+        </aside>
+       </div>
       </div>
     </div>
   `);
@@ -3980,6 +4297,783 @@ function openCargo() {
   drawHud();
   arcRunLoop(canvas, (dt) => { update(dt); draw(); });
 }
+// ================== STOLIKI — zapisy na wspólne granie ==================
+const tablesRef = db.ref('tables');
+const TBL_NAME_KEY = 'biblioteczka-gier-my-name';
+let tblList = [];
+let tblView = { mode: 'list', tab: 'upcoming', id: null };
+const tblSeen = new Set();      // gracze już narysowani (animacja tylko dla nowych)
+
+function tblPad(n) { return String(n).padStart(2, '0'); }
+function tblToday() { const d = new Date(); return `${d.getFullYear()}-${tblPad(d.getMonth() + 1)}-${tblPad(d.getDate())}`; }
+function tblAddDays(s, n) { const d = new Date(s + 'T00:00:00'); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${tblPad(d.getMonth() + 1)}-${tblPad(d.getDate())}`; }
+function tblGetName() { try { return localStorage.getItem(TBL_NAME_KEY) || arcGetName() || ''; } catch (e) { return ''; } }
+function tblSetName(v) { try { localStorage.setItem(TBL_NAME_KEY, v); } catch (e) {} arcSetName(v); }
+function tblKey(name) { return String(name || '').toLowerCase().trim().replace(/[.#$\[\]\/\s]+/g, '_').slice(0, 40) || 'anon'; }
+function tblIsPast(t) { return t.date < tblToday(); }
+function tblGameOf(t) { return t.gameId ? games.find(g => g.id === t.gameId) : null; }
+function tblGameName(t) { const g = tblGameOf(t); return g ? g.name : (t.gameName || 'Gra'); }
+function tblSeatsOf(t) { return arcClamp(Number(t.seats) || 4, 2, 10); }
+function tblPlayers(t) {
+  return Object.entries(t.players || {}).map(([key, p]) => ({ key, name: p.name, joinedAt: p.joinedAt || 0 }))
+    .sort((a, b) => {
+      const ha = tblKey(a.name) === tblKey(t.host) ? 0 : 1, hb = tblKey(b.name) === tblKey(t.host) ? 0 : 1;
+      return ha - hb || a.joinedAt - b.joinedAt;
+    });
+}
+function tblIsMine(t) {
+  const me = tblGetName();
+  if (!me) return false;
+  const k = tblKey(me);
+  return !!(t.players && t.players[k]) || tblKey(t.host) === k;
+}
+function tblDayLabel(d) {
+  const today = tblToday();
+  const long = new Date(d + 'T00:00:00').toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
+  if (d === today) return `<b>Dziś</b> · ${long}`;
+  if (d === tblAddDays(today, 1)) return `<b>Jutro</b> · ${long}`;
+  return long;
+}
+function tblLongDate(d) { return new Date(d + 'T00:00:00').toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+function tblSort(a, b) { return (a.date + a.time).localeCompare(b.date + b.time); }
+function tblDurationMin(str) {
+  const s = String(str || '').toLowerCase().replace(',', '.');
+  const h = s.match(/(\d+(?:\.\d+)?)\s*h/), m = s.match(/(\d+)\s*min/);
+  const v = (h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0);
+  return v || 120;
+}
+function tblMaxPlayers(p) { const v = parsePlayersMax(p); return v === 999 ? 0 : v; }
+function tblWriteError() { toast('Nie udało się zapisać (sprawdź reguły Firebase dla „tables”).', 'error'); }
+function tblBoxColor(name) {
+  const palette = ['#2e7f9b', '#A8483A', '#4F7A57', '#8F6B8A', '#B8935F', '#3a6579', '#6B7A8F'];
+  let h = 0;
+  for (const ch of String(name || '')) h = (h * 31 + ch.charCodeAt(0)) % 997;
+  return palette[h % palette.length];
+}
+
+// ---- synchronizacja z bazą ----
+tablesRef.on('value', (snap) => {
+  const val = snap.val() || {};
+  tblList = Object.values(val).filter(t => t && t.id && t.date).sort(tblSort);
+  tblUpdateBadge();
+  setTimeout(() => tblHandleLink(false), 0);
+  if (document.getElementById('tbl-root') && tblView.mode !== 'form') tblRender();
+  setTimeout(() => { try { checkDueNotifications(); } catch (e) {} }, 0);
+}, () => {
+  const el = document.getElementById('tbl-body');
+  if (el) el.innerHTML = '<div class="rank-empty">Brak dostępu do stolików w bazie (sprawdź reguły Firebase dla „tables”).</div>';
+});
+function tblUpdateBadge() {
+  const el = document.getElementById('tablesCount');
+  if (el) { const n = tblList.filter(t => !tblIsPast(t)).length; el.textContent = n ? String(n) : ''; }
+}
+
+// ---- rysowanie stołu ----
+function tblSceneHtml(t, opts) {
+  opts = opts || {};
+  const size = opts.size || 190;
+  const seats = tblSeatsOf(t);
+  const players = tblPlayers(t);
+  const meKey = tblGetName() ? tblKey(tblGetName()) : null;
+  const hostKey = tblKey(t.host);
+  const g = tblGameOf(t);
+  const gname = tblGameName(t);
+  const box = g && g.hasCover
+    ? `<img data-cover-id="${g.id}" alt="${escapeHtml(gname)}">`
+    : (() => {
+        const longest = Math.max(...gname.split(/\s+/).map(w => w.length));
+        const fs = longest > 13 ? 0.68 : longest > 11 ? 0.78 : longest > 9 ? 0.9 : 1;
+        return `<div class="tbl-box-ph" style="background-color:${tblBoxColor(gname)}; --fs:${fs}"><span>🎲</span><b>${escapeHtml(gname)}</b></div>`;
+      })();
+  const live = opts.interactive && !tblIsPast(t);
+  let seatsHtml = '';
+  for (let i = 0; i < seats; i++) {
+    const a = 360 * i / seats;
+    const p = players[i];
+    if (p) {
+      const sk = t.id + ':' + p.key;
+      const pop = opts.animate && !tblSeen.has(sk);
+      if (opts.animate) tblSeen.add(sk);
+      const mine = p.key === meKey;
+      seatsHtml += `<div class="tbl-seat taken ${mine ? 'me' : ''} ${tblKey(p.name) === hostKey ? 'host' : ''}" style="--a:${a}deg" ${live && mine ? `data-leave="${t.id}" title="Kliknij, aby zwolnić miejsce"` : `title="${escapeHtml(p.name)}"`}>
+        <span class="tbl-pawn ${pop ? 'pop' : ''}" style="background:${avatarColor(p.name)}">${initials(p.name)}</span>
+        <span class="tbl-name">${escapeHtml(p.name)}${mine ? ' (Ty)' : ''}</span>
+      </div>`;
+    } else {
+      seatsHtml += `<div class="tbl-seat tbl-free" style="--a:${a}deg" ${live ? `data-join="${t.id}" title="Zajmij to miejsce"` : ''}><span class="tbl-plus">+</span></div>`;
+    }
+  }
+  const badges = [];
+  if (opts.badges) {
+    if (tblIsPast(t)) badges.push('<span class="tbl-badge past">ODBYŁ SIĘ</span>');
+    else {
+      if (t.date === tblToday()) badges.push('<span class="tbl-badge">DZIŚ</span>');
+      if (players.length >= seats) badges.push('<span class="tbl-badge full">KOMPLET</span>');
+    }
+    if (tblIsMine(t)) badges.push('<span class="tbl-badge mine">GRASZ</span>');
+  }
+  return `<div class="tbl-scene ${opts.big ? 'big' : ''}" style="--size:${typeof size === 'number' ? size + 'px' : size}">
+    <div class="tbl-top"><span class="tbl-die"></span><span class="tbl-cards"><i></i><i></i></span></div>
+    <div class="tbl-game">${box}</div>
+    ${seatsHtml}
+    ${badges.length ? `<div class="tbl-badges">${badges.join('')}</div>` : ''}
+  </div>`;
+}
+
+function tblCardHtml(t) {
+  const players = tblPlayers(t), seats = tblSeatsOf(t);
+  const full = players.length >= seats, past = tblIsPast(t);
+  const meIn = tblGetName() && t.players && t.players[tblKey(tblGetName())];
+  const inLib = !!tblGameOf(t);
+  let action = '';
+  if (!past) {
+    if (meIn) action = `<button class="btn btn-outline" data-leave="${t.id}">Wypisz się</button>`;
+    else if (!full) action = `<button class="btn btn-green" data-join="${t.id}">Dołącz</button>`;
+  }
+  return `<div class="tbl-card ${past ? 'past' : ''}" data-open="${t.id}">
+    ${tblSceneHtml(t, { size: 'clamp(240px, 20vw, 320px)', interactive: true, badges: true, animate: true })}
+    <div class="tbl-info">
+      <div class="tbl-title"><span>${escapeHtml(tblGameName(t))}${inLib ? '' : '<small>spoza biblioteczki</small>'}</span>${past ? '' : `<button class="tbl-share-ico" data-invite="${t.id}" title="Zaproś do stolika (link)">🔗</button>`}</div>
+      <div class="tbl-meta">🕖 ${escapeHtml(t.time || '—')} · 📍 ${escapeHtml(t.place || '—')}<br>👑 ${escapeHtml(t.host || '—')}</div>
+      <div class="tbl-foot">
+        <span class="tbl-seats ${full ? 'full' : ''}">👥 ${players.length}/${seats}</span>
+        <span class="tbl-progress ${full ? 'full' : ''}"><span style="width:${Math.round(players.length / seats * 100)}%"></span></span>
+        ${action}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ---- główne okno ----
+function openTables(view) {
+  if (view) tblView = Object.assign({ mode: 'list', tab: 'upcoming', id: null, invited: null }, view);
+  if (tblView.mode === 'form') tblView.mode = 'list';
+  openModal(`<div class="modal modal-tables" id="tbl-root"></div>`);
+  const root = document.getElementById('tbl-root');
+  root.addEventListener('click', tblOnClick);
+  tblRender();
+}
+
+function tblRender() {
+  const root = document.getElementById('tbl-root');
+  if (!root) return;
+  const oldBody = document.getElementById('tbl-body');
+  const scroll = oldBody ? oldBody.scrollTop : 0;
+  if (tblView.mode === 'detail') {
+    const t = tblList.find(x => x.id === tblView.id);
+    if (!t) { tblView.mode = 'list'; return tblRender(); }
+    root.innerHTML = `
+      <div class="modal-head">
+        <button class="arcade-back" data-act="back">‹ Wszystkie stoliki</button>
+        <h2 class="display">🪑 Stolik</h2>
+        <button onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="tbl-body">${tblDetailHtml(t)}</div>`;
+  } else {
+    const upcoming = tblList.filter(t => !tblIsPast(t));
+    const mine = upcoming.filter(tblIsMine);
+    const archive = tblList.filter(tblIsPast).reverse();
+    const list = tblView.tab === 'mine' ? mine : tblView.tab === 'archive' ? archive : upcoming;
+    const me = tblGetName();
+    const tab = (k, label, n) => `<button class="tbl-tab ${tblView.tab === k ? 'active' : ''}" data-tab="${k}">${label}<span class="cnt">${n}</span></button>`;
+    let floor;
+    if (!list.length) {
+      const demo = { id: '_demo', gameName: '?', seats: 4, players: {}, date: tblToday(), host: '' };
+      floor = `<div class="tbl-empty">
+        ${tblSceneHtml(demo, { size: 240 })}
+        <p>${tblView.tab === 'archive' ? 'Archiwum jest puste.' : tblView.tab === 'mine' ? 'Nie siedzisz jeszcze przy żadnym stoliku.' : 'Sala czeka na graczy — załóż pierwszy stolik!'}</p>
+        ${tblView.tab !== 'archive' ? '<button class="btn btn-gold" data-act="new">+ Nowy stolik</button>' : ''}
+      </div>`;
+    } else {
+      const byDay = {};
+      list.forEach(t => (byDay[t.date] = byDay[t.date] || []).push(t));
+      floor = Object.keys(byDay).map(d => `
+        <div class="tbl-day-block">
+          <div class="tbl-day">📅 ${tblDayLabel(d)}</div>
+          <div class="tbl-grid">${byDay[d].map(tblCardHtml).join('')}</div>
+        </div>`).join('');
+    }
+    root.innerHTML = `
+      <div class="modal-head"><h2 class="display">🪑 Stoliki do gry</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body" id="tbl-body">
+        <div class="tbl-toolbar">
+          <div class="tbl-tabs">
+            ${tab('upcoming', 'Nadchodzące', upcoming.length)}${tab('mine', 'Moje', mine.length)}${tab('archive', 'Archiwum', archive.length)}
+          </div>
+          <div class="tbl-toolbar-right">
+            <span class="tbl-me">${me ? `Grasz jako <b>${escapeHtml(me)}</b> <button class="tbl-link" data-act="name">zmień</button>` : `<button class="tbl-link" data-act="name">Przedstaw się</button>`}</span>
+            <button class="btn btn-outline tbl-set-btn" data-act="settings" title="Linki i powiadomienia na Slacku">⚙️ Linki i Slack${slackEnabled() ? ' <span class="tbl-slack-on">●</span>' : ''}</button>
+            <button class="btn btn-gold" data-act="new">+ Nowy stolik</button>
+          </div>
+        </div>
+        <div class="tbl-floor tbl-floor-main">${floor}</div>
+      </div>`;
+  }
+  hydrateCovers(root);
+  const body = document.getElementById('tbl-body');
+  if (body) body.scrollTop = scroll;
+}
+
+function tblDetailHtml(t) {
+  const players = tblPlayers(t), seats = tblSeatsOf(t), past = tblIsPast(t);
+  const me = tblGetName(), meKey = me ? tblKey(me) : null;
+  const meIn = meKey && t.players && t.players[meKey];
+  const full = players.length >= seats;
+  const g = tblGameOf(t);
+  const end = (() => { const [hh, mm] = (t.time || '18:00').split(':').map(Number); const tot = hh * 60 + mm + tblDurationMin(g && g.duration); return `${tblPad(Math.floor(tot / 60) % 24)}:${tblPad(tot % 60)}`; })();
+  let joinBtn = '';
+  if (!past) {
+    if (meIn) joinBtn = `<button class="btn btn-outline" data-leave="${t.id}">Zwolnij miejsce</button>`;
+    else if (!full) joinBtn = `<button class="btn btn-green" data-join="${t.id}">🪑 Zajmij miejsce</button>`;
+    else joinBtn = `<button class="btn btn-outline" disabled>Komplet graczy</button>`;
+  }
+  const invited = tblView.invited === t.id && !past;
+  const banner = invited ? `<div class="tbl-invite-banner">
+      <span style="font-size:30px">✉️</span>
+      <div><b>Zaproszenie do stolika!</b><br>${escapeHtml(t.host || 'Ktoś')} zaprasza Cię do gry: <b style="font-size:inherit">${escapeHtml(tblGameName(t))}</b> — ${tblLongDate(t.date)}, ${escapeHtml(t.time)}.
+      ${meIn ? 'Masz już tu miejsce 🎉' : full ? 'Niestety wszystkie miejsca są zajęte.' : `Wolne miejsca: ${seats - players.length}.`}</div>
+      ${!meIn && !full ? `<button class="btn" data-join="${t.id}">🪑 Zajmij miejsce</button>` : ''}
+    </div>` : '';
+  return `${banner}<div class="tbl-detail">
+    <div class="tbl-floor">${tblSceneHtml(t, { size: 'min(560px, 72vw, 64vh)', big: true, interactive: true, badges: true, animate: true })}</div>
+    <div class="tbl-dl">
+      <div class="tbl-dl-title">${escapeHtml(tblGameName(t))}</div>
+      <div class="tbl-dl-row"><span>📅</span><span>${tblLongDate(t.date)}<br><small>${escapeHtml(t.time || '')} – ok. ${end}${g && g.duration ? ` (czas gry: ${escapeHtml(g.duration)})` : ''}</small></span></div>
+      <div class="tbl-dl-row"><span>📍</span><span>${escapeHtml(t.place || '—')}</span></div>
+      <div class="tbl-dl-row"><span>👑</span><span>Organizuje: <b>${escapeHtml(t.host || '—')}</b></span></div>
+      <div class="tbl-dl-row"><span>👥</span><span>${players.length} z ${seats} miejsc zajętych${g && g.players ? ` <small>(gra na ${escapeHtml(g.players)} os.)</small>` : ''}</span></div>
+      ${!g ? `<div class="tbl-dl-row"><span>📦</span><span><small>Gra spoza biblioteczki — ktoś musi ją przynieść.</small></span></div>` : ''}
+      ${t.notes ? `<div class="tbl-notes">${escapeHtml(t.notes)}</div>` : ''}
+      ${players.length ? `<div class="tbl-players">${players.map(p => `<span class="tbl-chip ${p.key === meKey ? 'me' : ''}">${avatarHtml(p.name)}${escapeHtml(p.name)}${tblKey(p.name) === tblKey(t.host) ? ' 👑' : ''}</span>`).join('')}</div>` : '<div class="rank-empty">Nikt jeszcze nie usiadł przy stole.</div>'}
+      <div class="tbl-actions">
+        ${joinBtn}
+        ${!past ? `<button class="btn btn-gold" data-invite="${t.id}">🔗 Zaproś</button>` : ''}
+        <button class="btn btn-outline" data-act="ics">📆 Do kalendarza</button>
+        ${!past ? `<button class="btn btn-outline" data-act="edit">✎ Edytuj</button>` : ''}
+        <button class="btn tbl-btn-danger" data-act="delete">🗑 Usuń</button>
+      </div>
+      ${g ? `<div><button class="tbl-link" data-act="game" style="font-family:'JetBrains Mono',monospace; font-size:11px">Pokaż grę w biblioteczce →</button></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function tblOnClick(e) {
+  const el = (sel) => e.target.closest(sel);
+  let n;
+  if ((n = el('[data-join]'))) { e.stopPropagation(); return tblJoin(n.dataset.join); }
+  if ((n = el('[data-leave]'))) { e.stopPropagation(); return tblLeave(n.dataset.leave); }
+  if ((n = el('[data-invite]'))) { e.stopPropagation(); return openTableInvite(n.dataset.invite); }
+  if ((n = el('[data-tab]'))) { tblView.tab = n.dataset.tab; return tblRender(); }
+  if ((n = el('[data-act]'))) {
+    const act = n.dataset.act, t = tblList.find(x => x.id === tblView.id);
+    if (act === 'back') { tblView.mode = 'list'; tblView.invited = null; return tblRender(); }
+    if (act === 'new') return openTableForm(null);
+    if (act === 'settings') return openAppSettings(() => openTables());
+    if (act === 'name') return tblAskName(() => openTables(), true);
+    if (act === 'edit' && t) return openTableForm(t.id);
+    if (act === 'ics' && t) return tblDownloadIcs(t);
+    if (act === 'game' && t) return openQuickActions(t.gameId);
+    if (act === 'delete' && t) {
+      return confirmAction(`Usunąć stolik „${tblGameName(t)}” (${fmtDate(t.date)}, ${t.time})?`, () => {
+        tablesRef.child(t.id).remove().then(() => toast('Stolik usunięty.')).catch(tblWriteError);
+        setTimeout(() => openTables({ mode: 'list', tab: tblView.tab }), 200);
+      });
+    }
+    return;
+  }
+  if ((n = el('[data-open]'))) { tblView = Object.assign(tblView, { mode: 'detail', id: n.dataset.open }); return tblRender(); }
+}
+
+// ---- dołączanie i wypisywanie ----
+function tblAskName(then, changing) {
+  const cur = tblGetName();
+  openModal(`
+    <div class="modal">
+      <div class="modal-head"><h2 class="display">${changing ? 'Twoje imię' : 'Kto siada przy stole?'}</h2><button onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="field" id="tn-field"><label>Imię i nazwisko</label><input id="tn-name" maxlength="30" value="${escapeHtml(cur)}" placeholder="np. Anna Kowalska" autofocus><div class="field-error">Podaj imię</div></div>
+        <div class="field-hint">Zapamiętamy je w tej przeglądarce, żeby następnym razem dołączać jednym kliknięciem.</div>
+      </div>
+      <div class="modal-foot" style="justify-content:flex-end"><button class="btn btn-green" id="tn-ok">${changing ? 'Zapisz' : 'Dołącz'}</button></div>
+    </div>`);
+  const input = document.getElementById('tn-name');
+  setTimeout(() => input.focus(), 50);
+  document.getElementById('tn-ok').onclick = () => {
+    const v = input.value.trim();
+    if (!v) { document.getElementById('tn-field').classList.add('invalid'); return; }
+    tblSetName(v);
+    then();
+  };
+}
+
+function tblJoin(id) {
+  const me = tblGetName();
+  if (!me) return tblAskName(() => { openTables(); tblJoin(id); });
+  const t = tblList.find(x => x.id === id);
+  if (!t) return;
+  if (tblIsPast(t)) return toast('Ten stolik już się odbył.', 'error');
+  const k = tblKey(me);
+  if (t.players && t.players[k]) return toast('Już siedzisz przy tym stoliku.');
+  if (tblPlayers(t).length >= tblSeatsOf(t)) return toast('Przy tym stoliku nie ma już wolnych miejsc.', 'error');
+  tablesRef.child(`${id}/players/${k}`).set({ name: me, joinedAt: Date.now() })
+    .then(() => {
+      toast(`Zajęto miejsce: ${tblGameName(t)} · ${t.time}`);
+      const nt = JSON.parse(JSON.stringify(t));
+      nt.players = Object.assign({}, nt.players, { [k]: { name: me, joinedAt: Date.now() } });
+      slackNotify(tblPlayers(nt).length >= tblSeatsOf(nt) ? 'full' : 'join', nt, me);
+    })
+    .catch(tblWriteError);
+}
+
+function tblLeave(id) {
+  const me = tblGetName();
+  const t = tblList.find(x => x.id === id);
+  if (!t || !me) return;
+  tablesRef.child(`${id}/players/${tblKey(me)}`).remove()
+    .then(() => { tblSeen.delete(id + ':' + tblKey(me)); toast('Zwolniono miejsce przy stoliku.'); })
+    .catch(tblWriteError);
+}
+
+// ---- formularz: nowy stolik / edycja ----
+function openTableForm(editId, presetGameId) {
+  const t = editId ? tblList.find(x => x.id === editId) : null;
+  tblView.mode = 'form';
+  const sorted = [...games].sort((a, b) => a.name.localeCompare(b.name, 'pl'));
+  const places = [...new Set(tblList.map(x => x.place).filter(Boolean))];
+  const presetGame = presetGameId ? games.find(g => g.id === presetGameId) : null;
+  const draft = t ? JSON.parse(JSON.stringify(t)) : {
+    id: uid(), gameId: presetGame ? presetGame.id : '', gameName: '', date: tblToday(), time: '18:00',
+    place: places[places.length - 1] || '', seats: presetGame && tblMaxPlayers(presetGame.players) ? arcClamp(tblMaxPlayers(presetGame.players), 2, 10) : 4,
+    host: tblGetName(), notes: '', players: {}
+  };
+  let seatsTouched = !!t;
+  const otherSelected = t && !t.gameId;
+  openModal(`
+    <div class="modal modal-tables-form">
+      <div class="modal-head">
+        <button class="arcade-back" id="t-back">‹ Stoliki</button>
+        <h2 class="display">${t ? '✎ Edycja stolika' : '🪑 Nowy stolik'}</h2>
+        <button onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="tbl-form-grid">
+          <div class="tbl-form">
+            <div class="field" id="t-game-field">
+              <label>Gra</label>
+              <select id="t-game">
+                <option value="">— wybierz z biblioteczki —</option>
+                ${sorted.map(g => `<option value="${g.id}" ${draft.gameId === g.id ? 'selected' : ''}>${escapeHtml(g.name)}${g.players ? ` (${escapeHtml(g.players)} os.)` : ''}${g.status === 'borrowed' ? ' · wypożyczona' : ''}</option>`).join('')}
+                <option value="__other" ${otherSelected ? 'selected' : ''}>✏️ Inna gra (spoza biblioteczki)…</option>
+              </select>
+              <div class="field-error">Wybierz grę</div>
+            </div>
+            <div class="field" id="t-other-field" style="${otherSelected ? '' : 'display:none'}">
+              <label>Nazwa gry spoza biblioteczki</label>
+              <input id="t-other" maxlength="60" value="${escapeHtml(otherSelected ? draft.gameName : '')}" placeholder="np. Catan (przyniosę swoją)">
+              <div class="field-error">Wpisz nazwę gry</div>
+            </div>
+            <div class="field-hint" id="t-game-hint"></div>
+            <div class="tbl-row2">
+              <div class="field" id="t-date-field"><label>Dzień</label><input id="t-date" type="date" value="${draft.date}" ${t ? '' : `min="${tblToday()}"`}><div class="field-error">Wybierz dzień (nie wcześniej niż dziś)</div></div>
+              <div class="field" id="t-time-field"><label>Godzina</label><input id="t-time" type="time" value="${escapeHtml(draft.time)}"><div class="field-error">Podaj godzinę</div></div>
+            </div>
+            <div class="field" id="t-place-field">
+              <label>Miejsce</label>
+              <input id="t-place" list="t-places" maxlength="60" value="${escapeHtml(draft.place)}" placeholder="np. Sala konferencyjna 2.14, kuchnia na 3. piętrze">
+              <datalist id="t-places">${places.map(p => `<option value="${escapeHtml(p)}">`).join('')}</datalist>
+              <div class="field-error">Podaj miejsce</div>
+            </div>
+            <div class="tbl-row2">
+              <div class="field"><label>Miejsca przy stole</label>
+                <div style="margin-top:4px"><div class="tbl-stepper"><button type="button" id="t-minus">−</button><span id="t-seats">${tblSeatsOf(draft)}</span><button type="button" id="t-plus">+</button></div></div>
+              </div>
+              <div class="field" id="t-host-field"><label>Organizator</label><input id="t-host" maxlength="30" value="${escapeHtml(draft.host || '')}" placeholder="Twoje imię"><div class="field-error">Podaj imię organizatora</div></div>
+            </div>
+            ${t ? '' : '<label class="tbl-check"><input type="checkbox" id="t-join" checked> Siadam przy stole jako pierwszy gracz</label>'}
+            <div class="field"><label>Notatka (opcjonalnie)</label><textarea id="t-notes" rows="2" maxlength="300" placeholder="np. Tłumaczę zasady od zera, zabierzcie przekąski 🍕">${escapeHtml(draft.notes || '')}</textarea></div>
+          </div>
+          <div class="tbl-preview">
+            <span class="tbl-preview-label">Podgląd stolika</span>
+            <div class="tbl-floor" id="t-preview"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot" style="justify-content:flex-end">
+        <button class="btn btn-gold" id="t-save">${t ? 'Zapisz zmiany' : '🪑 Załóż stolik'}</button>
+      </div>
+    </div>`);
+
+  const $ = (id) => document.getElementById(id);
+  const minSeats = () => Math.max(2, tblPlayers(draft).length);
+  function readDraft() {
+    const sel = $('t-game').value;
+    draft.gameId = sel && sel !== '__other' ? sel : '';
+    draft.gameName = sel === '__other' ? $('t-other').value.trim() : '';
+    draft.date = $('t-date').value; draft.time = $('t-time').value;
+    draft.place = $('t-place').value.trim(); draft.host = $('t-host').value.trim();
+    draft.notes = $('t-notes').value.trim();
+  }
+  function preview() {
+    readDraft();
+    const p = JSON.parse(JSON.stringify(draft));
+    if (!t && $('t-join') && $('t-join').checked && p.host) p.players = { [tblKey(p.host)]: { name: p.host, joinedAt: 0 } };
+    if (!p.gameId && !p.gameName) p.gameName = '?';
+    $('t-preview').innerHTML = tblSceneHtml(p, { size: 220 });
+    hydrateCovers($('t-preview'));
+    const g = tblGameOf(draft);
+    $('t-game-hint').textContent = g
+      ? [g.players ? `Gra na ${g.players} os.` : '', g.duration ? `czas gry: ${g.duration}` : '', g.status === 'borrowed' ? `uwaga: wypożyczona przez ${g.borrower}` : ''].filter(Boolean).join(' · ')
+      : '';
+  }
+  $('t-game').onchange = () => {
+    const other = $('t-game').value === '__other';
+    $('t-other-field').style.display = other ? '' : 'none';
+    if (other) setTimeout(() => $('t-other').focus(), 30);
+    const g = games.find(x => x.id === $('t-game').value);
+    if (g && !seatsTouched && tblMaxPlayers(g.players)) {
+      draft.seats = Math.max(minSeats(), arcClamp(tblMaxPlayers(g.players), 2, 10));
+      $('t-seats').textContent = draft.seats;
+    }
+    preview();
+  };
+  ['t-other', 't-date', 't-time', 't-place', 't-host', 't-notes'].forEach(id => { $(id).oninput = preview; });
+  if ($('t-join')) $('t-join').onchange = preview;
+  $('t-minus').onclick = () => { seatsTouched = true; draft.seats = Math.max(minSeats(), tblSeatsOf(draft) - 1); $('t-seats').textContent = draft.seats; preview(); };
+  $('t-plus').onclick = () => { seatsTouched = true; draft.seats = Math.min(10, tblSeatsOf(draft) + 1); $('t-seats').textContent = draft.seats; preview(); };
+  $('t-back').onclick = () => openTables(t ? { mode: 'detail', id: t.id, tab: tblView.tab } : { mode: 'list', tab: tblView.tab });
+  preview();
+
+  $('t-save').onclick = () => {
+    readDraft();
+    const checks = [
+      ['t-game-field', !!$('t-game').value],
+      ['t-other-field', $('t-game').value !== '__other' || !!draft.gameName],
+      ['t-date-field', !!draft.date && (t || draft.date >= tblToday())],
+      ['t-time-field', !!draft.time],
+      ['t-place-field', !!draft.place],
+      ['t-host-field', !!draft.host]
+    ];
+    let ok = true;
+    checks.forEach(([fid, valid]) => {
+      const f = $(fid);
+      f.classList.toggle('invalid', !valid);
+      if (!valid) { ok = false; f.classList.add('shake'); setTimeout(() => f.classList.remove('shake'), 300); }
+    });
+    if (!ok) return;
+    if (!tblGetName()) tblSetName(draft.host);
+    const data = {
+      id: draft.id, gameId: draft.gameId, gameName: draft.gameId ? '' : draft.gameName,
+      date: draft.date, time: draft.time, place: draft.place, seats: tblSeatsOf(draft),
+      host: draft.host, notes: draft.notes
+    };
+    let op;
+    if (t) {
+      op = tablesRef.child(t.id).update(data);
+    } else {
+      data.createdAt = Date.now();
+      data.players = $('t-join').checked ? { [tblKey(draft.host)]: { name: draft.host, joinedAt: Date.now() } } : {};
+      op = tablesRef.child(data.id).set(data);
+    }
+    op.then(() => {
+      toast(t ? 'Zapisano zmiany stolika.' : `Stolik założony — czekamy na graczy!${slackEnabled() && appSettings.slack.onCreate ? ' Ogłoszenie poszło na Slacka.' : ''}`);
+      if (!t) slackNotify('create', data);
+      openTables({ mode: 'detail', id: data.id, tab: tblView.tab });
+    }).catch(tblWriteError);
+  };
+}
+
+// ---- eksport do kalendarza ----
+function tblDownloadIcs(t) {
+  const g = tblGameOf(t);
+  const [hh, mm] = (t.time || '18:00').split(':').map(Number);
+  const start = new Date(t.date + 'T00:00:00'); start.setHours(hh, mm, 0, 0);
+  const end = new Date(start.getTime() + tblDurationMin(g && g.duration) * 60000);
+  const f = (d) => `${d.getFullYear()}${tblPad(d.getMonth() + 1)}${tblPad(d.getDate())}T${tblPad(d.getHours())}${tblPad(d.getMinutes())}00`;
+  const esc = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+  const now = new Date();
+  const stamp = `${now.getUTCFullYear()}${tblPad(now.getUTCMonth() + 1)}${tblPad(now.getUTCDate())}T${tblPad(now.getUTCHours())}${tblPad(now.getUTCMinutes())}00Z`;
+  const players = tblPlayers(t).map(p => p.name).join(', ');
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Biblioteczka Gier JFF//Stoliki//PL', 'BEGIN:VEVENT',
+    `UID:${t.id}@biblioteczka-gier`, `DTSTAMP:${stamp}`, `DTSTART:${f(start)}`, `DTEND:${f(end)}`,
+    `SUMMARY:${esc('🎲 ' + tblGameName(t))}`, `LOCATION:${esc(t.place)}`,
+    `DESCRIPTION:${esc(`Organizator: ${t.host}\nGracze: ${players || '—'}${t.notes ? '\n' + t.notes : ''}`)}`,
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `stolik-${t.date}-${tblKey(tblGameName(t))}.ics`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// ---- zaproszenia (link do konkretnego stolika) ----
+function tblInviteUrl(id) { return publicLink('#t-' + id); }
+function tblInviteText(t) {
+  const players = tblPlayers(t), seats = tblSeatsOf(t), free = seats - players.length;
+  return `🎲 Zaproszenie do gry: ${tblGameName(t)}\n` +
+    `📅 ${tblLongDate(t.date)}, ${t.time}\n` +
+    `📍 ${t.place}\n` +
+    `👥 ${free > 0 ? `Wolne miejsca: ${free} z ${seats}` : 'Komplet — ale zajrzyj, może ktoś się zwolni'}` +
+    `${players.length ? ` (grają: ${players.map(p => p.name).join(', ')})` : ''}\n` +
+    `${t.notes ? `📝 ${t.notes}\n` : ''}` +
+    (tblInviteUrl(t.id) ? `Zajmij miejsce przy stoliku: ${tblInviteUrl(t.id)}` : 'Zapisy: Biblioteczka Gier JFF → 🪑 Stoliki');
+}
+function tblCopy(text, btn, label) {
+  const done = () => { if (btn) { const old = btn.innerHTML; btn.innerHTML = '✓ Skopiowano'; setTimeout(() => { btn.innerHTML = old; }, 1600); } toast(label || 'Skopiowano do schowka.'); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, () => fallback());
+  else fallback();
+  function fallback() {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { toast('Nie udało się skopiować — zaznacz tekst i skopiuj ręcznie.', 'error'); }
+    ta.remove();
+  }
+}
+// ---- ustawienia wspólne: publiczny adres strony + Slack ----
+const settingsRef = db.ref('settings');
+const SLACK_DEFAULTS = { webhook: '', channel: '', onCreate: true, onJoin: true, onFull: true };
+let appSettings = { publicUrl: '', slack: { ...SLACK_DEFAULTS } };
+let settingsError = false;
+settingsRef.on('value', (snap) => {
+  const v = snap.val() || {};
+  appSettings = { publicUrl: v.publicUrl || '', slack: Object.assign({ ...SLACK_DEFAULTS }, v.slack || {}) };
+  settingsError = false;
+}, () => { settingsError = true; });
+
+// Czy strona jest otwarta spod adresu, który inni też mogą otworzyć?
+function isPublicPage() {
+  return /^https?:$/.test(window.location.protocol) && !/^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(window.location.hostname);
+}
+function publicBase() {
+  if (isPublicPage()) return window.location.href.split('#')[0];
+  const u = String(appSettings.publicUrl || '').trim();
+  return /^https?:\/\/[^\s]+$/i.test(u) ? u.split('#')[0] : '';
+}
+function publicLink(hash) { const b = publicBase(); return b ? b + hash : ''; }
+function pageLocationLabel() {
+  if (window.location.protocol === 'file:') return 'plik na Twoim dysku';
+  if (!isPublicPage()) return 'serwer lokalny na Twoim komputerze';
+  return window.location.host;
+}
+
+// ---- Slack (Incoming Webhook) ----
+function slackEnabled() { return /^https:\/\/hooks\.slack\.com\/services\/\S+$/.test(appSettings.slack.webhook || ''); }
+function slackEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function slackTableText(t, headline) {
+  const players = tblPlayers(t), seats = tblSeatsOf(t), free = seats - players.length;
+  const url = tblInviteUrl(t.id);
+  return `${headline}\n` +
+    `*${slackEsc(tblGameName(t))}*\n` +
+    `📅 ${tblLongDate(t.date)}, ${slackEsc(t.time)}\n` +
+    `📍 ${slackEsc(t.place)}\n` +
+    `👥 ${free > 0 ? `Wolne miejsca: ${free} z ${seats}` : `Komplet (${seats}/${seats})`}` +
+    `${players.length ? ` · grają: ${slackEsc(players.map(p => p.name).join(', '))}` : ''}` +
+    `${t.notes ? `\n📝 ${slackEsc(t.notes)}` : ''}` +
+    `${url ? `\n<${url}|🪑 Zajmij miejsce przy stoliku>` : ''}`;
+}
+// Slack nie pozwala odczytać odpowiedzi z przeglądarki (CORS), więc wysyłamy „na ślepo” jako formularz.
+function slackSend(text, webhookOverride) {
+  const hook = webhookOverride || appSettings.slack.webhook;
+  if (!/^https:\/\/hooks\.slack\.com\/services\/\S+$/.test(hook || '')) return Promise.resolve(false);
+  const body = new URLSearchParams({ payload: JSON.stringify({ text, unfurl_links: false, unfurl_media: false }) });
+  return fetch(hook, { method: 'POST', mode: 'no-cors', body }).then(() => true, () => false);
+}
+function slackNotify(kind, t, extra) {
+  if (!slackEnabled()) return;
+  const s = appSettings.slack;
+  let head = '';
+  if (kind === 'create' && s.onCreate) head = `🪑 *${slackEsc(t.host)}* zakłada nowy stolik — kto się dosiada?`;
+  if (kind === 'join' && s.onJoin) head = `🙋 *${slackEsc(extra)}* dosiada się do stolika`;
+  if (kind === 'full' && s.onFull) head = `🎉 *Komplet przy stoliku!* Ostatnie miejsce zajmuje *${slackEsc(extra)}*`;
+  if (head) slackSend(slackTableText(t, head));
+}
+
+// ---- okno ustawień ----
+function openAppSettings(back) {
+  const s = appSettings.slack;
+  openModal(`
+    <div class="modal modal-settings">
+      <div class="modal-head">
+        ${back ? '<button class="arcade-back" id="set-back">‹ Wróć</button>' : ''}
+        <h2 class="display">⚙️ Linki i Slack</h2>
+        <button onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        ${settingsError ? '<div class="set-warn">⚠️ Brak dostępu do ustawień w bazie (ścieżka <code>settings</code> w regułach Firebase). Zmiany nie zostaną zapisane.</div>' : ''}
+        <section class="set-section">
+          <div class="set-title">🌐 Publiczny adres strony</div>
+          <div class="set-now">Ta karta jest otwarta jako: <b>${escapeHtml(pageLocationLabel())}</b>${isPublicPage() ? ' — linki działają automatycznie ✓' : ''}</div>
+          <div class="field"><label>Adres, pod którym inni otwierają stronę</label>
+            <input id="set-url" type="url" placeholder="https://twoja-nazwa.github.io/biblioteczka/" value="${escapeHtml(appSettings.publicUrl)}">
+          </div>
+          <div class="field-hint">Potrzebny tylko wtedy, gdy sam otwierasz stronę z pliku. Z tego adresu budowane są linki do stolików, kody QR i przycisk „Udostępnij”. Po opublikowaniu strony (GitHub Pages, Firebase Hosting, Netlify) wpisz tu jej adres.</div>
+        </section>
+        <section class="set-section">
+          <div class="set-title">💬 Slack — powiadomienia na kanale</div>
+          <div class="field"><label>Adres Incoming Webhook</label>
+            <input id="set-hook" type="url" placeholder="https://hooks.slack.com/services/T…/B…/…" value="${escapeHtml(s.webhook)}">
+          </div>
+          <div class="field"><label>Nazwa kanału (tylko do wyświetlania)</label>
+            <input id="set-channel" maxlength="60" placeholder="#planszowki" value="${escapeHtml(s.channel)}">
+          </div>
+          <label class="tbl-check"><input type="checkbox" id="set-create" ${s.onCreate ? 'checked' : ''}> Ogłaszaj nowe stoliki</label>
+          <label class="tbl-check"><input type="checkbox" id="set-join" ${s.onJoin ? 'checked' : ''}> Informuj, gdy ktoś się dosiada</label>
+          <label class="tbl-check"><input type="checkbox" id="set-full" ${s.onFull ? 'checked' : ''}> Informuj o komplecie graczy</label>
+          <div class="set-row"><button class="btn btn-outline" id="set-test">📨 Wyślij wiadomość testową</button></div>
+          <details class="set-help">
+            <summary>Jak zdobyć adres webhooka? (ok. 3 minuty)</summary>
+            <ol>
+              <li>Wejdź na <b>api.slack.com/apps</b> → <b>Create New App</b> → <b>From scratch</b>, nazwij ją np. „Biblioteczka Gier” i wybierz swój workspace.</li>
+              <li>W menu po lewej wybierz <b>Incoming Webhooks</b> i włącz przełącznik <b>Activate Incoming Webhooks</b>.</li>
+              <li>Kliknij <b>Add New Webhook to Workspace</b>, wybierz kanał (np. #planszowki) i zatwierdź.</li>
+              <li>Skopiuj adres zaczynający się od <code>https://hooks.slack.com/services/</code> i wklej go powyżej.</li>
+            </ol>
+            <p>Jeśli w Twojej firmie instalację aplikacji zatwierdza administrator Slacka, poproś go o dodanie webhooka.</p>
+          </details>
+          <div class="field-hint">⚠️ Adres webhooka jest zapisywany we wspólnej bazie, więc widzi go każdy, kto ma dostęp do strony, i może za jego pomocą pisać na tym kanale. Użyj osobnego kanału — w razie potrzeby webhook można w każdej chwili wyłączyć w ustawieniach aplikacji Slack.</div>
+        </section>
+      </div>
+      <div class="modal-foot" style="justify-content:flex-end"><button class="btn btn-gold" id="set-save">Zapisz ustawienia</button></div>
+    </div>`);
+  const $ = (id) => document.getElementById(id);
+  const read = () => ({
+    publicUrl: $('set-url').value.trim(),
+    slack: {
+      webhook: $('set-hook').value.trim(), channel: $('set-channel').value.trim(),
+      onCreate: $('set-create').checked, onJoin: $('set-join').checked, onFull: $('set-full').checked
+    }
+  });
+  if (back) $('set-back').onclick = back;
+  $('set-test').onclick = () => {
+    const v = read();
+    if (!/^https:\/\/hooks\.slack\.com\/services\/\S+$/.test(v.slack.webhook)) { toast('Wklej najpierw poprawny adres webhooka (https://hooks.slack.com/services/…).', 'error'); return; }
+    const who = tblGetName() || 'Ktoś';
+    slackSend(`👋 *${slackEsc(who)}* podłączył(a) Biblioteczkę Gier JFF do tego kanału. Tutaj będą pojawiać się nowe stoliki do wspólnego grania 🎲`, v.slack.webhook)
+      .then(ok => toast(ok ? `Wysłano wiadomość testową${v.slack.channel ? ' na ' + v.slack.channel : ''} — sprawdź kanał w Slacku.` : 'Nie udało się wysłać (brak połączenia z internetem?).', ok ? undefined : 'error'));
+  };
+  $('set-save').onclick = () => {
+    const v = read();
+    if (v.publicUrl && !/^https?:\/\/[^\s]+$/i.test(v.publicUrl)) { toast('Publiczny adres musi zaczynać się od https:// (albo http://).', 'error'); return; }
+    if (v.slack.webhook && !/^https:\/\/hooks\.slack\.com\/services\/\S+$/.test(v.slack.webhook)) { toast('To nie wygląda na adres webhooka Slacka (https://hooks.slack.com/services/…).', 'error'); return; }
+    settingsRef.set(v).then(() => {
+      appSettings = { publicUrl: v.publicUrl, slack: Object.assign({ ...SLACK_DEFAULTS }, v.slack) };
+      toast('Ustawienia zapisane.');
+      if (back) back(); else closeModal();
+    }).catch(() => toast('Nie udało się zapisać ustawień (sprawdź reguły Firebase dla „settings”).', 'error'));
+  };
+}
+
+// ---- okno zaproszenia ----
+function openTableInvite(id) {
+  const t = tblList.find(x => x.id === id);
+  if (!t) return;
+  const url = tblInviteUrl(id);
+  const text = tblInviteText(t);
+  const subject = `Zaproszenie: ${tblGameName(t)} — ${fmtDate(t.date)}, ${t.time}`;
+  const qr = url ? `https://api.qrserver.com/v1/create-qr-code/?size=264x264&data=${encodeURIComponent(url)}&color=1F2A24&bgcolor=F0EAD9` : '';
+  const canShare = !!navigator.share;
+  const reopen = () => openTableInvite(id);
+  const slackLabel = appSettings.slack.channel ? `💬 Wyślij na ${escapeHtml(appSettings.slack.channel)}` : '💬 Wyślij na Slacka';
+  openModal(`
+    <div class="modal modal-invite">
+      <div class="modal-head">
+        <button class="arcade-back" id="inv-back">‹ Stolik</button>
+        <h2 class="display">🔗 Zaproś do stolika</h2>
+        <button onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        ${url ? '' : `
+        <div class="set-warn">
+          <b>Link nie zadziała jeszcze u innych.</b> Strona jest otwarta jako ${escapeHtml(pageLocationLabel())} — tego adresu nie da się otworzyć na innym komputerze ani telefonie.
+          Link i kod QR pojawią się, gdy strona będzie dostępna w internecie (np. GitHub Pages).
+          <div class="tbl-copy-row" style="margin-top:8px">
+            <input id="inv-pub" type="url" placeholder="Masz już adres? np. https://twoja-nazwa.github.io/biblioteczka/">
+            <button class="btn btn-gold" id="inv-pub-save">Zapisz adres</button>
+          </div>
+        </div>`}
+        <div class="tbl-inv-grid">
+          <div class="tbl-inv-side">
+            <div class="tbl-floor">${tblSceneHtml(t, { size: 200 })}</div>
+            ${url ? `<div class="tbl-inv-qr"><img src="${qr}" alt="Kod QR z linkiem do stolika"></div><span class="tbl-preview-label">Zeskanuj telefonem</span>` : ''}
+          </div>
+          <div class="tbl-inv-main">
+            ${url ? `<div class="field"><label>Link do stolika</label>
+              <div class="tbl-copy-row" style="margin-top:4px">
+                <input id="inv-url" readonly value="${escapeHtml(url)}">
+                <button class="btn btn-gold" id="inv-copy-url">Kopiuj link</button>
+              </div>
+            </div>` : ''}
+            <div class="field"><label>Gotowa wiadomość (możesz ją edytować)</label>
+              <textarea id="inv-msg" class="tbl-inv-msg">${escapeHtml(text)}</textarea>
+            </div>
+            <div class="tbl-inv-btns">
+              <button class="btn btn-outline" id="inv-copy-msg">📋 Kopiuj wiadomość</button>
+              ${slackEnabled() ? `<button class="btn btn-outline" id="inv-slack">${slackLabel}</button>` : '<button class="btn btn-outline" id="inv-slack-setup">💬 Podłącz Slacka</button>'}
+              ${canShare ? '<button class="btn btn-outline" id="inv-share">📤 Udostępnij…</button>' : ''}
+              <button class="btn btn-outline" id="inv-mail">✉️ E-mail</button>
+            </div>
+            <div class="field-hint">${url ? 'Osoba, która otworzy link, zobaczy od razu ten stolik i może zająć wolne krzesło jednym kliknięciem.' : 'Do czasu publikacji strony możesz skopiować wiadomość — zawiera wszystkie szczegóły stolika.'}
+              <button class="tbl-link" id="inv-settings">Ustawienia linków i Slacka</button></div>
+          </div>
+        </div>
+      </div>
+    </div>`);
+  hydrateCovers(document.getElementById('overlay'));
+  const $ = (x) => document.getElementById(x);
+  const msg = () => $('inv-msg').value;
+  $('inv-back').onclick = () => openTables({ mode: 'detail', id, tab: tblView.tab });
+  $('inv-settings').onclick = () => openAppSettings(reopen);
+  if (url) {
+    $('inv-url').onclick = (e) => e.target.select();
+    $('inv-copy-url').onclick = (e) => tblCopy(url, e.currentTarget, 'Link do stolika skopiowany.');
+  } else {
+    $('inv-pub-save').onclick = () => {
+      const v = $('inv-pub').value.trim();
+      if (!/^https?:\/\/[^\s]+$/i.test(v)) { toast('Adres musi zaczynać się od https://', 'error'); return; }
+      const next = { publicUrl: v, slack: appSettings.slack };
+      settingsRef.set(next).then(() => { appSettings.publicUrl = v; toast('Zapisano publiczny adres strony.'); reopen(); })
+        .catch(() => toast('Nie udało się zapisać (sprawdź reguły Firebase dla „settings”).', 'error'));
+    };
+  }
+  $('inv-copy-msg').onclick = (e) => tblCopy(msg(), e.currentTarget, 'Wiadomość z zaproszeniem skopiowana.');
+  $('inv-mail').onclick = () => { window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg())}`; };
+  if ($('inv-slack')) {
+    $('inv-slack').onclick = (e) => {
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      const who = tblGetName() || t.host || 'Ktoś';
+      slackSend(slackTableText(t, `✉️ *${slackEsc(who)}* zaprasza do gry!`)).then(ok => {
+        btn.disabled = false;
+        toast(ok ? `Zaproszenie wysłane${appSettings.slack.channel ? ' na ' + appSettings.slack.channel : ' na Slacka'}.` : 'Nie udało się wysłać na Slacka.', ok ? undefined : 'error');
+      });
+    };
+  }
+  if ($('inv-slack-setup')) $('inv-slack-setup').onclick = () => openAppSettings(reopen);
+  if (canShare) $('inv-share').onclick = () => { navigator.share(url ? { title: subject, text: msg(), url } : { title: subject, text: msg() }).catch(() => {}); };
+}
+
+// Wejście z linku zaproszenia: #t-<id>
+let tblLinkHandled = false;
+function tblHandleLink(fromHashChange) {
+  const m = window.location.hash.match(/^#t-([A-Za-z0-9_-]+)$/);
+  if (!m) return;
+  if (tblLinkHandled && !fromHashChange) return;
+  tblLinkHandled = true;
+  const id = m[1];
+  const t = tblList.find(x => x.id === id);
+  history.replaceState(null, '', window.location.pathname + window.location.search);
+  setTimeout(() => {
+    if (!t) { toast('Ten stolik już nie istnieje — zobacz pozostałe.', 'error'); openTables({ mode: 'list', tab: 'upcoming' }); return; }
+    openTables({ mode: 'detail', id, tab: tblIsPast(t) ? 'archive' : 'upcoming', invited: id });
+  }, 350);
+}
+window.addEventListener('hashchange', () => tblHandleLink(true));
+
+document.getElementById('tablesBtn').onclick = () => openTables({ mode: 'list', tab: 'upcoming' });
+
 document.getElementById('searchInput').oninput = (e) => { query = e.target.value; render(); };
 function filterBy(value) {
   query = value;
@@ -4072,6 +5166,15 @@ function checkDueNotifications() {
       }
     });
   });
+  if (typeof tblList !== 'undefined') {
+    const today = tblToday(), tomorrow = tblAddDays(today, 1);
+    tblList.filter(t => (t.date === today || t.date === tomorrow) && tblGetName() && t.players && t.players[tblKey(tblGetName())]).forEach(t => {
+      const key = 'tbl:' + t.id + ':' + t.date;
+      if (seen[key]) return;
+      new Notification('🪑 ' + tblGameName(t), { body: `${t.date === today ? 'Dziś' : 'Jutro'} o ${t.time} · ${t.place}`, tag: key });
+      markNotifSeen(key);
+    });
+  }
 }
 document.getElementById('notifToggle').onclick = async () => {
   if (!notifSupported()) return;
@@ -4096,13 +5199,13 @@ setInterval(checkDueNotifications, 30 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkDueNotifications(); });
 
 document.getElementById('shareBtn').onclick = () => {
-  const base = window.location.href.split('#')[0];
-  navigator.clipboard?.writeText(base).then(() => {
-    const btn = document.getElementById('shareBtn');
-    const old = btn.textContent;
-    btn.textContent = 'Skopiowano!';
-    setTimeout(() => btn.textContent = old, 2000);
-  });
+  const base = publicBase();
+  if (!base) {
+    toast('Strona jest otwarta z pliku — inni nie otworzą tego adresu. Podaj publiczny adres strony.', 'error');
+    openAppSettings();
+    return;
+  }
+  tblCopy(base, null, 'Link do biblioteczki skopiowany.');
 };
 
 // Nasłuchiwanie zmian w czasie rzeczywistym - to jest sedno synchronizacji
