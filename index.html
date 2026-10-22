@@ -4,6 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biblioteczka Gier JFF</title>
+<!--
+  PODGLĄD LINKU (Slack, Messenger, WhatsApp, e-mail)
+  Po opublikowaniu strony podmień ADRES-STRONY na jej prawdziwy adres (Ctrl+H → „Zamień wszystko”),
+  np. https://twoja-nazwa.github.io/biblioteczka/ — i wrzuć plik og-image.jpg do tego samego folderu co index.html.
+  Serwisy pobierają te znaczniki same, bez JavaScriptu, dlatego adres musi być wpisany na stałe.
+-->
+<meta name="description" content="Wypożycz grę planszową z biblioteczki JFF, zapisz się na wspólny stolik i zagraj w lotnicze minigry.">
+<meta name="theme-color" content="#0d3244">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pl_PL">
+<meta property="og:site_name" content="Biblioteczka Gier JFF">
+<meta property="og:title" content="Biblioteczka Gier JFF — wypożycz grę i zapisz się na stolik">
+<meta property="og:description" content="🎲 Katalog gier planszowych · 🪑 zapisy na wspólne granie · 🎮 lotnicze minigry. Kliknij, żeby zobaczyć stoliki i zająć wolne miejsce.">
+<meta property="og:url" content="https://ADRES-STRONY/">
+<meta property="og:image" content="https://ADRES-STRONY/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Biblioteczka Gier JFF — stoliki do gry z zapisanymi graczami">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Biblioteczka Gier JFF">
+<meta name="twitter:description" content="Wypożycz grę, zapisz się na stolik, zagraj w minigry.">
+<meta name="twitter:image" content="https://ADRES-STRONY/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -988,6 +1011,15 @@
   }
   .set-warn b { display: block; margin-bottom: 2px; }
   .tbl-slack-on { color: #7FD08A; font-size: 10px; }
+  .tbl-inv-preview { display: flex; flex-direction: column; gap: 10px; }
+  .tbl-inv-img-wrap { position: relative; width: 100%; aspect-ratio: 1200 / 630; border-radius: 12px; overflow: hidden; background: #6C482B; box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
+  .tbl-inv-img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .3s ease; }
+  .tbl-inv-img-wrap img.ready { opacity: 1; }
+  .tbl-inv-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #F4EBDD; }
+  .tbl-inv-img-wrap img.ready + .tbl-inv-loading { display: none; }
+  .tbl-inv-img-btns { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .tbl-inv-img-btns .tbl-preview-label { flex: 1; min-width: 160px; }
+  .tbl-inv-grid.no-side { grid-template-columns: 1fr; }
 
   /* ---- Minigry: duża plansza + panel boczny ---- */
   .modal.modal-game-play { max-width: min(1560px, 97vw); width: 100%; max-height: 96vh; }
@@ -4834,7 +4866,7 @@ function tblCopy(text, btn, label) {
 }
 // ---- ustawienia wspólne: publiczny adres strony + Slack ----
 const settingsRef = db.ref('settings');
-const SLACK_DEFAULTS = { webhook: '', channel: '', onCreate: true, onJoin: true, onFull: true };
+const SLACK_DEFAULTS = { webhook: '', channel: '', imageUrl: '', onCreate: true, onJoin: true, onFull: true };
 let appSettings = { publicUrl: '', slack: { ...SLACK_DEFAULTS } };
 let settingsError = false;
 settingsRef.on('value', (snap) => {
@@ -4875,10 +4907,32 @@ function slackTableText(t, headline) {
     `${url ? `\n<${url}|🪑 Zajmij miejsce przy stoliku>` : ''}`;
 }
 // Slack nie pozwala odczytać odpowiedzi z przeglądarki (CORS), więc wysyłamy „na ślepo” jako formularz.
-function slackSend(text, webhookOverride) {
+function slackTableBlocks(t, headline) {
+  const players = tblPlayers(t), url = tblInviteUrl(t.id);
+  const blocks = [
+    { type: 'section', text: { type: 'mrkdwn', text: headline } },
+    { type: 'header', text: { type: 'plain_text', text: `🎲 ${tblGameName(t)}`.slice(0, 150), emoji: true } },
+    { type: 'section', fields: [
+      { type: 'mrkdwn', text: `*📅 Kiedy*\n${tblLongDate(t.date)}, ${slackEsc(t.time)}` },
+      { type: 'mrkdwn', text: `*📍 Gdzie*\n${slackEsc(t.place)}` },
+      { type: 'mrkdwn', text: `*👥 Miejsca*\n${tblFreeLabel(t)}` },
+      { type: 'mrkdwn', text: `*👑 Organizuje*\n${slackEsc(t.host)}` }
+    ] }
+  ];
+  if (t.notes) blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `📝 ${slackEsc(t.notes)}` } });
+  if (players.length) blocks.push({ type: 'context', elements: [{ type: 'mrkdwn', text: `Przy stole: ${players.map(p => slackEsc(p.name)).join(' · ')}` }] });
+  const img = String(appSettings.slack.imageUrl || '').trim();
+  if (/^https:\/\/\S+$/.test(img)) blocks.push({ type: 'image', image_url: img, alt_text: 'Biblioteczka Gier JFF' });
+  if (url) blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `<${url}|*🪑 Zajmij miejsce przy stoliku →*>` } });
+  blocks.push({ type: 'divider' });
+  return blocks;
+}
+function slackSend(text, webhookOverride, blocks) {
   const hook = webhookOverride || appSettings.slack.webhook;
   if (!/^https:\/\/hooks\.slack\.com\/services\/\S+$/.test(hook || '')) return Promise.resolve(false);
-  const body = new URLSearchParams({ payload: JSON.stringify({ text, unfurl_links: false, unfurl_media: false }) });
+  const msg = { text, unfurl_links: false, unfurl_media: false };
+  if (blocks && blocks.length) msg.blocks = blocks;
+  const body = new URLSearchParams({ payload: JSON.stringify(msg) });
   return fetch(hook, { method: 'POST', mode: 'no-cors', body }).then(() => true, () => false);
 }
 function slackNotify(kind, t, extra) {
@@ -4888,7 +4942,7 @@ function slackNotify(kind, t, extra) {
   if (kind === 'create' && s.onCreate) head = `🪑 *${slackEsc(t.host)}* zakłada nowy stolik — kto się dosiada?`;
   if (kind === 'join' && s.onJoin) head = `🙋 *${slackEsc(extra)}* dosiada się do stolika`;
   if (kind === 'full' && s.onFull) head = `🎉 *Komplet przy stoliku!* Ostatnie miejsce zajmuje *${slackEsc(extra)}*`;
-  if (head) slackSend(slackTableText(t, head));
+  if (head) slackSend(slackTableText(t, head), null, slackTableBlocks(t, head));
 }
 
 // ---- okno ustawień ----
@@ -4909,6 +4963,7 @@ function openAppSettings(back) {
           <div class="field"><label>Adres, pod którym inni otwierają stronę</label>
             <input id="set-url" type="url" placeholder="https://twoja-nazwa.github.io/biblioteczka/" value="${escapeHtml(appSettings.publicUrl)}">
           </div>
+          ${isPublicPage() && (document.querySelector('meta[property="og:image"]') || {}).content?.includes('ADRES-STRONY') ? '<div class="set-warn"><b>Podgląd linku nie jest jeszcze ustawiony.</b> W pliku index.html (sekcja &lt;head&gt;) podmień „ADRES-STRONY” na adres tej strony i wrzuć obok plik og-image.jpg — wtedy linki w Slacku i komunikatorach pokażą grafikę biblioteczki.</div>' : ''}
           <div class="field-hint">Potrzebny tylko wtedy, gdy sam otwierasz stronę z pliku. Z tego adresu budowane są linki do stolików, kody QR i przycisk „Udostępnij”. Po opublikowaniu strony (GitHub Pages, Firebase Hosting, Netlify) wpisz tu jej adres.</div>
         </section>
         <section class="set-section">
@@ -4918,6 +4973,10 @@ function openAppSettings(back) {
           </div>
           <div class="field"><label>Nazwa kanału (tylko do wyświetlania)</label>
             <input id="set-channel" maxlength="60" placeholder="#planszowki" value="${escapeHtml(s.channel)}">
+          </div>
+          <div class="field"><label>Grafika w wiadomościach (opcjonalnie)</label>
+            <input id="set-img" type="url" placeholder="${escapeHtml(publicBase() ? publicBase().replace(/[^/]*$/, '') + 'og-image.jpg' : 'https://twoja-nazwa.github.io/biblioteczka/og-image.jpg')}" value="${escapeHtml(s.imageUrl || '')}">
+            <div class="field-hint">Adres obrazka w internecie, np. pliku <code>og-image.jpg</code> wrzuconego obok strony. Slack pokaże go w każdej wiadomości. Jeśli adres będzie błędny, Slack odrzuci wiadomość — sprawdź go przyciskiem testowym.</div>
           </div>
           <label class="tbl-check"><input type="checkbox" id="set-create" ${s.onCreate ? 'checked' : ''}> Ogłaszaj nowe stoliki</label>
           <label class="tbl-check"><input type="checkbox" id="set-join" ${s.onJoin ? 'checked' : ''}> Informuj, gdy ktoś się dosiada</label>
@@ -4942,7 +5001,7 @@ function openAppSettings(back) {
   const read = () => ({
     publicUrl: $('set-url').value.trim(),
     slack: {
-      webhook: $('set-hook').value.trim(), channel: $('set-channel').value.trim(),
+      webhook: $('set-hook').value.trim(), channel: $('set-channel').value.trim(), imageUrl: $('set-img').value.trim(),
       onCreate: $('set-create').checked, onJoin: $('set-join').checked, onFull: $('set-full').checked
     }
   });
@@ -4951,12 +5010,16 @@ function openAppSettings(back) {
     const v = read();
     if (!/^https:\/\/hooks\.slack\.com\/services\/\S+$/.test(v.slack.webhook)) { toast('Wklej najpierw poprawny adres webhooka (https://hooks.slack.com/services/…).', 'error'); return; }
     const who = tblGetName() || 'Ktoś';
-    slackSend(`👋 *${slackEsc(who)}* podłączył(a) Biblioteczkę Gier JFF do tego kanału. Tutaj będą pojawiać się nowe stoliki do wspólnego grania 🎲`, v.slack.webhook)
+    const testText = `👋 *${slackEsc(who)}* podłączył(a) Biblioteczkę Gier JFF do tego kanału. Tutaj będą pojawiać się nowe stoliki do wspólnego grania 🎲`;
+    const testBlocks = [{ type: 'section', text: { type: 'mrkdwn', text: testText } }];
+    if (/^https:\/\/\S+$/.test(v.slack.imageUrl)) testBlocks.push({ type: 'image', image_url: v.slack.imageUrl, alt_text: 'Biblioteczka Gier JFF' });
+    slackSend(testText, v.slack.webhook, testBlocks)
       .then(ok => toast(ok ? `Wysłano wiadomość testową${v.slack.channel ? ' na ' + v.slack.channel : ''} — sprawdź kanał w Slacku.` : 'Nie udało się wysłać (brak połączenia z internetem?).', ok ? undefined : 'error'));
   };
   $('set-save').onclick = () => {
     const v = read();
     if (v.publicUrl && !/^https?:\/\/[^\s]+$/i.test(v.publicUrl)) { toast('Publiczny adres musi zaczynać się od https:// (albo http://).', 'error'); return; }
+    if (v.slack.imageUrl && !/^https:\/\/\S+$/.test(v.slack.imageUrl)) { toast('Adres grafiki musi zaczynać się od https://', 'error'); return; }
     if (v.slack.webhook && !/^https:\/\/hooks\.slack\.com\/services\/\S+$/.test(v.slack.webhook)) { toast('To nie wygląda na adres webhooka Slacka (https://hooks.slack.com/services/…).', 'error'); return; }
     settingsRef.set(v).then(() => {
       appSettings = { publicUrl: v.publicUrl, slack: Object.assign({ ...SLACK_DEFAULTS }, v.slack) };
@@ -4964,6 +5027,222 @@ function openAppSettings(back) {
       if (back) back(); else closeModal();
     }).catch(() => toast('Nie udało się zapisać ustawień (sprawdź reguły Firebase dla „settings”).', 'error'));
   };
+}
+
+// ---- grafika zaproszenia do stolika (PNG 1200×630, do wklejenia razem z linkiem) ----
+function tblPlural(n, one, few, many) {
+  const m10 = n % 10, m100 = n % 100;
+  if (n === 1) return one;
+  return (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) ? few : many;
+}
+function tblFreeLabel(t) {
+  const seats = tblSeatsOf(t), free = seats - tblPlayers(t).length;
+  if (free <= 0) return `Komplet (${seats}/${seats})`;
+  return `${free} ${tblPlural(free, 'wolne miejsce', 'wolne miejsca', 'wolnych miejsc')} z ${seats}`;
+}
+function tblRoundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+function tblWrap(ctx, text, maxW, maxLines) {
+  const words = String(text).split(/\s+/);
+  const lines = [];
+  let cur = '';
+  words.forEach(w => {
+    const test = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(test).width <= maxW || !cur) cur = test;
+    else { lines.push(cur); cur = w; }
+  });
+  if (cur) lines.push(cur);
+  if (lines.length > maxLines) {
+    const kept = lines.slice(0, maxLines);
+    let last = kept[maxLines - 1] + '…';
+    while (ctx.measureText(last).width > maxW && last.length > 2) last = last.slice(0, -2) + '…';
+    kept[maxLines - 1] = last;
+    return kept;
+  }
+  return lines;
+}
+function tblLoadImg(src) {
+  return new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
+}
+
+async function tblRenderInviteImage(t) {
+  const W = 1200, H = 630;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  try { await Promise.all(['700 64px Fraunces', '600 30px Inter', '700 24px "JetBrains Mono"'].map(f => document.fonts.load(f))); } catch (e) {}
+  const SERIF = 'Fraunces, Georgia, serif', SANS = 'Inter, "Segoe UI", Arial, sans-serif', MONO = '"JetBrains Mono", Consolas, monospace';
+  const g = tblGameOf(t);
+  const gname = tblGameName(t);
+  const cover = g && g.hasCover ? await getCover(g.id).then(src => src ? tblLoadImg(src) : null).catch(() => null) : null;
+
+  // podłoga z desek
+  const floor = ctx.createLinearGradient(0, 0, 0, H);
+  floor.addColorStop(0, '#8A623E'); floor.addColorStop(1, '#6C482B');
+  ctx.fillStyle = floor; ctx.fillRect(0, 0, W, H);
+  for (let y = 0; y < H; y += 52) {
+    ctx.fillStyle = (y / 52) % 2 ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.035)'; ctx.fillRect(0, y, W, 52);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(0, y, W, 2);
+    const off = (y / 52) % 2 ? 140 : 0;
+    for (let x = off; x < W; x += 280) ctx.fillRect(x, y, 2, 52);
+  }
+  const vig = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 760);
+  vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+
+  // stół
+  const cx = 300, cy = 315, R = 168;
+  const seats = tblSeatsOf(t), players = tblPlayers(t), hostKey = tblKey(t.host);
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18;
+  ctx.beginPath(); ctx.arc(cx, cy, R + 22, 0, Math.PI * 2); ctx.fillStyle = '#3F2614'; ctx.fill();
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx, cy, R + 18, 0, Math.PI * 2); ctx.fillStyle = '#6A4426'; ctx.fill();
+  const felt = ctx.createRadialGradient(cx - 50, cy - 60, 20, cx, cy, R);
+  felt.addColorStop(0, '#46996A'); felt.addColorStop(0.5, '#2F7752'); felt.addColorStop(1, '#225C3D');
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = felt; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, R * 0.78, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.lineWidth = 3; ctx.stroke();
+  // kostka i karty
+  ctx.save(); ctx.translate(cx + 96, cy + 86); ctx.rotate(0.3);
+  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 3;
+  tblRoundRect(ctx, -17, -17, 34, 34, 7); ctx.fillStyle = '#F4F1E8'; ctx.fill(); ctx.shadowColor = 'transparent';
+  ctx.fillStyle = '#26343F'; [[-8, -8], [0, 0], [8, 8]].forEach(([a, b]) => { ctx.beginPath(); ctx.arc(a, b, 3.6, 0, Math.PI * 2); ctx.fill(); });
+  ctx.restore();
+  [['#2e7f9b', -0.3], ['#F4F1E8', 0.15]].forEach(([col, rot]) => {
+    ctx.save(); ctx.translate(cx - 116, cy + 50); ctx.rotate(rot);
+    ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 2;
+    tblRoundRect(ctx, -20, -29, 40, 58, 5); ctx.fillStyle = col; ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.strokeStyle = '#B8935F'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+  });
+  // pudełko gry
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.12);
+  const B = 150;
+  ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 22; ctx.shadowOffsetX = 6; ctx.shadowOffsetY = 12;
+  ctx.fillStyle = '#F4F1E8'; tblRoundRect(ctx, -B / 2 - 5, -B / 2 - 5, B + 10, B + 10, 10); ctx.fill();
+  ctx.shadowColor = 'transparent';
+  ctx.save(); tblRoundRect(ctx, -B / 2, -B / 2, B, B, 7); ctx.clip();
+  if (cover) {
+    const s = Math.max(B / cover.width, B / cover.height);
+    ctx.drawImage(cover, -cover.width * s / 2, -cover.height * s / 2, cover.width * s, cover.height * s);
+  } else {
+    ctx.fillStyle = tblBoxColor(gname); ctx.fillRect(-B / 2, -B / 2, B, B);
+    const shine = ctx.createLinearGradient(-B / 2, -B / 2, B / 2, B / 2);
+    shine.addColorStop(0, 'rgba(255,255,255,0.25)'); shine.addColorStop(1, 'rgba(0,0,0,0.25)');
+    ctx.fillStyle = shine; ctx.fillRect(-B / 2, -B / 2, B, B);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = `40px ${SANS}`; ctx.fillText('🎲', 0, -32);
+    ctx.fillStyle = '#fff'; ctx.font = `700 22px ${SERIF}`;
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowOffsetY = 1; ctx.shadowBlur = 2;
+    tblWrap(ctx, gname, B - 18, 3).forEach((ln, i, arr) => ctx.fillText(ln, 0, 18 + (i - (arr.length - 1) / 2) * 25));
+  }
+  ctx.restore(); ctx.restore();
+  // krzesła i pionki
+  for (let i = 0; i < seats; i++) {
+    const a = -Math.PI / 2 + Math.PI * 2 * i / seats;
+    const sx = cx + Math.cos(a) * (R + 30), sy = cy + Math.sin(a) * (R + 30);
+    ctx.save(); ctx.translate(sx, sy); ctx.rotate(a + Math.PI / 2);
+    ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
+    tblRoundRect(ctx, -34, -30, 68, 62, 16); ctx.fillStyle = '#6E4829'; ctx.fill();
+    ctx.shadowColor = 'transparent';
+    tblRoundRect(ctx, -34, -30, 68, 16, 10); ctx.fillStyle = '#4A2F1B'; ctx.fill();
+    ctx.restore();
+    const p = players[i];
+    ctx.save(); ctx.translate(sx, sy);
+    if (p) {
+      ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+      ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.fillStyle = avatarColor(p.name); ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.lineWidth = 4; ctx.strokeStyle = '#F4F1E8'; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = `700 19px ${MONO}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(initials(p.name), 0, 1);
+      if (tblKey(p.name) === hostKey) { ctx.font = `24px ${SANS}`; ctx.fillText('👑', 20, -24); }
+    } else {
+      ctx.setLineDash([6, 5]); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,236,200,0.75)';
+      ctx.beginPath(); ctx.arc(0, 0, 21, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(255,236,200,0.95)'; ctx.font = `700 28px ${SANS}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('+', 0, 1);
+    }
+    ctx.restore();
+  }
+
+  // karta z informacjami
+  const px = 600, py = 70, pw = 540, ph = 490;
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14;
+  tblRoundRect(ctx, px, py, pw, ph, 22); ctx.fillStyle = '#F0EAD9'; ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = '#B8935F'; tblRoundRect(ctx, px, py, pw, 10, 5); ctx.fill();
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  let y = py + 62;
+  ctx.fillStyle = '#9A7A4C'; ctx.font = `700 19px ${MONO}`;
+  ctx.fillText('ZAPROSZENIE DO STOLIKA', px + 40, y);
+  y += 22;
+  let size = 52;
+  ctx.font = `700 ${size}px ${SERIF}`;
+  while (size > 34 && tblWrap(ctx, gname, pw - 80, 2).length > 1 && ctx.measureText(gname).width > (pw - 80) * 1.7) { size -= 4; ctx.font = `700 ${size}px ${SERIF}`; }
+  ctx.fillStyle = '#16232B';
+  tblWrap(ctx, gname, pw - 80, 2).forEach(ln => { y += size * 1.1; ctx.fillText(ln, px + 40, y); });
+  y += 26;
+  const dObj = new Date(t.date + 'T00:00:00');
+  ctx.font = `500 26px ${SANS}`;
+  const dateCandidates = [
+    dObj.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' }) + ', ' + t.time,
+    dObj.toLocaleDateString('pl-PL', { weekday: 'short', day: 'numeric', month: 'long' }) + ' · ' + t.time,
+    dObj.toLocaleDateString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + t.time
+  ];
+  const dateTxt = dateCandidates.find(s => ctx.measureText(s).width <= pw - 130) || dateCandidates[2];
+  const rows = [
+    ['📅', dateTxt],
+    ['📍', t.place || '—'],
+    ['👑', `Organizuje: ${t.host || '—'}`],
+    ['👥', tblFreeLabel(t)]
+  ];
+  rows.forEach(([ico, txt], i) => {
+    y += 44;
+    ctx.font = `26px ${SANS}`; ctx.fillStyle = '#16232B'; ctx.fillText(ico, px + 40, y);
+    ctx.font = `${i === 3 ? 600 : 500} 26px ${SANS}`;
+    ctx.fillStyle = i === 3 ? (tblPlayers(t).length >= seats ? '#A8483A' : '#4F7A57') : '#16232B';
+    ctx.fillText(tblWrap(ctx, txt, pw - 130, 1)[0], px + 86, y);
+  });
+  // stopka karty
+  const fy = py + ph - 44;
+  ctx.fillStyle = '#E6DFC8'; ctx.fillRect(px + 30, fy - 34, pw - 60, 2);
+  ctx.font = `700 18px ${MONO}`; ctx.fillStyle = '#7A6A50';
+  const url = tblInviteUrl(t.id);
+  const foot = url ? url.replace(/^https?:\/\//, '') : 'Biblioteczka Gier JFF → 🪑 Stoliki';
+  ctx.fillText(tblWrap(ctx, '🔗 ' + foot, pw - 80, 1)[0], px + 40, fy);
+  // podpis strony
+  ctx.font = `700 22px ${SERIF}`; ctx.fillStyle = 'rgba(244,235,221,0.92)'; ctx.textAlign = 'right';
+  ctx.fillText('Biblioteczka Gier JFF', W - 60, H - 26);
+  ctx.textAlign = 'left';
+  return new Promise(res => c.toBlob(b => res({ blob: b, url: c.toDataURL('image/png') }), 'image/png'));
+}
+
+async function tblCopyInviteImage(t, btn) {
+  const { blob } = await tblRenderInviteImage(t);
+  try {
+    if (!navigator.clipboard || !window.ClipboardItem) throw new Error('no clipboard');
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    if (btn) { const old = btn.innerHTML; btn.innerHTML = '✓ Skopiowano'; setTimeout(() => { btn.innerHTML = old; }, 1600); }
+    toast('Grafika skopiowana — wklej ją (Ctrl+V) w Slacku, mailu lub komunikatorze.');
+  } catch (e) {
+    tblDownloadInviteImage(t, blob);
+    toast('Ta przeglądarka nie kopiuje obrazków — grafika została pobrana jako plik.');
+  }
+}
+async function tblDownloadInviteImage(t, blob) {
+  if (!blob) blob = (await tblRenderInviteImage(t)).blob;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `zaproszenie-${t.date}-${tblKey(tblGameName(t))}.png`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
 }
 
 // ---- okno zaproszenia ----
@@ -4994,11 +5273,19 @@ function openTableInvite(id) {
             <button class="btn btn-gold" id="inv-pub-save">Zapisz adres</button>
           </div>
         </div>`}
-        <div class="tbl-inv-grid">
-          <div class="tbl-inv-side">
-            <div class="tbl-floor">${tblSceneHtml(t, { size: 200 })}</div>
-            ${url ? `<div class="tbl-inv-qr"><img src="${qr}" alt="Kod QR z linkiem do stolika"></div><span class="tbl-preview-label">Zeskanuj telefonem</span>` : ''}
+        <div class="tbl-inv-preview">
+          <div class="tbl-inv-img-wrap"><img id="inv-img" alt="Grafika zaproszenia do stolika"><span class="tbl-inv-loading">Rysuję grafikę…</span></div>
+          <div class="tbl-inv-img-btns">
+            <span class="tbl-preview-label">Grafika do wklejenia razem z linkiem</span>
+            <button class="btn btn-gold" id="inv-img-copy">🖼️ Kopiuj grafikę</button>
+            <button class="btn btn-outline" id="inv-img-dl">⬇️ Pobierz PNG</button>
           </div>
+        </div>
+        <div class="tbl-inv-grid ${url ? '' : 'no-side'}">
+          ${url ? `<div class="tbl-inv-side">
+            <div class="tbl-inv-qr"><img src="${qr}" alt="Kod QR z linkiem do stolika"></div>
+            <span class="tbl-preview-label">Zeskanuj telefonem</span>
+          </div>` : ''}
           <div class="tbl-inv-main">
             ${url ? `<div class="field"><label>Link do stolika</label>
               <div class="tbl-copy-row" style="margin-top:4px">
@@ -5021,9 +5308,17 @@ function openTableInvite(id) {
         </div>
       </div>
     </div>`);
-  hydrateCovers(document.getElementById('overlay'));
   const $ = (x) => document.getElementById(x);
   const msg = () => $('inv-msg').value;
+  let imgBlob = null;
+  tblRenderInviteImage(t).then(({ blob, url: dataUrl }) => {
+    imgBlob = blob;
+    const im = $('inv-img');
+    if (!im) return;
+    im.src = dataUrl; im.classList.add('ready');
+  });
+  $('inv-img-copy').onclick = (e) => tblCopyInviteImage(t, e.currentTarget);
+  $('inv-img-dl').onclick = () => tblDownloadInviteImage(t, imgBlob);
   $('inv-back').onclick = () => openTables({ mode: 'detail', id, tab: tblView.tab });
   $('inv-settings').onclick = () => openAppSettings(reopen);
   if (url) {
@@ -5045,14 +5340,23 @@ function openTableInvite(id) {
       const btn = e.currentTarget;
       btn.disabled = true;
       const who = tblGetName() || t.host || 'Ktoś';
-      slackSend(slackTableText(t, `✉️ *${slackEsc(who)}* zaprasza do gry!`)).then(ok => {
+      const head = `✉️ *${slackEsc(who)}* zaprasza do gry!`;
+      slackSend(slackTableText(t, head), null, slackTableBlocks(t, head)).then(ok => {
         btn.disabled = false;
         toast(ok ? `Zaproszenie wysłane${appSettings.slack.channel ? ' na ' + appSettings.slack.channel : ' na Slacka'}.` : 'Nie udało się wysłać na Slacka.', ok ? undefined : 'error');
       });
     };
   }
   if ($('inv-slack-setup')) $('inv-slack-setup').onclick = () => openAppSettings(reopen);
-  if (canShare) $('inv-share').onclick = () => { navigator.share(url ? { title: subject, text: msg(), url } : { title: subject, text: msg() }).catch(() => {}); };
+  if (canShare) $('inv-share').onclick = async () => {
+    const data = url ? { title: subject, text: msg(), url } : { title: subject, text: msg() };
+    try {
+      const blob = imgBlob || (await tblRenderInviteImage(t)).blob;
+      const file = new File([blob], `zaproszenie-${t.date}.png`, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) data.files = [file];
+    } catch (e) {}
+    navigator.share(data).catch(() => {});
+  };
 }
 
 // Wejście z linku zaproszenia: #t-<id>
