@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🪑 Zaproszenie do stolika · Biblioteczka Gier JFF</title>
+<!--
+  Strona zaproszeń: daje linkom do stolików własny podgląd w Slacku, Messengerze, WhatsAppie i poczcie,
+  a potem od razu przenosi do biblioteczki i otwiera zaproszony stolik.
+  Wrzuć ją do tego samego folderu co index.html razem z plikiem og-zaproszenie.jpg.
+  Jeśli adres Twojej strony jest inny niż poniżej, podmień go (Ctrl+H → „Zamień wszystko”).
+-->
+<meta name="description" content="Ktoś zaprasza Cię do wspólnego grania. Zobacz, w co gramy, kiedy i gdzie — i zajmij wolne krzesło.">
+<meta name="theme-color" content="#7B5534">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pl_PL">
+<meta property="og:site_name" content="Biblioteczka Gier JFF">
+<meta property="og:title" content="🪑 Zaproszenie do stolika — dosiądź się!">
+<meta property="og:description" content="Ktoś zaprasza Cię do wspólnego grania w Biblioteczce Gier JFF. Kliknij, żeby zobaczyć, w co gramy, kiedy i gdzie — i zająć wolne krzesło.">
+<meta property="og:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-zaproszenie.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zaproszenie do stolika — wolne krzesło czeka na Ciebie">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="🪑 Zaproszenie do stolika — dosiądź się!">
+<meta name="twitter:description" content="Zobacz, w co gramy, kiedy i gdzie — i zajmij wolne krzesło.">
+<meta name="twitter:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-zaproszenie.jpg">
+<script>
+  // Przekierowanie do biblioteczki z otwartym stolikiem (stolik.html?t=ID → ./#t-ID)
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('t') || (window.location.hash.indexOf('#t-') === 0 ? window.location.hash.slice(3) : '');
+    var target = './' + (id ? '#t-' + encodeURIComponent(id) : '');
+    window.__target = target;
+    window.location.replace(target);
+  })();
+</script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body {
+    display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', Inter, Arial, sans-serif;
+    background: #7B5534 repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0 1px, transparent 1px 34px);
+    color: #16232B;
+  }
+  .card { background: #F0EAD9; border-radius: 18px; padding: 28px 30px; max-width: 360px; margin: 16px; text-align: center; box-shadow: 0 14px 34px rgba(0,0,0,0.45); border-top: 8px solid #B8935F; }
+  .ico { font-size: 44px; }
+  h1 { font-family: Georgia, serif; font-size: 24px; margin: 8px 0 6px; }
+  p { margin: 0 0 18px; color: #3A4A52; line-height: 1.45; font-size: 15px; }
+  a { display: inline-block; background: #B8935F; color: #16232B; text-decoration: none; font-weight: 700; padding: 11px 18px; border-radius: 10px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="ico">🪑</div>
+    <h1>Otwieram zaproszenie…</h1>
+    <p>Za chwilę zobaczysz stolik w Biblioteczce Gier JFF.</p>
+    <a id="go" href="./">Przejdź do stolika</a>
+  </div>
+  <script>document.getElementById('go').href = window.__target || './';</script>
+</body>
+</html>

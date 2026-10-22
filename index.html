@@ -6,8 +6,8 @@
 <title>Biblioteczka Gier JFF</title>
 <!--
   PODGLĄD LINKU (Slack, Messenger, WhatsApp, e-mail)
-  Po opublikowaniu strony podmień ADRES-STRONY na jej prawdziwy adres (Ctrl+H → „Zamień wszystko”),
-  np. https://twoja-nazwa.github.io/biblioteczka/ — i wrzuć plik og-image.jpg do tego samego folderu co index.html.
+  Adres strony jest już wpisany poniżej. Jeśli kiedyś się zmieni, podmień go (Ctrl+H → „Zamień wszystko”)
+  tutaj i w pliku stolik.html. Obok index.html muszą leżeć: og-image.jpg, stolik.html i og-zaproszenie.jpg.
   Serwisy pobierają te znaczniki same, bez JavaScriptu, dlatego adres musi być wpisany na stałe.
 -->
 <meta name="description" content="Wypożycz grę planszową z biblioteczki JFF, zapisz się na wspólny stolik i zagraj w lotnicze minigry.">
@@ -17,8 +17,8 @@
 <meta property="og:site_name" content="Biblioteczka Gier JFF">
 <meta property="og:title" content="Biblioteczka Gier JFF — wypożycz grę i zapisz się na stolik">
 <meta property="og:description" content="🎲 Katalog gier planszowych · 🪑 zapisy na wspólne granie · 🎮 lotnicze minigry. Kliknij, żeby zobaczyć stoliki i zająć wolne miejsce.">
-<meta property="og:url" content="https://potwierdzony.github.io/Biblioteczka-gier//">
-<meta property="og:image" content="https://potwierdzony.github.io/Biblioteczka-gier//og-image.jpg">
+<meta property="og:url" content="https://potwierdzony.github.io/Biblioteczka-gier/">
+<meta property="og:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,7 +26,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Biblioteczka Gier JFF">
 <meta name="twitter:description" content="Wypożycz grę, zapisz się na stolik, zagraj w minigry.">
-<meta name="twitter:image" content="https://potwierdzony.github.io/Biblioteczka-gier//og-image.jpg">
+<meta name="twitter:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -4841,7 +4841,11 @@ function tblDownloadIcs(t) {
 }
 
 // ---- zaproszenia (link do konkretnego stolika) ----
-function tblInviteUrl(id) { return publicLink('#t-' + id); }
+function tblInviteUrl(id) {
+  const dir = publicDir();
+  if (!dir) return '';
+  return invitePageOk ? `${dir}stolik.html?t=${encodeURIComponent(id)}` : `${dir}#t-${id}`;
+}
 function tblInviteText(t) {
   const players = tblPlayers(t), seats = tblSeatsOf(t), free = seats - players.length;
   return `🎲 Zaproszenie do gry: ${tblGameName(t)}\n` +
@@ -4873,7 +4877,8 @@ settingsRef.on('value', (snap) => {
   const v = snap.val() || {};
   appSettings = { publicUrl: v.publicUrl || '', slack: Object.assign({ ...SLACK_DEFAULTS }, v.slack || {}) };
   settingsError = false;
-}, () => { settingsError = true; });
+  setTimeout(checkInvitePage, 0);
+}, () => { settingsError = true; setTimeout(checkInvitePage, 0); });
 
 // Czy strona jest otwarta spod adresu, który inni też mogą otworzyć?
 function isPublicPage() {
@@ -4885,6 +4890,28 @@ function publicBase() {
   return /^https?:\/\/[^\s]+$/i.test(u) ? u.split('#')[0] : '';
 }
 function publicLink(hash) { const b = publicBase(); return b ? b + hash : ''; }
+// Katalog strony (adres bez index.html, zawsze zakończony „/”)
+function publicDir() {
+  const b = publicBase();
+  if (!b) return '';
+  const u = b.split('#')[0].split('?')[0];
+  if (u.endsWith('/')) return u;
+  const last = u.slice(u.lastIndexOf('/') + 1);
+  return last.includes('.') ? u.slice(0, u.lastIndexOf('/') + 1) : u + '/';
+}
+// Strona zaproszeń stolik.html daje linkom do stolików osobny podgląd w komunikatorach.
+let invitePageOk = null;
+let invitePageDir = '';
+function checkInvitePage() {
+  const dir = publicDir();
+  if (dir === invitePageDir && invitePageOk !== null) return;
+  invitePageDir = dir;
+  if (!dir) { invitePageOk = false; return; }
+  invitePageOk = null;
+  fetch(dir + 'stolik.html', { method: 'HEAD', cache: 'no-store' })
+    .then(r => { if (invitePageDir === dir) invitePageOk = r.ok; })
+    .catch(() => { if (invitePageDir === dir) invitePageOk = false; });
+}
 function pageLocationLabel() {
   if (window.location.protocol === 'file:') return 'plik na Twoim dysku';
   if (!isPublicPage()) return 'serwer lokalny na Twoim komputerze';
@@ -4964,6 +4991,7 @@ function openAppSettings(back) {
             <input id="set-url" type="url" placeholder="https://twoja-nazwa.github.io/biblioteczka/" value="${escapeHtml(appSettings.publicUrl)}">
           </div>
           ${isPublicPage() && (document.querySelector('meta[property="og:image"]') || {}).content?.includes('ADRES-STRONY') ? '<div class="set-warn"><b>Podgląd linku nie jest jeszcze ustawiony.</b> W pliku index.html (sekcja &lt;head&gt;) podmień „ADRES-STRONY” na adres tej strony i wrzuć obok plik og-image.jpg — wtedy linki w Slacku i komunikatorach pokażą grafikę biblioteczki.</div>' : ''}
+          ${publicDir() ? `<div class="set-now">Strona zaproszeń <code>stolik.html</code>: ${invitePageOk ? '<b style="color:var(--green)">✓ działa — zaproszenia mają własny podgląd „Zaproszenie do stolika”</b>' : invitePageOk === false ? '<b style="color:var(--red)">✗ nie znaleziono</b> — wrzuć <code>stolik.html</code> i <code>og-zaproszenie.jpg</code> obok index.html (do tego czasu linki prowadzą bezpośrednio do biblioteczki)' : 'sprawdzam…'}</div>` : ''}
           <div class="field-hint">Potrzebny tylko wtedy, gdy sam otwierasz stronę z pliku. Z tego adresu budowane są linki do stolików, kody QR i przycisk „Udostępnij”. Po opublikowaniu strony (GitHub Pages, Firebase Hosting, Netlify) wpisz tu jej adres.</div>
         </section>
         <section class="set-section">
