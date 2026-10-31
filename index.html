@@ -18,7 +18,7 @@
 <meta property="og:title" content="Biblioteczka Gier JFF — wypożycz grę i zapisz się na stolik">
 <meta property="og:description" content="🎲 Katalog gier planszowych · 🪑 zapisy na wspólne granie · 🎮 lotnicze minigry. Kliknij, żeby zobaczyć stoliki i zająć wolne miejsce.">
 <meta property="og:url" content="https://potwierdzony.github.io/Biblioteczka-gier/">
-<meta property="og:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-image.jpg">
+<meta property="og:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-image.jpg?v=2">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,7 +26,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Biblioteczka Gier JFF">
 <meta name="twitter:description" content="Wypożycz grę, zapisz się na stolik, zagraj w minigry.">
-<meta name="twitter:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-image.jpg">
+<meta name="twitter:image" content="https://potwierdzony.github.io/Biblioteczka-gier/og-image.jpg?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -936,16 +936,16 @@
   .tbl-actions .btn { padding: 10px 14px; font-size: 13px; }
   .tbl-invite-banner {
     display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 16px; border-radius: 12px;
-    background: linear-gradient(120deg, #B8935F, #D9B57A); color: #16232B; box-shadow: 0 4px 14px rgba(0,0,0,0.2); animation: card-in .35s ease;
+    background: linear-gradient(120deg, #1F6FEB, #3D8BFD); color: #fff; box-shadow: 0 6px 18px rgba(31,111,235,0.35); animation: card-in .35s ease;
   }
   .tbl-invite-banner b { font-family: 'Inter', sans-serif; font-size: 18px; }
   .tbl-invite-banner > div { flex: 1; min-width: 200px; font-size: 13px; line-height: 1.4; }
-  .tbl-invite-banner .btn { background: #16232B; color: #F0EAD9; }
+  .tbl-invite-banner .btn { background: #0C1A2E; color: #fff; }
   /* okno zaproszenia */
   .tbl-inv-grid { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; }
   .tbl-inv-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .tbl-inv-side .tbl-floor { padding: 18px; min-height: 0; display: flex; justify-content: center; }
-  .tbl-inv-qr { background: #F0EAD9; border-radius: 10px; padding: 8px; border: 1px solid var(--border-card); }
+  .tbl-inv-qr { background: #fff; border-radius: 10px; padding: 8px; border: 1px solid var(--border-card); }
   .tbl-inv-qr img { display: block; width: 132px; height: 132px; }
   .tbl-inv-main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
   .tbl-copy-row { display: flex; gap: 8px; }
@@ -1012,7 +1012,7 @@
   .set-warn b { display: block; margin-bottom: 2px; }
   .tbl-slack-on { color: #7FD08A; font-size: 10px; }
   .tbl-inv-preview { display: flex; flex-direction: column; gap: 10px; }
-  .tbl-inv-img-wrap { position: relative; width: 100%; aspect-ratio: 1200 / 630; border-radius: 12px; overflow: hidden; background: #6C482B; box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
+  .tbl-inv-img-wrap { position: relative; width: 100%; aspect-ratio: 1200 / 630; border-radius: 12px; overflow: hidden; background: #0B1830; box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
   .tbl-inv-img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .3s ease; }
   .tbl-inv-img-wrap img.ready { opacity: 1; }
   .tbl-inv-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #F4EBDD; }
@@ -1246,7 +1246,7 @@
 </style>
 </head>
 <body class="pre-intro">
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.7V17c0 .6-.5 1-1 1.2C7.9 18.8 7 20.2 7 22M14 14.7V17c0 .6.5 1 1 1.2 1.1.6 2 2 2 3.8M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol><symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.6 9.4 2 14.5 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.4-1.4A2 2 0 0 1 9.8 16h4.4a2 2 0 0 1 1.4.6L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.5-.6-6.6-.7-7.3A4 4 0 0 0 17.3 5z"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol><symbol id="i-clipboard" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol><symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol><symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2"/><path d="m17.9 14 3.5-3.5a2.2 2.2 0 0 0 0-3l-5-4.9a2.2 2.2 0 0 0-3 0L10 6M6 18h.01M10 14h.01M15 6h.01M18 9h.01"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.7 18-8-14a2 2 0 0 0-3.5 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3"/><path d="M12 9v4M12 17h.01"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.7 9.7 0 0 0-6.7 2.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></symbol><symbol id="i-qr" viewBox="0 0 24 24"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3M21 21v.01M12 7v3a2 2 0 0 1-2 2H7M3 12h.01M12 3h.01M12 16v.01M16 12h1M21 12v.01M12 21v-1"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol><symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4A2 2 0 0 0 7 17.8V22M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4A2 2 0 0 0 17 6.2V2"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></symbol><symbol id="i-library" viewBox="0 0 24 24"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.7V17c0 .6-.5 1-1 1.2C7.9 18.8 7 20.2 7 22M14 14.7V17c0 .6.5 1 1 1.2 1.1.6 2 2 2 3.8M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol><symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6C2.6 9.4 2 14.5 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.4-1.4A2 2 0 0 1 9.8 16h4.4a2 2 0 0 1 1.4.6L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.5-.6-6.6-.7-7.3A4 4 0 0 0 17.3 5z"/></symbol><symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol><symbol id="i-clipboard" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol><symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol><symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2"/><path d="m17.9 14 3.5-3.5a2.2 2.2 0 0 0 0-3l-5-4.9a2.2 2.2 0 0 0-3 0L10 6M6 18h.01M10 14h.01M15 6h.01M18 9h.01"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.7 18-8-14a2 2 0 0 0-3.5 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3"/><path d="M12 9v4M12 17h.01"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol><symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.7 9.7 0 0 0-6.7 2.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></symbol><symbol id="i-qr" viewBox="0 0 24 24"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3M21 21v.01M12 7v3a2 2 0 0 1-2 2H7M3 12h.01M12 3h.01M12 16v.01M16 12h1M21 12v.01M12 21v-1"/></symbol><symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol><symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4A2 2 0 0 0 7 17.8V22M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4A2 2 0 0 0 17 6.2V2"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></symbol><symbol id="i-library" viewBox="0 0 24 24"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/></symbol></defs></svg>
 <svg class="navmap" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
 <defs><pattern id="nmGrid" width="160" height="160" patternUnits="userSpaceOnUse"><path d="M160 0H0V160" fill="none" stroke="currentColor" stroke-width=".6"/></pattern>
 <symbol id="nmVor" viewBox="-14 -14 28 28"><polygon points="-6,-11 6,-11 12,0 6,11 -6,11 -12,0" fill="none" stroke="currentColor" stroke-width="1.4"/><circle r="2.2" fill="currentColor"/></symbol>
@@ -4779,24 +4779,24 @@ function tblDetailHtml(t) {
   let joinBtn = '';
   if (!past) {
     if (meIn) joinBtn = `<button class="btn btn-outline" data-leave="${t.id}">Zwolnij miejsce</button>`;
-    else if (!full) joinBtn = `<button class="btn btn-green" data-join="${t.id}">🪑 Zajmij miejsce</button>`;
+    else if (!full) joinBtn = `<button class="btn btn-green" data-join="${t.id}"><svg class="ic"><use href="#i-users"/></svg> Zajmij miejsce</button>`;
     else joinBtn = `<button class="btn btn-outline" disabled>Komplet graczy</button>`;
   }
   const invited = tblView.invited === t.id && !past;
   const banner = invited ? `<div class="tbl-invite-banner">
-      <span style="font-size:30px">✉️</span>
+      <span style="font-size:30px;display:flex"><svg class="ic"><use href="#i-mail"/></svg></span>
       <div><b>Zaproszenie do stolika!</b><br>${escapeHtml(t.host || 'Ktoś')} zaprasza Cię do gry: <b style="font-size:inherit">${escapeHtml(tblGameName(t))}</b> — ${tblLongDate(t.date)}, ${escapeHtml(t.time)}.
-      ${meIn ? 'Masz już tu miejsce 🎉' : full ? 'Niestety wszystkie miejsca są zajęte.' : `Wolne miejsca: ${seats - players.length}.`}</div>
-      ${!meIn && !full ? `<button class="btn" data-join="${t.id}">🪑 Zajmij miejsce</button>` : ''}
+      ${meIn ? 'Masz już tu miejsce.' : full ? 'Niestety wszystkie miejsca są zajęte.' : `Wolne miejsca: ${seats - players.length}.`}</div>
+      ${!meIn && !full ? `<button class="btn" data-join="${t.id}"><svg class="ic"><use href="#i-users"/></svg> Zajmij miejsce</button>` : ''}
     </div>` : '';
   return `${banner}<div class="tbl-detail">
     <div class="tbl-floor">${tblSceneHtml(t, { size: 'min(560px, 72vw, 64vh)', big: true, interactive: true, badges: true, animate: true })}</div>
     <div class="tbl-dl">
       <div class="tbl-dl-title">${escapeHtml(tblGameName(t))}</div>
-      <div class="tbl-dl-row"><span>📅</span><span>${tblLongDate(t.date)}<br><small>${escapeHtml(t.time || '')} – ok. ${end}${g && g.duration ? ` (czas gry: ${escapeHtml(g.duration)})` : ''}</small></span></div>
-      <div class="tbl-dl-row"><span>📍</span><span>${escapeHtml(t.place || '—')}</span></div>
-      <div class="tbl-dl-row"><span>👑</span><span>Organizuje: <b>${escapeHtml(t.host || '—')}</b></span></div>
-      <div class="tbl-dl-row"><span>👥</span><span>${players.length} z ${seats} miejsc zajętych${g && g.players ? ` <small>(gra na ${escapeHtml(g.players)} os.)</small>` : ''}</span></div>
+      <div class="tbl-dl-row"><span><svg class="ic"><use href="#i-calendar"/></svg></span><span>${tblLongDate(t.date)}<br><small>${escapeHtml(t.time || '')} – ok. ${end}${g && g.duration ? ` (czas gry: ${escapeHtml(g.duration)})` : ''}</small></span></div>
+      <div class="tbl-dl-row"><span><svg class="ic"><use href="#i-pin"/></svg></span><span>${escapeHtml(t.place || '—')}</span></div>
+      <div class="tbl-dl-row"><span><svg class="ic"><use href="#i-star"/></svg></span><span>Organizuje: <b>${escapeHtml(t.host || '—')}</b></span></div>
+      <div class="tbl-dl-row"><span><svg class="ic"><use href="#i-users"/></svg></span><span>${players.length} z ${seats} miejsc zajętych${g && g.players ? ` <small>(gra na ${escapeHtml(g.players)} os.)</small>` : ''}</span></div>
       ${!g ? `<div class="tbl-dl-row"><span>📦</span><span><small>Gra spoza biblioteczki — ktoś musi ją przynieść.</small></span></div>` : ''}
       ${t.notes ? `<div class="tbl-notes">${escapeHtml(t.notes)}</div>` : ''}
       ${players.length ? `<div class="tbl-players">${players.map(p => `<span class="tbl-chip ${p.key === meKey ? 'me' : ''}">${avatarHtml(p.name)}${escapeHtml(p.name)}${tblKey(p.name) === tblKey(t.host) ? ' 👑' : ''}</span>`).join('')}</div>` : '<div class="rank-empty">Nikt jeszcze nie usiadł przy stole.</div>'}
@@ -5326,56 +5326,68 @@ async function tblRenderInviteImage(t) {
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const ctx = c.getContext('2d');
-  try { await Promise.all(['700 64px Fraunces', '600 30px Inter', '700 24px "JetBrains Mono"'].map(f => document.fonts.load(f))); } catch (e) {}
-  const SERIF = 'Fraunces, Georgia, serif', SANS = 'Inter, "Segoe UI", Arial, sans-serif', MONO = '"JetBrains Mono", Consolas, monospace';
+  try { await Promise.all(['700 64px Inter', '500 26px Inter', '700 22px "JetBrains Mono"'].map(f => document.fonts.load(f))); } catch (e) {}
+  const SANS = 'Inter, "Segoe UI", Arial, sans-serif', MONO = '"JetBrains Mono", Consolas, monospace';
   const g = tblGameOf(t);
   const gname = tblGameName(t);
   const cover = g && g.hasCover ? await getCover(g.id).then(src => src ? tblLoadImg(src) : null).catch(() => null) : null;
-
-  // podłoga z desek
-  const floor = ctx.createLinearGradient(0, 0, 0, H);
-  floor.addColorStop(0, '#8A623E'); floor.addColorStop(1, '#6C482B');
-  ctx.fillStyle = floor; ctx.fillRect(0, 0, W, H);
-  for (let y = 0; y < H; y += 52) {
-    ctx.fillStyle = (y / 52) % 2 ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.035)'; ctx.fillRect(0, y, W, 52);
-    ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(0, y, W, 2);
-    const off = (y / 52) % 2 ? 140 : 0;
-    for (let x = off; x < W; x += 280) ctx.fillRect(x, y, 2, 52);
-  }
-  const vig = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 760);
-  vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.45)');
-  ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
-
-  // stół
-  const cx = 300, cy = 315, R = 168;
-  const seats = tblSeatsOf(t), players = tblPlayers(t), hostKey = tblKey(t.host);
-  ctx.save();
-  ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18;
-  ctx.beginPath(); ctx.arc(cx, cy, R + 22, 0, Math.PI * 2); ctx.fillStyle = '#3F2614'; ctx.fill();
-  ctx.restore();
-  ctx.beginPath(); ctx.arc(cx, cy, R + 18, 0, Math.PI * 2); ctx.fillStyle = '#6A4426'; ctx.fill();
-  const felt = ctx.createRadialGradient(cx - 50, cy - 60, 20, cx, cy, R);
-  felt.addColorStop(0, '#46996A'); felt.addColorStop(0.5, '#2F7752'); felt.addColorStop(1, '#225C3D');
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = felt; ctx.fill();
-  ctx.beginPath(); ctx.arc(cx, cy, R * 0.78, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.lineWidth = 3; ctx.stroke();
-  // kostka i karty
-  ctx.save(); ctx.translate(cx + 96, cy + 86); ctx.rotate(0.3);
-  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 3;
-  tblRoundRect(ctx, -17, -17, 34, 34, 7); ctx.fillStyle = '#F4F1E8'; ctx.fill(); ctx.shadowColor = 'transparent';
-  ctx.fillStyle = '#26343F'; [[-8, -8], [0, 0], [8, 8]].forEach(([a, b]) => { ctx.beginPath(); ctx.arc(a, b, 3.6, 0, Math.PI * 2); ctx.fill(); });
-  ctx.restore();
-  [['#2e7f9b', -0.3], ['#F4F1E8', 0.15]].forEach(([col, rot]) => {
-    ctx.save(); ctx.translate(cx - 116, cy + 50); ctx.rotate(rot);
-    ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 2;
-    tblRoundRect(ctx, -20, -29, 40, 58, 5); ctx.fillStyle = col; ctx.fill();
-    ctx.shadowColor = 'transparent'; ctx.strokeStyle = '#B8935F'; ctx.lineWidth = 2; ctx.stroke();
+  const icon = (d, x, y, s, col, fill) => {
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    const p = new Path2D(d);
+    if (fill) { ctx.fillStyle = col; ctx.fill(p); }
+    else { ctx.strokeStyle = col; ctx.lineWidth = 1.9; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(p); }
     ctx.restore();
-  });
+  };
+  const IC = {
+    cal: 'M8 2v4M16 2v4M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM3 10h18',
+    pin: 'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
+    star: 'm12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z',
+    users: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
+    dice: 'M4 10h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2ZM17.9 14l3.5-3.5a2.2 2.2 0 0 0 0-3l-5-4.9a2.2 2.2 0 0 0-3 0L10 6M6 18h.01M10 14h.01M15 6h.01M18 9h.01'
+  };
+
+  // tło: ciemna mapa nawigacyjna
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0F1D33'); bg.addColorStop(0.55, '#0A1424'); bg.addColorStop(1, '#070E1A');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  const glow = ctx.createRadialGradient(W * 0.25, 0, 0, W * 0.25, 0, 620);
+  glow.addColorStop(0, 'rgba(61,139,253,0.22)'); glow.addColorStop(1, 'rgba(61,139,253,0)');
+  ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(125,184,255,0.07)'; ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 48) { ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 48) { ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); ctx.stroke(); }
+  const cx = 300, cy = 315, R = 168;
+  ctx.setLineDash([3, 8]); ctx.strokeStyle = 'rgba(125,184,255,0.16)'; ctx.lineWidth = 1.5;
+  [260, 360].forEach(r => { ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); });
+  ctx.setLineDash([12, 9]); ctx.strokeStyle = 'rgba(232,121,249,0.28)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(-10, 80); ctx.lineTo(cx, cy); ctx.lineTo(W + 10, 600); ctx.stroke(); ctx.setLineDash([]);
+  // samolot w tle ze smugą
+  ctx.save(); ctx.globalAlpha = 0.11; ctx.translate(690, 6); ctx.scale(0.95, 0.95); ctx.fillStyle = '#9CC4FF';
+  ['M234 38C232 30 218 26 200 26H70C50 26 28 25 14 21L10 28C26 38 52 46 80 48H200C220 48 232 45 234 38Z', 'M98 26L40 2H24L30 25Z', 'M152 46L108 68H94L124 46Z', 'M118 56H146C151 56 151 65 146 65H118C113 65 113 56 118 56Z'].forEach(d => ctx.fill(new Path2D(d)));
+  const trail = ctx.createLinearGradient(-330, 0, 8, 0); trail.addColorStop(0, 'rgba(156,196,255,0)'); trail.addColorStop(1, 'rgba(156,196,255,1)');
+  ctx.fillStyle = trail; ctx.fillRect(-330, 35, 338, 2); ctx.restore();
+
+  // stół jako skop radarowy
+  const seats = tblSeatsOf(t), players = tblPlayers(t), hostKey = tblKey(t.host);
+  ctx.beginPath(); ctx.arc(cx, cy, R + 30, 0, Math.PI * 2); ctx.fillStyle = 'rgba(125,184,255,0.08)'; ctx.fill();
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
+  const scope = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+  scope.addColorStop(0, '#0E2547'); scope.addColorStop(0.7, '#0A1B36'); scope.addColorStop(1, '#07142A');
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = scope; ctx.fill(); ctx.restore();
+  ctx.strokeStyle = 'rgba(125,184,255,0.26)'; ctx.lineWidth = 2;
+  [0.75, 0.5, 0.25].forEach(f => { ctx.beginPath(); ctx.arc(cx, cy, R * f, 0, Math.PI * 2); ctx.stroke(); });
+  ctx.beginPath(); ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
+  if (ctx.createConicGradient) {
+    const cg = ctx.createConicGradient(-Math.PI / 2 + 0.9, cx, cy);
+    cg.addColorStop(0, 'rgba(61,139,253,0)'); cg.addColorStop(0.8, 'rgba(61,139,253,0)'); cg.addColorStop(1, 'rgba(61,139,253,0.4)');
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = cg; ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(125,184,255,0.7)'; ctx.lineWidth = 5; ctx.stroke();
   // pudełko gry
-  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.12);
+  ctx.save(); ctx.translate(cx, cy);
   const B = 150;
-  ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 22; ctx.shadowOffsetX = 6; ctx.shadowOffsetY = 12;
-  ctx.fillStyle = '#F4F1E8'; tblRoundRect(ctx, -B / 2 - 5, -B / 2 - 5, B + 10, B + 10, 10); ctx.fill();
+  ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 10;
+  ctx.fillStyle = '#F5F8FC'; tblRoundRect(ctx, -B / 2 - 4, -B / 2 - 4, B + 8, B + 8, 10); ctx.fill();
   ctx.shadowColor = 'transparent';
   ctx.save(); tblRoundRect(ctx, -B / 2, -B / 2, B, B, 7); ctx.clip();
   if (cover) {
@@ -5384,60 +5396,54 @@ async function tblRenderInviteImage(t) {
   } else {
     ctx.fillStyle = tblBoxColor(gname); ctx.fillRect(-B / 2, -B / 2, B, B);
     const shine = ctx.createLinearGradient(-B / 2, -B / 2, B / 2, B / 2);
-    shine.addColorStop(0, 'rgba(255,255,255,0.25)'); shine.addColorStop(1, 'rgba(0,0,0,0.25)');
+    shine.addColorStop(0, 'rgba(255,255,255,0.22)'); shine.addColorStop(1, 'rgba(0,0,0,0.28)');
     ctx.fillStyle = shine; ctx.fillRect(-B / 2, -B / 2, B, B);
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.font = `40px ${SANS}`; ctx.fillText('🎲', 0, -32);
-    ctx.fillStyle = '#fff'; ctx.font = `700 22px ${SERIF}`;
-    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowOffsetY = 1; ctx.shadowBlur = 2;
-    tblWrap(ctx, gname, B - 18, 3).forEach((ln, i, arr) => ctx.fillText(ln, 0, 18 + (i - (arr.length - 1) / 2) * 25));
+    icon(IC.dice, -18, -58, 1.5, '#fff', false);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.font = `700 21px ${SANS}`;
+    ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowOffsetY = 1; ctx.shadowBlur = 3;
+    tblWrap(ctx, gname, B - 18, 3).forEach((ln, i, arr) => ctx.fillText(ln, 0, 24 + (i - (arr.length - 1) / 2) * 24));
   }
   ctx.restore(); ctx.restore();
-  // krzesła i pionki
+  // miejsca i pionki
   for (let i = 0; i < seats; i++) {
     const a = -Math.PI / 2 + Math.PI * 2 * i / seats;
-    const sx = cx + Math.cos(a) * (R + 30), sy = cy + Math.sin(a) * (R + 30);
-    ctx.save(); ctx.translate(sx, sy); ctx.rotate(a + Math.PI / 2);
-    ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
-    tblRoundRect(ctx, -34, -30, 68, 62, 16); ctx.fillStyle = '#6E4829'; ctx.fill();
-    ctx.shadowColor = 'transparent';
-    tblRoundRect(ctx, -34, -30, 68, 16, 10); ctx.fillStyle = '#4A2F1B'; ctx.fill();
-    ctx.restore();
+    const sx = cx + Math.cos(a) * (R + 36), sy = cy + Math.sin(a) * (R + 36);
     const p = players[i];
     ctx.save(); ctx.translate(sx, sy);
+    ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI * 2); ctx.fillStyle = '#13294B'; ctx.fill();
+    ctx.strokeStyle = 'rgba(125,184,255,0.4)'; ctx.lineWidth = 2; ctx.stroke();
     if (p) {
       ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
-      ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.fillStyle = avatarColor(p.name); ctx.fill();
-      ctx.shadowColor = 'transparent';
-      ctx.lineWidth = 4; ctx.strokeStyle = '#F4F1E8'; ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, 26, 0, Math.PI * 2); ctx.fillStyle = avatarColor(p.name); ctx.fill();
+      ctx.shadowColor = 'transparent'; ctx.lineWidth = 4; ctx.strokeStyle = '#DCE8FA'; ctx.stroke();
       ctx.fillStyle = '#fff'; ctx.font = `700 19px ${MONO}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(initials(p.name), 0, 1);
-      if (tblKey(p.name) === hostKey) { ctx.font = `24px ${SANS}`; ctx.fillText('👑', 20, -24); }
+      if (tblKey(p.name) === hostKey) { icon(IC.star, 12, -42, 1.1, '#F5A524', true); }
     } else {
-      ctx.setLineDash([6, 5]); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,236,200,0.75)';
-      ctx.beginPath(); ctx.arc(0, 0, 21, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(255,236,200,0.95)'; ctx.font = `700 28px ${SANS}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.setLineDash([6, 5]); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(125,184,255,0.85)';
+      ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#BFD8FF'; ctx.font = `700 28px ${SANS}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText('+', 0, 1);
     }
     ctx.restore();
   }
 
-  // karta z informacjami
-  const px = 600, py = 70, pw = 540, ph = 490;
+  // karta „boarding pass”
+  const px = 610, py = 70, pw = 540, ph = 490;
   ctx.save();
-  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14;
-  tblRoundRect(ctx, px, py, pw, ph, 22); ctx.fillStyle = '#F0EAD9'; ctx.fill();
+  ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 16;
+  tblRoundRect(ctx, px, py, pw, ph, 22); ctx.fillStyle = '#F5F8FC'; ctx.fill();
   ctx.restore();
-  ctx.fillStyle = '#B8935F'; tblRoundRect(ctx, px, py, pw, 10, 5); ctx.fill();
+  ctx.save(); tblRoundRect(ctx, px, py, pw, ph, 22); ctx.clip(); ctx.fillStyle = '#2B7BEF'; ctx.fillRect(px, py, pw, 10); ctx.restore();
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-  let y = py + 62;
-  ctx.fillStyle = '#9A7A4C'; ctx.font = `700 19px ${MONO}`;
-  ctx.fillText('ZAPROSZENIE DO STOLIKA', px + 40, y);
-  y += 22;
+  let y = py + 64;
+  ctx.fillStyle = '#1F6FEB'; ctx.font = `700 18px ${MONO}`;
+  ctx.fillText('ZAPROSZENIE · BOARDING PASS', px + 40, y);
+  y += 20;
   let size = 52;
-  ctx.font = `700 ${size}px ${SERIF}`;
-  while (size > 34 && tblWrap(ctx, gname, pw - 80, 2).length > 1 && ctx.measureText(gname).width > (pw - 80) * 1.7) { size -= 4; ctx.font = `700 ${size}px ${SERIF}`; }
-  ctx.fillStyle = '#16232B';
+  ctx.font = `700 ${size}px ${SANS}`;
+  while (size > 34 && tblWrap(ctx, gname, pw - 80, 2).length > 1 && ctx.measureText(gname).width > (pw - 80) * 1.7) { size -= 4; ctx.font = `700 ${size}px ${SANS}`; }
+  ctx.fillStyle = '#0C1A2E';
   tblWrap(ctx, gname, pw - 80, 2).forEach(ln => { y += size * 1.1; ctx.fillText(ln, px + 40, y); });
   y += 26;
   const dObj = new Date(t.date + 'T00:00:00');
@@ -5449,28 +5455,29 @@ async function tblRenderInviteImage(t) {
   ];
   const dateTxt = dateCandidates.find(s => ctx.measureText(s).width <= pw - 130) || dateCandidates[2];
   const rows = [
-    ['📅', dateTxt],
-    ['📍', t.place || '—'],
-    ['👑', `Organizuje: ${t.host || '—'}`],
-    ['👥', tblFreeLabel(t)]
+    [IC.cal, false, dateTxt],
+    [IC.pin, false, t.place || '—'],
+    [IC.star, true, `Organizuje: ${t.host || '—'}`],
+    [IC.users, false, tblFreeLabel(t)]
   ];
-  rows.forEach(([ico, txt], i) => {
+  rows.forEach(([ico, fill, txt], i) => {
     y += 44;
-    ctx.font = `26px ${SANS}`; ctx.fillStyle = '#16232B'; ctx.fillText(ico, px + 40, y);
+    icon(ico, px + 40, y - 24, 1.2, i === 2 ? '#F5A524' : '#1F6FEB', fill);
     ctx.font = `${i === 3 ? 600 : 500} 26px ${SANS}`;
-    ctx.fillStyle = i === 3 ? (tblPlayers(t).length >= seats ? '#A8483A' : '#4F7A57') : '#16232B';
+    ctx.fillStyle = i === 3 ? (tblPlayers(t).length >= seats ? '#D13438' : '#12805A') : '#0C1A2E';
     ctx.fillText(tblWrap(ctx, txt, pw - 130, 1)[0], px + 86, y);
   });
   // stopka karty
-  const fy = py + ph - 44;
-  ctx.fillStyle = '#E6DFC8'; ctx.fillRect(px + 30, fy - 34, pw - 60, 2);
-  ctx.font = `700 18px ${MONO}`; ctx.fillStyle = '#7A6A50';
+  const fy = py + ph - 40;
+  ctx.setLineDash([8, 6]); ctx.strokeStyle = '#C6D2E2'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(px + 30, fy - 32); ctx.lineTo(px + pw - 30, fy - 32); ctx.stroke(); ctx.setLineDash([]);
+  ctx.font = `700 15px ${MONO}`; ctx.fillStyle = '#51627A';
   const url = tblInviteUrl(t.id);
-  const foot = url ? url.replace(/^https?:\/\//, '') : 'Biblioteczka Gier JFF → 🪑 Stoliki';
-  ctx.fillText(tblWrap(ctx, '🔗 ' + foot, pw - 80, 1)[0], px + 40, fy);
+  const foot = url ? url.replace(/^https?:\/\//, '') : 'Biblioteczka Gier JFF → Stoliki';
+  ctx.fillText(tblWrap(ctx, foot, pw - 80, 1)[0], px + 40, fy);
   // podpis strony
-  ctx.font = `700 22px ${SERIF}`; ctx.fillStyle = 'rgba(244,235,221,0.92)'; ctx.textAlign = 'right';
-  ctx.fillText('Biblioteczka Gier JFF', W - 60, H - 26);
+  ctx.font = `700 22px ${SANS}`; ctx.fillStyle = 'rgba(223,233,248,0.9)'; ctx.textAlign = 'right';
+  ctx.fillText('Biblioteczka Gier JFF', W - 50, H - 22);
   ctx.textAlign = 'left';
   return new Promise(res => c.toBlob(b => res({ blob: b, url: c.toDataURL('image/png') }), 'image/png'));
 }
