@@ -1346,6 +1346,18 @@
   .fp-status.busy { background: rgba(229,72,77,.12); color: var(--red); }
   .fp-status.small { background: rgba(245,165,36,.16); color: #9A6200; }
   .fp-status.mine { background: rgba(245,165,36,.18); color: #9A6200; }
+  .fp-status.social { background: rgba(31,169,113,.13); color: var(--green); }
+  .fp-social-note { font-size: 11.5px; line-height: 1.45; color: var(--ink-muted); background: rgba(31,169,113,.08); border: 1px dashed rgba(31,169,113,.45); border-radius: 8px; padding: 7px 9px; }
+  .fp-item.social .fp-item-code { background: var(--green); }
+  .fp-item.social .fp-item-cap { color: var(--ink-muted); font-weight: 500; }
+  .fp-lbl.room.social { border-color: #1FA971; background: #EEFBF5; }
+  .fp-lbl.room.social::after { border-top-color: #1FA971; }
+  .fp-lbl.room.social b { color: #0E7A52; }
+  .fp-lbl.room.social em { color: #3D6B5A; font-weight: 500; }
+  .fp-lbl.room.social.hover { background: #DDF6EA; }
+  .fp-lbl.room.social.sel { background: #F5A524; border-color: #FFD58A; }
+  .fp-lbl.room.social.sel::after { border-top-color: #F5A524; }
+  .fp-lbl.room.social.sel b, .fp-lbl.room.social.sel em { color: #0C1A2E; }
   .fp-item.mine .fp-item-txt small { color: #9A6200; }
   .fp-day-t { font: 500 10px 'JetBrains Mono', monospace; color: var(--label); text-transform: uppercase; letter-spacing: .1em; }
   .fp-day ul { margin: 5px 0 0; padding-left: 16px; font-size: 12px; color: var(--ink); line-height: 1.65; }
@@ -5160,7 +5172,7 @@ function openTableForm(editId, presetGameId) {
   ['t-other', 't-date', 't-time', 't-place', 't-host', 't-notes'].forEach(id => { $(id).oninput = preview; });
   const roomChip = () => {
     const info = draft.roomId ? fpRoom(draft.roomId) : null;
-    $('t-room-chip').innerHTML = info ? `<span class="tbl-room-chip"><svg class="ic"><use href="#i-pin"/></svg>${escapeHtml(FP_FLOORS[info.floor].name)} · ${escapeHtml(info.room.name)} · do ${info.room.cap} os. <button type="button" id="t-room-x" title="Usuń wybór sali"><svg class="ic"><use href="#i-x"/></svg></button></span>` : '';
+    $('t-room-chip').innerHTML = info ? `<span class="tbl-room-chip"><svg class="ic"><use href="#i-pin"/></svg>${escapeHtml(FP_FLOORS[info.floor].name)} · ${escapeHtml(info.room.name)}${info.room.social ? ' · bez rezerwacji' : ` · do ${info.room.cap} os.`} <button type="button" id="t-room-x" title="Usuń wybór sali"><svg class="ic"><use href="#i-x"/></svg></button></span>` : '';
     if (info) $('t-room-x').onclick = () => { draft.roomId = ''; draft.floor = ''; $('t-place').value = ''; roomChip(); preview(); };
   };
   $('t-place').oninput = () => {
@@ -5842,17 +5854,31 @@ window.addEventListener('hashchange', () => tblHandleLink(true));
 const FP_W = 48.9, FP_D = 22.85;
 const FP_FLOORS = {"1":{"name":"Piętro 1","level":"+3,96","rooms":[{"id":"rebiechowo","name":"Rębiechowo","cap":20,"x":19.61,"y":0.18,"w":7.11,"h":6.34,"doors":[["s",25.85,0.9]],"furn":"conf","book":true,"tv":"w"},{"id":"kosakowo","name":"Kosakowo","cap":4,"x":44.58,"y":16.93,"w":4.01,"h":2.54,"doors":[["s",45.35,0.9]],"furn":"conf","book":true}],"plain":[{"x":26.72,"y":0.33,"w":3.4,"h":6.19,"doors":[["s",29.51,0.9]],"kind":"office"},{"x":30.12,"y":0.33,"w":2.28,"h":6.19,"doors":[["s",31.64,0.9]],"kind":"office"},{"x":32.4,"y":0.33,"w":3.05,"h":6.19,"doors":[["s",33.16,0.9]],"kind":"office"},{"x":35.45,"y":0.33,"w":2.53,"h":6.19,"doors":[["s",36.21,0.9]],"kind":"office"},{"x":6.77,"y":8.05,"w":4.46,"h":7.25,"doors":[["n",7.98,1.4]],"kind":"archive"},{"x":44.99,"y":8.05,"w":3.55,"h":2.94,"doors":[["w",10.23,0.9]],"kind":"office"},{"x":44.99,"y":10.99,"w":3.55,"h":2.79,"doors":[["w",13.02,0.9]],"kind":"office"},{"x":44.99,"y":13.78,"w":3.55,"h":2.39,"doors":[["w",15.56,0.9]],"kind":"office"},{"x":44.58,"y":19.62,"w":3.96,"h":3.23,"doors":[["w",20.43,0.9]],"kind":"office"}],"core":[{"kind":"stairs","x":14.03,"y":8.45,"w":4.41,"h":7.11},{"kind":"shaft","x":19.86,"y":8.45,"w":0.87,"h":7.11},{"kind":"wc","x":20.73,"y":8.45,"w":5.99,"h":7.11},{"kind":"lift","x":30.02,"y":8.45,"w":2.38,"h":7.11},{"kind":"stairs","x":32.4,"y":8.45,"w":4.21,"h":7.11},{"kind":"tech","x":38.14,"y":8.45,"w":2.54,"h":7.11}],"zones":[{"rects":[[0.07,0.08,19.54,6.6]]},{"rects":[[37.98,0.08,10.82,7.86]]},{"rects":[[0.07,7.94,6.7,7.36]]},{"rects":[[0.07,15.81,6.85,7.04]]},{"rects":[[6.92,15.81,7.11,7.04]],"tint":2},{"rects":[[14.03,15.81,10.66,7.04]]},{"rects":[[32.3,15.81,12.28,7.04]]},{"rects":[[40.68,7.94,4.31,8.13]],"tint":2}],"desks":[[2.05,1.45,-1],[2.85,1.45,1],[2.05,3.22,-1],[2.85,3.22,1],[2.05,4.9,-1],[2.85,4.9,1],[5.5,1.45,-1],[6.3,1.45,1],[5.5,3.22,-1],[6.3,3.22,1],[5.5,4.9,-1],[6.3,4.9,1],[9.01,1.7,-1],[9.81,1.7,1],[9.01,3.22,-1],[9.81,3.22,1],[12.25,1.7,-1],[13.05,1.7,1],[12.25,3.22,-1],[13.05,3.22,1],[15.55,1.7,-1],[16.35,1.7,1],[15.55,3.22,-1],[16.35,3.22,1],[39.77,1.7,-1],[40.57,1.7,1],[39.77,3.22,-1],[40.57,3.22,1],[39.77,5.0,-1],[40.57,5.0,1],[43.32,1.7,-1],[44.12,1.7,1],[43.32,3.22,-1],[44.12,3.22,1],[43.32,5.0,-1],[44.12,5.0,1],[1.59,18.1,-1],[2.39,18.1,1],[1.59,19.72,-1],[2.39,19.72,1],[1.59,21.4,-1],[2.39,21.4,1],[4.74,18.1,-1],[5.54,18.1,1],[4.74,19.72,-1],[5.54,19.72,1],[4.74,21.4,-1],[5.54,21.4,1],[15.4,18.6,-1],[15.4,20.23,-1],[15.4,21.9,-1],[18.45,18.6,-1],[19.25,18.6,1],[18.45,20.23,-1],[19.25,20.23,1],[18.45,21.9,-1],[19.25,21.9,1],[34.44,18.6,-1],[35.24,18.6,1],[34.44,20.23,-1],[35.24,20.23,1],[37.94,18.6,-1],[38.74,18.6,1],[37.94,20.23,-1],[38.74,20.23,1],[37.94,21.9,-1],[38.74,21.9,1],[41.49,18.6,-1],[42.29,18.6,1],[41.49,20.23,-1],[42.29,20.23,1],[41.49,21.9,-1],[42.29,21.9,1]],"tables":[{"x":1.34,"y":9.47,"w":3.8,"h":1.32,"seats":8},{"x":1.34,"y":13.63,"w":3.8,"h":1.22,"seats":8},{"x":22.25,"y":18.6,"w":1.17,"h":3.56,"seats":8},{"round":true,"x":12.25,"y":20.74,"rad":0.75,"seats":7},{"x":12.05,"y":16.68,"w":0.91,"h":0.91,"seats":4},{"x":10.62,"y":18.35,"w":0.92,"h":0.91,"seats":4},{"x":7.27,"y":19.72,"w":2.19,"h":0.76,"sofa":true}],"booths":[[46.87,5.76,1.42,1.27]],"greens":[],"walls":[[0.07,12.31,6.77,12.31]],"voids":[[24.69,16.32,7.61,5.08]],"deskCount":73},"2":{"name":"Piętro 2","level":"+7,67","rooms":[{"id":"tower","name":"Tower","cap":8,"x":0.04,"y":5.54,"w":4.37,"h":4.0,"doors":[["e",9.0,0.9]],"furn":"conf","book":true,"area":16.52},{"id":"terminal","name":"Terminal","cap":4,"x":44.81,"y":8.45,"w":3.9,"h":2.95,"doors":[["w",10.93,0.9]],"furn":"conf","book":true,"area":10.53},{"id":"hangar","name":"Hangar","cap":4,"x":44.81,"y":11.51,"w":3.9,"h":3.43,"doors":[["w",14.43,0.9]],"furn":"conf","book":true,"area":12.26},{"id":"training","name":"Training room","cap":21,"x":24.66,"y":16.68,"w":11.84,"h":6.16,"doors":[["n",26.3,1.0]],"furn":"class","book":true,"area":76.94}],"plain":[{"x":0.04,"y":9.65,"w":4.37,"h":2.55,"doors":[["e",11.73,0.9]],"kind":"office"},{"x":0.04,"y":12.28,"w":4.37,"h":2.47,"doors":[["e",14.24,0.9]],"kind":"office"},{"x":0.04,"y":14.83,"w":4.37,"h":2.73,"doors":[["e",17.12,0.9]],"kind":"office"},{"x":5.97,"y":8.45,"w":4.08,"h":4.15,"doors":[["s",6.7,0.9]],"kind":"office"},{"x":6.12,"y":12.68,"w":3.93,"h":1.93,"doors":[["s",7.36,0.9]],"kind":"office"},{"x":40.58,"y":8.45,"w":2.77,"h":3.17,"doors":[["e",11.07,0.9]],"kind":"office"},{"x":40.58,"y":11.62,"w":2.77,"h":2.99,"doors":[["e",12.31,0.9]],"kind":"office"}],"core":[{"kind":"stairs","x":15.05,"y":8.34,"w":3.24,"h":6.16},{"kind":"shaft","x":19.78,"y":8.34,"w":1.02,"h":6.16},{"kind":"wc","x":20.8,"y":8.34,"w":5.94,"h":6.16},{"kind":"lift","x":30.05,"y":8.34,"w":2.37,"h":6.16},{"kind":"stairs","x":32.42,"y":8.34,"w":3.21,"h":6.16},{"kind":"shaft","x":35.63,"y":8.34,"w":0.87,"h":6.16},{"kind":"tech","x":38.11,"y":8.34,"w":2.4,"h":6.16}],"zones":[{"rects":[[0,0,8.12,6.27]],"name":"ATRS","n":8},{"rects":[[8.74,0,15.27,6.27]],"name":"EH2","n":24},{"rects":[[24.66,0,24.23,6.63]],"name":"AMB+ASN","n":32},{"rects":[[4.41,16.1,15.63,6.74],[0,17.56,4.41,5.28]],"name":"EH1","n":26},{"rects":[[20.04,16.1,4.62,6.74]],"name":"HD","n":4},{"rects":[[36.5,15.37,12.39,7.47]],"name":"OPS DATA/OBST/TOPO","n":18}],"desks":[[2.08,1.42,-1],[2.88,1.42,1],[2.08,3.17,-1],[2.88,3.17,1],[5.72,1.42,-1],[6.52,1.42,1],[5.72,3.17,-1],[6.52,3.17,1],[10.02,1.42,-1],[10.82,1.42,1],[10.02,3.28,-1],[10.82,3.28,1],[10.02,5.06,-1],[10.82,5.06,1],[13.99,1.42,-1],[14.79,1.42,1],[13.99,3.28,-1],[14.79,3.28,1],[13.99,5.06,-1],[14.79,5.06,1],[17.96,1.42,-1],[18.76,1.42,1],[17.96,3.28,-1],[18.76,3.28,1],[17.96,5.06,-1],[18.76,5.06,1],[21.79,1.42,-1],[22.59,1.42,1],[21.79,3.28,-1],[22.59,3.28,1],[21.79,5.06,-1],[22.59,5.06,1],[25.9,1.42,-1],[26.7,1.42,1],[25.9,3.28,-1],[26.7,3.28,1],[29.76,1.42,-1],[30.56,1.42,1],[29.76,3.28,-1],[30.56,3.28,1],[34.03,1.42,-1],[34.83,1.42,1],[34.03,3.28,-1],[34.83,3.28,1],[34.03,5.06,-1],[34.83,5.06,1],[37.96,1.42,-1],[38.76,1.42,1],[37.96,3.28,-1],[38.76,3.28,1],[37.96,5.06,-1],[38.76,5.06,1],[41.97,1.42,-1],[42.77,1.42,1],[41.97,3.28,-1],[42.77,3.28,1],[41.97,5.06,-1],[42.77,5.06,1],[45.87,1.42,-1],[46.67,1.42,1],[45.87,3.28,-1],[46.67,3.28,1],[45.87,5.06,-1],[46.67,5.06,1],[2.48,19.56,-1],[3.28,19.56,1],[2.48,21.38,-1],[3.28,21.38,1],[6.16,19.56,-1],[6.96,19.56,1],[6.16,21.38,-1],[6.96,21.38,1],[9.95,18.0,-1],[10.75,18.0,1],[9.95,19.71,-1],[10.75,19.71,1],[9.95,21.38,-1],[10.75,21.38,1],[13.95,18.0,-1],[14.75,18.0,1],[13.95,19.71,-1],[14.75,19.71,1],[13.95,21.38,-1],[14.75,21.38,1],[17.96,18.0,-1],[18.76,18.0,1],[17.96,19.71,-1],[18.76,19.71,1],[17.96,21.38,-1],[18.76,21.38,1],[22.04,19.56,-1],[22.84,19.56,1],[22.04,21.38,-1],[22.84,21.38,1],[36.87,18.36,1],[36.87,20.07,1],[36.87,21.79,1],[39.53,18.36,-1],[40.33,18.36,1],[39.53,20.07,-1],[40.33,20.07,1],[39.53,21.79,-1],[40.33,21.79,1],[42.95,18.8,-1],[43.75,18.8,1],[42.95,20.47,-1],[43.75,20.47,1],[42.95,22.0,-1],[43.75,22.0,1],[46.78,18.8,1],[46.78,20.47,1],[46.78,22.0,1]],"tables":[{"x":10.64,"y":10.2,"w":2.18,"h":0.95,"seats":6},{"x":10.64,"y":12.53,"w":2.18,"h":0.95,"seats":6}],"booths":[[25.46,4.81,1.94,1.38],[28.78,4.81,2.04,1.38],[21.13,17.09,2.19,1.49]],"greens":[{"kind":"moss","x":8.12,"y":0.66,"w":0.62,"h":5.53},{"kind":"moss","x":24.01,"y":0.66,"w":0.65,"h":5.53}],"walls":[],"voids":[],"deskCount":112},"3":{"name":"Piętro 3","level":"+11,38","rooms":[{"id":"bryza","name":"Bryza","cap":24,"x":0,"y":6.98,"w":6.58,"h":8.18,"doors":[["e",7.64,0.9]],"furn":"conf","book":true,"area":51.64,"tv":"s"},{"id":"iryda","name":"Iryda","cap":10,"x":24.58,"y":0.22,"w":5.64,"h":5.85,"doors":[["s",25.16,0.9]],"furn":"conf","book":true,"area":30.88},{"id":"orlik","name":"Orlik","cap":4,"x":24.11,"y":16.58,"w":3.24,"h":3.17,"doors":[["n",26.84,0.9]],"furn":"conf","book":true,"area":9.05},{"id":"koliber","name":"Koliber","cap":4,"x":27.35,"y":16.58,"w":3.2,"h":3.17,"doors":[["n",29.96,0.9]],"furn":"conf","book":true,"area":9.06},{"id":"flaris","name":"Flaris","cap":4,"x":44.62,"y":8.47,"w":4.0,"h":2.98,"doors":[["w",10.98,0.9]],"furn":"conf","book":true,"area":10.33},{"id":"iskra","name":"Iskra","cap":8,"x":44.62,"y":11.45,"w":4.0,"h":4.84,"doors":[["w",15.71,0.9]],"furn":"conf","book":true,"area":16.69}],"plain":[{"x":8.15,"y":7.67,"w":2.83,"h":2.73,"doors":[["s",10.18,0.9]],"kind":"office"},{"x":10.98,"y":7.67,"w":3.09,"h":2.73,"doors":[["s",11.82,0.9]],"kind":"office"},{"x":24.11,"y":19.75,"w":6.44,"h":3.1,"doors":[["e",20.36,0.9]],"kind":"relax"},{"x":40.47,"y":8.33,"w":2.84,"h":3.31,"doors":[["e",11.16,0.9]],"kind":"office"},{"x":40.58,"y":11.75,"w":2.73,"h":3.09,"doors":[["e",12.36,0.9]],"kind":"office"}],"core":[{"kind":"stairs","x":14.18,"y":8.33,"w":4.07,"h":6.51},{"kind":"shaft","x":19.75,"y":8.33,"w":1.01,"h":6.51},{"kind":"wc","x":20.76,"y":8.33,"w":5.93,"h":6.51},{"kind":"lift","x":29.96,"y":8.33,"w":2.4,"h":6.51},{"kind":"stairs","x":32.36,"y":8.33,"w":3.2,"h":6.51},{"kind":"shaft","x":35.56,"y":8.33,"w":0.99,"h":6.51},{"kind":"tech","x":37.93,"y":8.33,"w":2.51,"h":6.51}],"zones":[{"rects":[[0,0,14.44,6.98]],"name":"VFR","n":21},{"rects":[[14.44,0,1.56,6.98]],"name":"SL/HD for VFR","n":3},{"rects":[[16.8,0,3.75,6.98]],"name":"SAQ","n":6},{"rects":[[20.55,0,4.03,6.98]],"name":"EnrCh","n":6},{"rects":[[30.22,0,18.51,6.98]],"name":"WH1","n":27},{"rects":[[0,15.71,8.07,7.14]],"name":"TLs","n":12},{"rects":[[8.8,15.71,15.31,7.14]],"name":"WH3","n":22},{"rects":[[32.8,15.71,15.93,7.14]],"name":"WH2","n":22}],"desks":[[2.07,1.49,-1],[2.87,1.49,1],[2.07,3.24,-1],[2.87,3.24,1],[2.07,5.02,-1],[2.87,5.02,1],[5.85,1.49,-1],[6.65,1.49,1],[5.85,3.24,-1],[6.65,3.24,1],[5.85,5.02,-1],[6.65,5.02,1],[10.15,1.49,-1],[10.95,1.49,1],[10.15,3.24,-1],[10.95,3.24,1],[10.15,5.02,-1],[10.95,5.02,1],[14.04,1.49,-1],[14.84,1.49,1],[14.04,3.24,-1],[14.84,3.24,1],[14.04,5.02,-1],[14.84,5.02,1],[18.22,1.49,-1],[19.02,1.49,1],[18.22,3.24,-1],[19.02,3.24,1],[18.22,5.02,-1],[19.02,5.02,1],[21.89,1.49,-1],[22.69,1.49,1],[21.89,3.24,-1],[22.69,3.24,1],[21.89,5.02,-1],[22.69,5.02,1],[30.84,1.49,1],[30.84,3.24,1],[30.84,5.02,1],[34.33,1.49,-1],[35.13,1.49,1],[34.33,3.24,-1],[35.13,3.24,1],[34.33,5.02,-1],[35.13,5.02,1],[38.25,1.49,-1],[39.05,1.49,1],[38.25,3.24,-1],[39.05,3.24,1],[38.25,5.02,-1],[39.05,5.02,1],[42.29,1.49,-1],[43.09,1.49,1],[42.29,3.24,-1],[43.09,3.24,1],[42.29,5.02,-1],[43.09,5.02,1],[46.18,1.49,-1],[46.98,1.49,1],[46.18,3.24,-1],[46.98,3.24,1],[46.18,5.02,-1],[46.98,5.02,1],[2.22,17.85,-1],[3.02,17.85,1],[2.22,19.6,-1],[3.02,19.6,1],[2.22,21.38,-1],[3.02,21.38,1],[5.96,17.85,-1],[6.76,17.85,1],[5.96,19.6,-1],[6.76,19.6,1],[5.96,21.38,-1],[6.76,21.38,1],[10.18,17.85,-1],[10.98,17.85,1],[10.18,19.6,-1],[10.98,19.6,1],[10.18,21.38,-1],[10.98,21.38,1],[13.89,17.85,-1],[14.69,17.85,1],[13.89,19.6,-1],[14.69,19.6,1],[13.89,21.38,-1],[14.69,21.38,1],[18.11,17.85,-1],[18.91,17.85,1],[18.11,19.6,-1],[18.91,19.6,1],[18.11,21.38,-1],[18.91,21.38,1],[21.89,19.6,-1],[22.69,19.6,1],[21.89,21.38,-1],[22.69,21.38,1],[34.98,18.44,-1],[35.78,18.44,1],[34.98,20.18,-1],[35.78,20.18,1],[34.98,21.89,-1],[35.78,21.89,1],[38.62,18.44,-1],[39.42,18.44,1],[38.62,20.18,-1],[39.42,20.18,1],[38.62,21.89,-1],[39.42,21.89,1],[42.62,18.44,-1],[43.42,18.44,1],[42.62,20.18,-1],[43.42,20.18,1],[42.62,21.89,-1],[43.42,21.89,1],[46.18,18.73,-1],[46.98,18.73,1],[46.18,20.51,-1],[46.98,20.51,1],[46.58,21.96,1]],"tables":[{"x":9.16,"y":10.69,"w":1.02,"h":2.04,"seats":6},{"x":11.09,"y":10.69,"w":1.02,"h":2.04,"seats":6}],"booths":[[20.87,17.02,1.93,1.38]],"greens":[{"kind":"plants","x":16.0,"y":0.15,"w":0.8,"h":6.1},{"kind":"plants","x":8.07,"y":16.58,"w":0.73,"h":6.27},{"kind":"plants","x":32.0,"y":16.8,"w":0.8,"h":4.98}],"walls":[],"voids":[],"deskCount":120}};
 const FP_ORDER = ['1', '2', '3'];
+// Kuchnie i strefy socjalne — można je wskazać jako miejsce gry, ale nie podlegają rezerwacji
+FP_FLOORS['1'].social = [
+  // aneks kuchenny przy schodach + strefa wypoczynku ze stolikami i kanapą (bez biurek)
+  { id: 'kuchnia-1', name: 'Kuchnia', kind: 'kitchen', social: true, x: 6.92, y: 15.81, w: 7.11, h: 7.04, open: true, doors: [], counter: [13.42, 8.9, 0.58, 5.7],
+    poly: [[11.23, 8.05], [14.03, 8.05], [14.03, 22.85], [6.92, 22.85], [6.92, 15.81], [11.23, 15.81]] }
+];
+FP_FLOORS['2'].social = [
+  { id: 'kuchnia-2', name: 'Kuchnia', kind: 'kitchen', social: true, cap: 12, x: 10.13, y: 8.37, w: 4.0, h: 6.13, doors: [['n', 13.0, 0.9], ['s', 13.0, 0.9]], counter: [13.45, 9.5, 0.55, 4.3] }
+];
+FP_FLOORS['3'].social = [
+  { id: 'kuchnia-3', name: 'Kuchnia', kind: 'kitchen', social: true, cap: 14, x: 8.18, y: 10.47, w: 5.92, h: 4.38, doors: [['w', 13.9, 0.9]], counter: [13.45, 10.8, 0.55, 3.8] },
+  { id: 'chill-3', name: 'Chill room', kind: 'chill', social: true, note: 'kanapa + 3 fotele do masażu', x: 24.11, y: 19.75, w: 6.44, h: 3.1, doors: [['e', 20.36, 0.9]] }
+];
+FP_FLOORS['3'].plain = FP_FLOORS['3'].plain.filter(r => r.kind !== 'relax');
 // Stare identyfikatory sal (z wcześniejszej wersji planu) → nowe nazwy, żeby zapisane stoliki dalej się zgadzały
 const FP_LEGACY = { '3.01': 'bryza', '3.03': 'iryda', '3.04': 'flaris', '3.05': 'iskra', '3.06': 'orlik', '3.07': 'koliber', '2.01': 'tower', '2.04': 'terminal', '2.05': 'hangar', '2.06': 'training' };
 function fpNormId(id) { return FP_LEGACY[id] || id; }
 function fpRoom(id) {
   id = fpNormId(id);
-  for (const k of FP_ORDER) { const r = FP_FLOORS[k].rooms.find(x => x.id === id); if (r) return { room: r, floor: k }; }
+  for (const k of FP_ORDER) { const r = FP_FLOORS[k].rooms.find(x => x.id === id) || (FP_FLOORS[k].social || []).find(x => x.id === id); if (r) return { room: r, floor: k }; }
   return null;
 }
-function fpRoomLabel(r) { return `${r.name} (${r.cap} os.)`; }
+function fpRoomLabel(r) { return r.cap ? `${r.name} (${r.cap} os.)` : r.name; }
 function fpPlaceLabel(r, k) { return `${FP_FLOORS[k].name} · ${fpRoomLabel(r)}`; }
-function fpRoomType(r) { return r.furn === 'class' ? 'Sala szkoleniowa' : r.cap >= 15 ? 'Sala konferencyjna' : r.cap >= 8 ? 'Sala spotkań' : 'Salka'; }
+function fpRoomType(r) { if (r.social) return r.kind === 'chill' ? 'Strefa relaksu' : 'Kuchnia / strefa socjalna'; return r.furn === 'class' ? 'Sala szkoleniowa' : r.cap >= 15 ? 'Sala konferencyjna' : r.cap >= 8 ? 'Sala spotkań' : 'Salka'; }
 // Ściany pomieszczenia jako odcinki z przerwami na drzwi; boki przy fasadzie pomijamy (tam jest ściana zewnętrzna)
 function fpWallSegs(r) {
   const E = 0.4, out = [];
@@ -5911,12 +5937,13 @@ function fpTableSpan(t) { const s = fpMin(t.time); return [s, s + tblDurationMin
 function fpRoomStatus(roomId, c) {
   const id = fpNormId(roomId);
   const day = tblList.filter(t => t.roomId && fpNormId(t.roomId) === id && c && t.date === c.date && t.id !== c.excludeId).sort(tblSort);
-  let busy = null;
+  let overlap = null;
   if (c && c.time) {
     const s = fpMin(c.time), e = s + (c.dur || 120);
-    busy = day.find(t => { const [a, b] = fpTableSpan(t); return a < e && s < b; }) || null;
+    overlap = day.find(t => { const [a, b] = fpTableSpan(t); return a < e && s < b; }) || null;
   }
-  return { day, busy };
+  const info = fpRoom(id), social = !!(info && info.room.social);
+  return { day, busy: social ? null : overlap, overlap, social };
 }
 
 // ---- wczytywanie Three.js dopiero po otwarciu planu ----
@@ -6045,6 +6072,13 @@ function fpCtx() { const o = fpView.opts; return o.date ? { date: o.date, time: 
 function fpStatusInfo(r) {
   const o = fpView.opts, c = fpCtx();
   const st = fpRoomStatus(r.id, c || { date: tblToday(), excludeId: o.excludeId });
+  if (r.social) {
+    let txt = c ? (st.overlap ? `Bez rezerwacji · w tym czasie gra tu też ${tblGameName(st.overlap)}` : 'Bez rezerwacji — wskaż jako miejsce gry')
+      : (st.day.length ? `${st.day.length} ${tblPlural(st.day.length, 'stolik', 'stoliki', 'stolików')} dziś · bez rezerwacji` : 'Strefa wspólna · bez rezerwacji');
+    const own = o.ownId ? tblList.find(x => x.id === o.ownId) : null;
+    if (own && own.roomId && fpNormId(own.roomId) === r.id) txt = `Tu odbywa się ten stolik · ${own.time}–${fpHM(fpTableSpan(own)[1])}`;
+    return { cls: own && own.roomId && fpNormId(own.roomId) === r.id ? 'mine' : 'social', txt, st };
+  }
   let cls = 'free', txt = c ? 'Wolna w tym terminie' : (st.day.length ? `${st.day.length} ${tblPlural(st.day.length, 'stolik', 'stoliki', 'stolików')} dziś` : 'Dziś bez rezerwacji');
   if (st.busy) { const [a, b] = fpTableSpan(st.busy); cls = 'busy'; txt = `Zajęta ${st.busy.time}–${fpHM(b)} · ${tblGameName(st.busy)}`; }
   else if (o.seats && r.cap < o.seats) { cls = 'small'; txt = `Za mała: ${r.cap} miejsc, a przy stole ${o.seats} os.`; }
@@ -6064,22 +6098,23 @@ function fpRenderSide() {
     card = `<div class="fp-card">
       <div class="fp-card-k">${FP_FLOORS[selInfo.floor].name} · ${fpRoomType(r).toLowerCase()}</div>
       <div class="fp-card-t">${escapeHtml(r.name)}</div>
-      <div class="fp-card-m"><span><svg class="ic"><use href="#i-users"/></svg>do ${r.cap} os.</span>${r.area ? `<span>${String(r.area).replace('.', ',')} m²</span>` : ''}${r.tv || r.furn === 'class' ? '<span>ekran</span>' : ''}</div>
+      <div class="fp-card-m">${r.cap ? `<span><svg class="ic"><use href="#i-users"/></svg>${r.social ? '' : 'do '}${r.cap} ${r.social ? 'miejsc' : 'os.'}</span>` : ''}${r.area ? `<span>${String(r.area).replace('.', ',')} m²</span>` : ''}${r.tv || r.furn === 'class' ? '<span>ekran</span>' : ''}${r.note ? `<span>${escapeHtml(r.note)}</span>` : ''}${r.social ? '<span>bez rezerwacji</span>' : ''}</div>
       <div class="fp-status ${s.cls}">${s.txt}</div>
       ${s.st.day.length ? `<div class="fp-day"><div class="fp-day-t">${c ? 'Inne stoliki tego dnia' : 'Dzisiejsze stoliki'}</div><ul>${dayList}</ul></div>` : ''}
-      ${o.mode === 'pick' ? `<button class="btn btn-gold fp-pick" data-pick="${r.id}" ${s.cls === 'busy' ? 'disabled' : ''}>${s.cls === 'busy' ? 'Sala zajęta w tym terminie' : '<svg class="ic"><use href="#i-check"/></svg>Wybierz tę salę'}</button>` : ''}
+      ${r.social ? '<div class="fp-social-note">To pomieszczenie wspólne — nie rezerwujesz go, tylko podajesz jako miejsce gry. Inni mogą z niego korzystać w tym samym czasie.</div>' : ''}
+      ${o.mode === 'pick' ? `<button class="btn btn-gold fp-pick" data-pick="${r.id}" ${s.cls === 'busy' ? 'disabled' : ''}>${s.cls === 'busy' ? 'Sala zajęta w tym terminie' : `<svg class="ic"><use href="#i-check"/></svg>${r.social ? 'Wybierz jako miejsce gry' : 'Wybierz tę salę'}`}</button>` : ''}
     </div>`;
   }
   const when = c ? `<div class="fp-when"><span><svg class="ic"><use href="#i-calendar"/></svg>${tblLongDate(c.date)}</span><span><svg class="ic"><use href="#i-clock"/></svg>${escapeHtml(c.time)}–${fpHM(fpMin(c.time) + (c.dur || 120))}${o.seats ? ` · ${o.seats} ${tblPlural(o.seats, 'osoba', 'osoby', 'osób')}` : ''}</span></div>`
     : `<div class="fp-when"><span><svg class="ic"><use href="#i-calendar"/></svg>Dostępność na dziś</span><span style="color:var(--ink-muted)">${tblLongDate(tblToday())}</span></div>`;
   const list = floors.map(k => {
     const F = FP_FLOORS[k];
-    const items = F.rooms.filter(r => r.book).map(r => {
+    const items = F.rooms.filter(r => r.book).concat(F.social || []).map(r => {
       const s = fpStatusInfo(r);
-      return `<button class="fp-item ${s.cls} ${v.selected === r.id ? 'active' : ''}" data-room="${r.id}">
+      return `<button class="fp-item ${s.cls} ${r.social ? 'social' : ''} ${v.selected === r.id ? 'active' : ''}" data-room="${r.id}">
         <span class="fp-item-code">P${k}</span>
         <span class="fp-item-txt"><b>${escapeHtml(r.name)}</b><small>${s.txt}</small></span>
-        <span class="fp-item-cap">${r.cap} os.</span>
+        <span class="fp-item-cap">${r.social ? (r.kind === 'chill' ? 'relaks' : 'kuchnia') : `${r.cap} os.`}</span>
       </button>`;
     }).join('');
     return `<div class="fp-list-t">${F.name} <small>poziom ${F.level} · ${F.deskCount} biurek</small></div><div class="fp-list">${items}</div>`;
@@ -6089,6 +6124,7 @@ function fpRenderSide() {
       <span><i style="background:#3D8BFD"></i>Sala do rezerwacji</span>
       <span><i style="background:#E5484D"></i>Zajęta</span>
       <span><i style="background:#F5A524"></i>Wybrana</span>
+      <span><i style="background:#1FA971"></i>Kuchnia / strefa socjalna</span>
       <span><i style="background:#22304D"></i>Open space</span>
       <span><i style="background:#3A4C68"></i>Pozostałe pomieszczenia</span>
       <span><i style="background:#2DD4A0; border-radius:50%"></i>Budka tel.</span>
@@ -6109,7 +6145,7 @@ function fpSideClick(e) {
 }
 function fpSelect(id, focus) {
   const v = fpView; if (!v) return;
-  const info = fpRoom(id); if (!info || !info.room.book) return;
+  const info = fpRoom(id); if (!info || !(info.room.book || info.room.social)) return;
   v.selected = info.room.id;
   if (v.floor !== 'all' && v.floor !== info.floor) { v.floor = info.floor; fpSyncButtons(); if (v.three) fpApplyFloor(false); }
   fpRenderSide();
@@ -6170,6 +6206,19 @@ function fpSvgFloor(k, yOff) {
   // ściany pomieszczeń z otworami drzwiowymi
   F.plain.forEach(r => { s += fpSvgWalls(r, '#6C82A3', 0.14); (r.doors || []).forEach(d => { s += fpSvgDoor(r, d, '#8CA0BA'); }); });
   F.walls.forEach(([x1, y1, x2, y2]) => { s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#6C82A3" stroke-width="0.14"/>`; });
+  // kuchnie i strefy socjalne (półprzezroczyste, żeby było widać stoły)
+  (F.social || []).forEach(r => {
+    const sel = v.selected === r.id;
+    const fs = Math.min(0.72, (r.w - 0.5) / (r.name.length * 0.62));
+    if (r.kind === 'chill') for (let i = 0; i < 3; i++) s += `<rect x="${r.x + 0.75 + i * ((r.w - 2.4) / 2)}" y="${r.y + r.h / 2 - 0.55}" width="0.9" height="1.2" rx="0.25" fill="#0F1D33"/>`;
+    if (r.counter) { const [cx, cy, cw, ch] = r.counter; s += `<rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" fill="#8CA0BA" fill-opacity=".7"/>`; }
+    s += `<g class="fp-svg-room book social ${sel ? 'sel' : ''}" data-room="${r.id}">
+      <${r.poly ? `path d="M${r.poly.map(p => p.join(' ')).join(' L')} Z"` : `rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}"`} fill="${sel ? '#F5A524' : '#1FA971'}" fill-opacity="${sel ? 0.6 : 0.3}" stroke="${sel ? '#FFD58A' : '#2DD4A0'}" stroke-width="${r.open ? 0.08 : 0}" stroke-dasharray="${r.open ? '0.35 0.25' : ''}"/>
+      ${r.open ? '' : fpSvgWalls(r, sel ? '#FFD58A' : '#7FE3BE', 0.12)}${(r.doors || []).map(d => fpSvgDoor(r, d, '#BFF3DE')).join('')}
+      <rect x="${r.x + r.w / 2 - Math.max(r.name.length * 0.45, 2.4) / 2}" y="${r.y + r.h / 2 - 0.68}" width="${Math.max(r.name.length * 0.45, 2.4)}" height="${r.cap ? 1.65 : 1.05}" rx="0.25" fill="${sel ? '#FFD58A' : '#0A1424'}" fill-opacity=".85"/>
+      <text x="${r.x + r.w / 2}" y="${r.y + r.h / 2 - 0.05}" class="fp-svg-code" style="font-size:${fs.toFixed(2)}px">${escapeHtml(r.name)}</text>${r.cap ? `<text x="${r.x + r.w / 2}" y="${r.y + r.h / 2 + 0.72}" class="fp-svg-cap">${r.cap} miejsc</text>` : ''}
+    </g>`;
+  });
   // sale do rezerwacji
   F.rooms.forEach(r => {
     let fill = '#2B7BEF', stroke = 'none', cls = '';
@@ -6256,7 +6305,7 @@ function fpInit3D() {
     el.className = 'fp-lbl ' + cls; el.innerHTML = html;
     if (room) el.dataset.room = room;
     labelRoot.appendChild(el);
-    labels.push({ el, floor: floorKey, pos, cls, n: labels.length });
+    labels.push({ el, floor: floorKey, pos, cls: cls.split(' ')[0], n: labels.length });
   };
   labelRoot.onclick = (e) => { const l = e.target.closest('[data-room]'); if (l) fpSelect(l.dataset.room, true); };
 
@@ -6382,6 +6431,36 @@ function fpInit3D() {
         else if (cap >= 8) screen(r, long ? 'w' : 'n');
       }
       addLabel(`<b>${escapeHtml(r.name)}</b> <em>${r.cap} os.</em>`, 'room', k, new T.Vector3(cx, top + WALL + 0.9, cz), r.id);
+    });
+    // kuchnie i strefy socjalne — klikalne, ale bez rezerwacji
+    (F.social || []).forEach(r => {
+      const cx = X(r.x + r.w / 2), cz = Z(r.y + r.h / 2);
+      const fm = new T.MeshStandardMaterial({ color: '#13704C', roughness: 0.7, emissive: '#0A3F2C', emissiveIntensity: 0.55 });
+      let plate;
+      if (r.poly) {
+        const sh = new T.Shape();
+        r.poly.forEach(([px, py], i) => { const a = X(px) - cx, b = -(Z(py) - cz); if (i) sh.lineTo(a, b); else sh.moveTo(a, b); });
+        sh.closePath();
+        plate = new T.Mesh(new T.ExtrudeGeometry(sh, { depth: 0.05, bevelEnabled: false }), fm);
+        plate.rotation.x = -Math.PI / 2; plate.position.set(cx, top + 0.005, cz); plate.receiveShadow = true;
+        g.add(plate);
+      } else plate = box(r.w - 0.06, 0.05, r.h - 0.06, fm, cx, top + 0.03, cz, g, false);
+      plate.userData = { room: r.id, floor: k, social: true }; picks.push(plate); r._plate = plate;
+      if (!r.open) wallBoxes(r, WALL + 0.15, solidM, mat('#7FE3BE', { emissive: '#1FA971', emissiveIntensity: 0.5 }), true);
+      if (r.counter) {
+        const [x, y, w, h] = r.counter;
+        box(w, 0.92, h, mat('#DCE8FA'), X(x + w / 2), top + 0.46, Z(y + h / 2), g);
+        box(w + 0.04, 0.05, h + 0.04, mat('#51627A'), X(x + w / 2), top + 0.95, Z(y + h / 2), g);
+        box(w, 1.9, 0.7, mat('#B9C9E0'), X(x + w / 2), top + 0.95, Z(y + h + 0.4), g);
+      }
+      if (r.kind === 'chill') {
+        for (let i = 0; i < 3; i++) {
+          const ax = X(r.x + 1.2 + i * ((r.w - 2.4) / 2));
+          box(0.95, 0.45, 1.25, mat('#0F1D33'), ax, top + 0.25, cz + 0.1, g);
+          box(0.95, 0.8, 0.3, mat('#0F1D33'), ax, top + 0.6, cz - 0.55, g);
+        }
+      }
+      addLabel(`<b>${escapeHtml(r.name)}</b> <em>${r.cap ? `${r.cap} miejsc` : 'strefa wspólna'}</em>`, 'room social', k, new T.Vector3(cx, top + WALL + 0.9, cz), r.id);
     });
     // pozostałe pomieszczenia (bez rezerwacji i bez podpisów)
     F.plain.forEach(r => {
@@ -6628,8 +6707,9 @@ function fpRefreshRooms() {
   let selPlate = null;
   tv.picks.forEach(p => {
     const id = p.userData.room, info = fpRoom(id), st = fpStatusInfo(info.room).cls;
-    let col = st === 'busy' ? '#9E1D22' : '#1652B8', em = st === 'busy' ? '#5C1114' : '#0E3780', ei = 0.55;
-    if (v.hover === id) { col = st === 'busy' ? '#C0272D' : '#2468D8'; ei = 0.85; }
+    const soc = info.room.social;
+    let col = st === 'busy' ? '#9E1D22' : soc ? '#13704C' : '#1652B8', em = st === 'busy' ? '#5C1114' : soc ? '#0A3F2C' : '#0E3780', ei = 0.55;
+    if (v.hover === id) { col = st === 'busy' ? '#C0272D' : soc ? '#1A8F62' : '#2468D8'; ei = 0.85; }
     if (v.selected === id) { col = '#A9650A'; em = '#5A3300'; ei = 0.55; selPlate = p; }
     p.material.color.set(col); p.material.emissive.set(em); p.material.emissiveIntensity = ei;
   });
