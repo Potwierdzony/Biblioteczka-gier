@@ -1294,9 +1294,10 @@
   .fp-lbl.room b { font-weight: 700; color: #1F6FEB; }
   .fp-lbl.room span { font-family: 'Inter', sans-serif; font-weight: 500; }
   .fp-lbl.room em { font-style: normal; font-weight: 700; color: #12805A; }
-  .fp-lbl.room.busy { border-color: #E5484D; background: #FDECEC; }
-  .fp-lbl.room.busy::after { border-top-color: #E5484D; }
-  .fp-lbl.room.busy b, .fp-lbl.room.busy em, .fp-lbl.room.small em { color: #D13438; }
+  .fp-lbl.room.taken { border-color: #8B5CF6; background: #F1ECFE; }
+  .fp-lbl.room.taken::after { border-top-color: #8B5CF6; }
+  .fp-lbl.room.taken b, .fp-lbl.room.taken em { color: #6D3FE0; }
+  .fp-lbl.room.small em { color: #B26A00; }
   .fp-lbl.room.hover { background: #E7F0FE; }
   .fp-lbl.room.behind { opacity: .28; }
   .fp-lbl.room.sel { background: #F5A524; border-color: #FFD58A; color: #0C1A2E; box-shadow: 0 0 0 3px rgba(245,165,36,.35), 0 8px 18px rgba(0,0,0,.5); opacity: 1; }
@@ -1343,7 +1344,7 @@
   .fp-status { display: flex; align-items: center; gap: 6px; font: 600 12px 'Inter', sans-serif; padding: 6px 9px; border-radius: 8px; }
   .fp-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
   .fp-status.free { background: rgba(31,169,113,.13); color: var(--green); }
-  .fp-status.busy { background: rgba(229,72,77,.12); color: var(--red); }
+  .fp-status.taken { background: rgba(139,92,246,.13); color: #7C4DEB; }
   .fp-status.small { background: rgba(245,165,36,.16); color: #9A6200; }
   .fp-status.mine { background: rgba(245,165,36,.18); color: #9A6200; }
   .fp-status.social { background: rgba(31,169,113,.13); color: var(--green); }
@@ -1373,12 +1374,12 @@
   .fp-item:hover { border-color: var(--accent); }
   .fp-item.active { border-color: #F5A524; box-shadow: 0 0 0 2px rgba(245,165,36,.3); }
   .fp-item-code { font: 700 11px 'JetBrains Mono', monospace; color: #fff; background: var(--accent); border-radius: 6px; padding: 4px 6px; min-width: 38px; text-align: center; }
-  .fp-item.busy .fp-item-code { background: var(--red); }
+  .fp-item.taken .fp-item-code { background: #8B5CF6; }
   .fp-item.active .fp-item-code { background: #F5A524; color: #0C1A2E; }
   .fp-item-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
   .fp-item-txt b { font-size: 13px; font-weight: 600; }
   .fp-item-txt small { font: 500 10px 'JetBrains Mono', monospace; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fp-item.busy .fp-item-txt small { color: var(--red); }
+  .fp-item.taken .fp-item-txt small { color: #7C4DEB; }
   .fp-item.small .fp-item-txt small { color: #9A6200; }
   .fp-item-cap { font: 600 11px 'JetBrains Mono', monospace; color: var(--green); white-space: nowrap; }
   .fp-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; font-size: 11px; color: var(--ink-muted); padding-top: 10px; border-top: 1px solid var(--border-card); }
@@ -1391,6 +1392,8 @@
   .tbl-plan-btn { white-space: nowrap; padding: 8px 12px; font-size: 12px; gap: 6px; }
   .tbl-room-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font: 500 11px 'JetBrains Mono', monospace; color: #0C1A2E; background: rgba(245,165,36,.22); border: 1px solid rgba(245,165,36,.6); border-radius: 6px; padding: 3px 4px 3px 8px; }
   .tbl-room-chip .ic { color: #9A6200; }
+  .tbl-room-also { display: flex; align-items: center; gap: 6px; margin-top: 6px; font: 500 11px 'Inter', sans-serif; color: #7C4DEB; }
+  .tbl-room-also .ic { width: 13px; height: 13px; }
   .tbl-room-chip button { background: none; border: none; cursor: pointer; color: #0C1A2E; padding: 0 4px; display: inline-flex; }
   .tbl-plan-link { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font-size: 13px; }
   @media (max-width: 900px) {
@@ -4926,7 +4929,7 @@ function tblRender() {
           </div>
           <div class="tbl-toolbar-right">
             <span class="tbl-me">${me ? `Grasz jako <b>${escapeHtml(me)}</b> <button class="tbl-link" data-act="name">zmień</button>` : `<button class="tbl-link" data-act="name">Przedstaw się</button>`}</span>
-            <button class="btn btn-outline" data-act="plan-all" title="Plan pięter z salami do rezerwacji"><svg class="ic"><use href="#i-map"/></svg> Plan biura</button>
+            <button class="btn btn-outline" data-act="plan-all" title="Plan pięter z salami i strefami wspólnymi"><svg class="ic"><use href="#i-map"/></svg> Plan biura</button>
             <button class="btn btn-outline tbl-set-btn" data-act="settings" title="Linki i powiadomienia na Slacku">⚙️ Linki i Slack${slackEnabled() ? ' <span class="tbl-slack-on">●</span>' : ''}</button>
             <button class="btn btn-gold" data-act="new">+ Nowy stolik</button>
           </div>
@@ -5173,9 +5176,16 @@ function openTableForm(editId, presetGameId) {
   ['t-other', 't-date', 't-time', 't-place', 't-host', 't-notes'].forEach(id => { $(id).oninput = preview; });
   const roomChip = () => {
     const info = draft.roomId ? fpRoom(draft.roomId) : null;
-    $('t-room-chip').innerHTML = info ? `<span class="tbl-room-chip"><svg class="ic"><use href="#i-pin"/></svg>${escapeHtml(FP_FLOORS[info.floor].name)} · ${escapeHtml(info.room.name)}${info.room.social ? ' · bez rezerwacji' : ` · do ${info.room.cap} os.`} <button type="button" id="t-room-x" title="Usuń wybór sali"><svg class="ic"><use href="#i-x"/></svg></button></span>` : '';
+    let also = '';
+    if (info) {
+      const g = tblGameOf(draft);
+      const other = fpRoomStatus(info.room.id, { date: $('t-date').value, time: $('t-time').value, dur: tblDurationMin(g && g.duration), excludeId: t ? t.id : null }).overlap;
+      if (other) also = `<span class="tbl-room-also"><svg class="ic"><use href="#i-users"/></svg>W tym czasie wybrał(a) ją też ${escapeHtml(fpWho(other))}</span>`;
+    }
+    $('t-room-chip').innerHTML = info ? `<span class="tbl-room-chip"><svg class="ic"><use href="#i-pin"/></svg>${escapeHtml(FP_FLOORS[info.floor].name)} · ${escapeHtml(info.room.name)}${info.room.social ? ' · strefa wspólna' : ` · do ${info.room.cap} os.`} <button type="button" id="t-room-x" title="Usuń wybór sali"><svg class="ic"><use href="#i-x"/></svg></button></span>${also}` : '';
     if (info) $('t-room-x').onclick = () => { draft.roomId = ''; draft.floor = ''; $('t-place').value = ''; roomChip(); preview(); };
   };
+  ['t-date', 't-time'].forEach(id => $(id).addEventListener('input', () => roomChip()));
   $('t-place').oninput = () => {
     const info = draft.roomId ? fpRoom(draft.roomId) : null;
     if (info && $('t-place').value.trim() !== fpPlaceLabel(info.room, info.floor)) { draft.roomId = ''; draft.floor = ''; roomChip(); }
@@ -5192,8 +5202,8 @@ function openTableForm(editId, presetGameId) {
         draft.roomId = room.id; draft.floor = floorKey;
         $('t-place').value = fpPlaceLabel(room, floorKey);
         $('t-place-field').classList.remove('invalid');
-        if (room.cap < tblSeatsOf(draft)) toast(`Uwaga: sala ${room.id} mieści ${room.cap} os., a stolik ma ${tblSeatsOf(draft)} miejsc.`, 'error');
-        else toast(`Wybrano salę ${room.id} — ${room.name}.`);
+        if (room.cap && room.cap < tblSeatsOf(draft)) toast(`Uwaga: ${room.name} mieści ${room.cap} os., a stolik ma ${tblSeatsOf(draft)} miejsc.`, 'error');
+        else toast(`Wybrano: ${fpPlaceLabel(room, floorKey)}.`);
         roomChip(); preview();
       }
     });
@@ -5224,12 +5234,8 @@ function openTableForm(editId, presetGameId) {
     if (!ok) return;
     if (draft.roomId) {
       const g = tblGameOf(draft);
-      const clash = fpRoomStatus(draft.roomId, { date: draft.date, time: draft.time, dur: tblDurationMin(g && g.duration), excludeId: t ? t.id : null }).busy;
-      if (clash) {
-        toast(`Sala ${(fpRoom(draft.roomId) || { room: { name: draft.roomId } }).room.name} jest zajęta ${clash.time}–${fpHM(fpTableSpan(clash)[1])} (${tblGameName(clash)}). Wybierz inną salę lub godzinę.`, 'error');
-        $('t-place-field').classList.add('invalid', 'shake'); setTimeout(() => $('t-place-field').classList.remove('shake'), 300);
-        return;
-      }
+      const other = fpRoomStatus(draft.roomId, { date: draft.date, time: draft.time, dur: tblDurationMin(g && g.duration), excludeId: t ? t.id : null }).overlap;
+      if (other) toast(`Info: w tym czasie salę ${(fpRoom(draft.roomId) || { room: { name: draft.roomId } }).room.name} wybrał(a) też ${fpWho(other)}.`);
     }
     if (!tblGetName()) tblSetName(draft.host);
     const data = {
@@ -5934,6 +5940,7 @@ FP_FLOORS['4'] = {
   ]
 };
 FP_ORDER.push('4');
+function fpWho(t) { return `${t.host || 'ktoś'} (${tblGameName(t)}, ${t.time}–${fpHM(fpTableSpan(t)[1])})`; }
 const FP_SOCIAL_TYPE = { kitchen: ['Kuchnia / strefa socjalna', 'kuchnia'], chill: ['Strefa relaksu', 'relaks'], cafe: ['Strefa kafeteryjna / chill', 'kafeteria'], games: ['Pokój rozrywkowy', 'rozrywka'] };
 function fpRoomType(r) { if (r.social) return (FP_SOCIAL_TYPE[r.kind] || FP_SOCIAL_TYPE.kitchen)[0]; return r.furn === 'class' ? 'Sala szkoleniowa' : r.cap >= 15 ? 'Sala konferencyjna' : r.cap >= 8 ? 'Sala spotkań' : 'Salka'; }
 // Ściany pomieszczenia jako odcinki z przerwami na drzwi; boki przy fasadzie pomijamy (tam jest ściana zewnętrzna)
@@ -5990,7 +5997,7 @@ function fpColsFor(F) { return FP_COLS.filter(([x, y]) => !F.rooms.some(r => x >
 function fpMin(t) { const [h, m] = String(t || '18:00').split(':').map(Number); return (h || 0) * 60 + (m || 0); }
 function fpHM(m) { m = ((m % 1440) + 1440) % 1440; return `${tblPad(Math.floor(m / 60))}:${tblPad(m % 60)}`; }
 function fpTableSpan(t) { const s = fpMin(t.time); return [s, s + tblDurationMin((tblGameOf(t) || {}).duration)]; }
-// Stoliki zarezerwowane w danej sali danego dnia + ewentualny konflikt z planowanym terminem
+// Stoliki, które wybrały daną salę danego dnia + stolik w tym samym czasie (tylko informacja — biblioteczka nie rezerwuje sal)
 function fpRoomStatus(roomId, c) {
   const id = fpNormId(roomId);
   const day = tblList.filter(t => t.roomId && fpNormId(t.roomId) === id && c && t.date === c.date && t.id !== c.excludeId).sort(tblSort);
@@ -6000,7 +6007,7 @@ function fpRoomStatus(roomId, c) {
     overlap = day.find(t => { const [a, b] = fpTableSpan(t); return a < e && s < b; }) || null;
   }
   const info = fpRoom(id), social = !!(info && info.room.social);
-  return { day, busy: social ? null : overlap, overlap, social };
+  return { day, busy: null, overlap, social };
 }
 
 // ---- wczytywanie Three.js dopiero po otwarciu planu ----
@@ -6043,7 +6050,7 @@ function openFloorViewer(opts) {
     <div class="fp-modal" role="dialog" aria-label="Plan biura">
       <div class="fp-head">
         <h2><svg class="ic"><use href="#i-map"/></svg>Plan biura</h2>
-        <span class="fp-sub">${opts.mode === 'pick' ? 'Kliknij salę, żeby wybrać ją dla stolika' : 'Sale do rezerwacji i strefy wspólne · parter i piętra 1–4'}</span>
+        <span class="fp-sub">${opts.mode === 'pick' ? 'Kliknij salę, żeby wybrać ją dla stolika' : 'Sale i strefy wspólne · parter i piętra 1–4'}</span>
         <div class="fp-seg" id="fp-floors">
           ${FP_ORDER.map(k => `<button data-floor="${k}">${FP_FLOORS[k].name}</button>`).join('')}<button data-floor="all"><svg class="ic"><use href="#i-layers"/></svg>Wszystkie</button>
         </div>
@@ -6130,17 +6137,17 @@ function fpStatusInfo(r) {
   const o = fpView.opts, c = fpCtx();
   const st = fpRoomStatus(r.id, c || { date: tblToday(), excludeId: o.excludeId });
   if (r.social) {
-    let txt = c ? (st.overlap ? `Bez rezerwacji · w tym czasie gra tu też ${tblGameName(st.overlap)}` : 'Bez rezerwacji — wskaż jako miejsce gry')
+    let txt = c ? (st.overlap ? `W tym czasie gra tu też ${fpWho(st.overlap)}` : 'Strefa wspólna — wskaż jako miejsce gry')
       : (st.day.length ? `${st.day.length} ${tblPlural(st.day.length, 'stolik', 'stoliki', 'stolików')} dziś · bez rezerwacji` : 'Strefa wspólna · bez rezerwacji');
     const own = o.ownId ? tblList.find(x => x.id === o.ownId) : null;
     if (own && own.roomId && fpNormId(own.roomId) === r.id) txt = `Tu odbywa się ten stolik · ${own.time}–${fpHM(fpTableSpan(own)[1])}`;
     return { cls: own && own.roomId && fpNormId(own.roomId) === r.id ? 'mine' : 'social', txt, st };
   }
-  let cls = 'free', txt = c ? 'Wolna w tym terminie' : (st.day.length ? `${st.day.length} ${tblPlural(st.day.length, 'stolik', 'stoliki', 'stolików')} dziś` : 'Dziś bez rezerwacji');
-  if (st.busy) { const [a, b] = fpTableSpan(st.busy); cls = 'busy'; txt = `Zajęta ${st.busy.time}–${fpHM(b)} · ${tblGameName(st.busy)}`; }
+  let cls = 'free', txt = c ? 'Nikt jej nie wybrał na ten czas' : (st.day.length ? `${st.day.length} ${tblPlural(st.day.length, 'stolik', 'stoliki', 'stolików')} dziś` : 'Dziś nikt jej nie wybrał');
+  if (c && st.overlap) { cls = 'taken'; txt = `Wybrał(a) już ${fpWho(st.overlap)}`; }
   else if (o.seats && r.cap < o.seats) { cls = 'small'; txt = `Za mała: ${r.cap} miejsc, a przy stole ${o.seats} os.`; }
   const own = o.ownId ? tblList.find(x => x.id === o.ownId) : null;
-  if (own && own.roomId && fpNormId(own.roomId) === r.id && cls !== 'busy') { cls = 'mine'; txt = `Tu odbywa się ten stolik · ${own.time}–${fpHM(fpTableSpan(own)[1])}`; }
+  if (own && own.roomId && fpNormId(own.roomId) === r.id) { cls = 'mine'; txt = `Tu odbywa się ten stolik · ${own.time}–${fpHM(fpTableSpan(own)[1])}`; }
   return { cls, txt, st };
 }
 function fpRenderSide() {
@@ -6151,15 +6158,15 @@ function fpRenderSide() {
   let card = '<div class="fp-card fp-card-empty"><svg class="ic"><use href="#i-pin"/></svg>Wybierz salę na planie albo z listy poniżej.</div>';
   if (selInfo) {
     const r = selInfo.room, s = fpStatusInfo(r);
-    const dayList = s.st.day.map(t => `<li><b>${escapeHtml(t.time)}–${fpHM(fpTableSpan(t)[1])}</b> ${escapeHtml(tblGameName(t))} <small>(${tblPlayers(t).length}/${tblSeatsOf(t)})</small></li>`).join('');
+    const dayList = s.st.day.map(t => `<li><b>${escapeHtml(t.time)}–${fpHM(fpTableSpan(t)[1])}</b> ${escapeHtml(tblGameName(t))} <small>· ${escapeHtml(t.host || '—')} (${tblPlayers(t).length}/${tblSeatsOf(t)})</small></li>`).join('');
     card = `<div class="fp-card">
       <div class="fp-card-k">${FP_FLOORS[selInfo.floor].name} · ${fpRoomType(r).toLowerCase()}</div>
       <div class="fp-card-t">${escapeHtml(r.name)}</div>
-      <div class="fp-card-m">${r.cap ? `<span><svg class="ic"><use href="#i-users"/></svg>${r.social ? '' : 'do '}${r.cap} ${r.social ? 'miejsc' : 'os.'}</span>` : ''}${r.area ? `<span>${String(r.area).replace('.', ',')} m²</span>` : ''}${r.tv || r.furn === 'class' ? '<span>ekran</span>' : ''}${r.note ? `<span>${escapeHtml(r.note)}</span>` : ''}${r.social ? '<span>bez rezerwacji</span>' : ''}</div>
+      <div class="fp-card-m">${r.cap ? `<span><svg class="ic"><use href="#i-users"/></svg>${r.social ? '' : 'do '}${r.cap} ${r.social ? 'miejsc' : 'os.'}</span>` : ''}${r.area ? `<span>${String(r.area).replace('.', ',')} m²</span>` : ''}${r.tv || r.furn === 'class' ? '<span>ekran</span>' : ''}${r.note ? `<span>${escapeHtml(r.note)}</span>` : ''}${r.social ? '<span>strefa wspólna</span>' : ''}</div>
       <div class="fp-status ${s.cls}">${s.txt}</div>
       ${s.st.day.length ? `<div class="fp-day"><div class="fp-day-t">${c ? 'Inne stoliki tego dnia' : 'Dzisiejsze stoliki'}</div><ul>${dayList}</ul></div>` : ''}
-      ${r.social ? '<div class="fp-social-note">To pomieszczenie wspólne — nie rezerwujesz go, tylko podajesz jako miejsce gry. Inni mogą z niego korzystać w tym samym czasie.</div>' : ''}
-      ${o.mode === 'pick' ? `<button class="btn btn-gold fp-pick" data-pick="${r.id}" ${s.cls === 'busy' ? 'disabled' : ''}>${s.cls === 'busy' ? 'Sala zajęta w tym terminie' : `<svg class="ic"><use href="#i-check"/></svg>${r.social ? 'Wybierz jako miejsce gry' : 'Wybierz tę salę'}`}</button>` : ''}
+      <div class="fp-social-note">${r.social ? 'To pomieszczenie wspólne — podajesz je tylko jako miejsce gry. Inni mogą z niego korzystać w tym samym czasie.' : 'Biblioteczka nie rezerwuje sal — tu widać tylko, kto wybrał tę salę na swój stolik. Samą salę zarezerwuj w firmowym systemie.'}</div>
+      ${o.mode === 'pick' ? `<button class="btn btn-gold fp-pick" data-pick="${r.id}"><svg class="ic"><use href="#i-check"/></svg>${r.social ? 'Wybierz jako miejsce gry' : 'Wybierz tę salę'}</button>` : ''}
     </div>`;
   }
   const when = c ? `<div class="fp-when"><span><svg class="ic"><use href="#i-calendar"/></svg>${tblLongDate(c.date)}</span><span><svg class="ic"><use href="#i-clock"/></svg>${escapeHtml(c.time)}–${fpHM(fpMin(c.time) + (c.dur || 120))}${o.seats ? ` · ${o.seats} ${tblPlural(o.seats, 'osoba', 'osoby', 'osób')}` : ''}</span></div>`
@@ -6178,8 +6185,8 @@ function fpRenderSide() {
   }).join('');
   document.getElementById('fp-side').innerHTML = `${when}${card}${list}
     <div class="fp-legend">
-      <span><i style="background:#3D8BFD"></i>Sala do rezerwacji</span>
-      <span><i style="background:#E5484D"></i>Zajęta</span>
+      <span><i style="background:#3D8BFD"></i>Sala</span>
+      <span><i style="background:#8B5CF6"></i>Wybrana już przez kogoś</span>
       <span><i style="background:#F5A524"></i>Wybrana</span>
       <span><i style="background:#1FA971"></i>Kuchnia / strefa socjalna</span>
       <span><i style="background:#22304D"></i>Open space</span>
@@ -6294,7 +6301,7 @@ function fpSvgFloor(k, yOff) {
   F.rooms.forEach(r => {
     let fill = '#2B7BEF', stroke = 'none', cls = '';
     const st = fpStatusInfo(r).cls;
-    if (st === 'busy') fill = '#E5484D';
+    if (st === 'taken') fill = '#7C5CE0';
     if (v.selected === r.id) { fill = '#F5A524'; cls = 'sel'; stroke = '#FFD58A'; }
     const fs = Math.min(0.72, (r.w - 0.5) / (r.name.length * 0.62));
     s += `<g class="fp-svg-room book ${cls}" data-room="${r.id}">
@@ -6828,8 +6835,9 @@ function fpRefreshRooms() {
   tv.picks.forEach(p => {
     const id = p.userData.room, info = fpRoom(id), st = fpStatusInfo(info.room).cls;
     const soc = info.room.social;
-    let col = st === 'busy' ? '#9E1D22' : soc ? '#13704C' : '#1652B8', em = st === 'busy' ? '#5C1114' : soc ? '#0A3F2C' : '#0E3780', ei = 0.55;
-    if (v.hover === id) { col = st === 'busy' ? '#C0272D' : soc ? '#1A8F62' : '#2468D8'; ei = 0.85; }
+    const tk = st === 'taken';
+    let col = tk ? '#5B3FB0' : soc ? '#13704C' : '#1652B8', em = tk ? '#2E1F66' : soc ? '#0A3F2C' : '#0E3780', ei = 0.55;
+    if (v.hover === id) { col = tk ? '#6E52CC' : soc ? '#1A8F62' : '#2468D8'; ei = 0.85; }
     if (v.selected === id) { col = '#A9650A'; em = '#5A3300'; ei = 0.55; selPlate = p; }
     p.material.color.set(col); p.material.emissive.set(em); p.material.emissiveIntensity = ei;
   });
@@ -6837,7 +6845,7 @@ function fpRefreshRooms() {
     const id = l.el.dataset.room;
     if (!id) return;
     const info = fpRoom(id), st = fpStatusInfo(info.room).cls;
-    l.el.classList.toggle('busy', st === 'busy');
+    l.el.classList.toggle('taken', st === 'taken');
     l.el.classList.toggle('small', st === 'small');
     l.el.classList.toggle('sel', v.selected === id);
     l.el.classList.toggle('hover', v.hover === id);
